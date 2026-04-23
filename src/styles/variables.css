@@ -1,0 +1,48 @@
+:root {
+  /* User's Specified Palette */
+  --palette-100: #F8F9FA; /* Bright Snow */
+  --palette-200: #E9ECEF; /* Platinum */
+  --palette-300: #DEE2E6; /* Light Gray */
+  --palette-400: #CED4DA; /* Silver */
+  --palette-500: #ADB5BD; /* French Gray */
+  --palette-600: #6C757D; /* Slate Gray */
+  --palette-700: #495057; /* Outer Space */
+  --palette-800: #343A40; /* Onyx */
+  --palette-900: #212529; /* Eerie Black */
+
+  /* Functional Mapping (Light Theme) */
+  --bg-primary: var(--palette-100);
+  --bg-secondary: #ffffff;
+  --bg-accent: var(--palette-200);
+  
+  --text-primary: var(--palette-900);
+  --text-secondary: var(--palette-700);
+  --text-muted: var(--palette-600);
+  
+  /* Using dark tones for accents in this refined light theme */
+  --accent-blue: var(--palette-900);
+  --accent-blue-glow: rgba(33, 37, 41, 0.08);
+  --accent-emerald: var(--palette-800);
+  --accent-emerald-glow: rgba(52, 58, 64, 0.08);
+  --accent-indigo: var(--palette-700);
+  --accent-purple: var(--palette-600);
+  
+  --border-color: var(--palette-400);
+  --glass-bg: rgba(0, 0, 0, 0.02);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  
+  /* Shadows & Effects (Adjusted for Light Theme) */
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --glass-blur: blur(20px);
+  
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Layout */
+  --sidebar-width: 280px;
+  --navbar-height: 70px;
+}

@@ -1,0 +1,309 @@
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { 
+  Container, 
+  Box, 
+  Typography, 
+  Button, 
+  Stack, 
+  Chip, 
+  Tabs, 
+  Tab, 
+  Paper,
+  Divider,
+  Avatar,
+  AvatarGroup,
+  LinearProgress,
+  IconButton,
+  CircularProgress,
+  Breadcrumbs,
+  Link,
+  Grid,
+  useTheme
+} from '@mui/material';
+import { 
+  ArrowLeft, 
+  Layout, 
+  Users, 
+  FileText, 
+  Calendar, 
+  MoreVertical, 
+  Clock, 
+  CheckCircle2,
+  Plus,
+  ChevronRight,
+  TrendingUp
+} from 'lucide-react';
+import { useApp } from '../context/AppContext';
+import KanbanBoard from '../components/Projects/ProjectDetails/KanbanBoard';
+import TeamSection from '../components/Projects/ProjectDetails/TeamSection';
+import ResourceCenter from '../components/Projects/ProjectDetails/ResourceCenter';
+import ProjectRoadmap from '../components/Projects/ProjectDetails/ProjectRoadmap';
+import confetti from 'canvas-confetti';
+import { ProjectDetailsSkeleton } from '../components/Feedback/LoadingSkeleton';
+import { useEffect } from 'react';
+
+const ProjectDetails = () => {
+  const theme = useTheme();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { projects, clients, loading } = useApp();
+  const [activeTab, setActiveTab] = useState(0);
+
+  const project = projects.find(p => p.id === id);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!loading && project?.progress === 100) {
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#6366f1', '#10b981', '#f59e0b', '#f43f5e']
+      });
+    }
+  }, [loading, project?.progress]);
+
+  if (loading) return <ProjectDetailsSkeleton />;
+  if (!project) {
+    return (
+      <Container sx={{ py: 10, textAlign: 'center' }}>
+        <Typography variant="h5">Project not found</Typography>
+        <Button startIcon={<ArrowLeft size={18} />} onClick={() => navigate('/projects')} sx={{ mt: 2 }}>
+          Back to Projects
+        </Button>
+      </Container>
+    );
+  }
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
+  return (
+    <Box sx={{ width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
+      {/* Breadcrumbs */}
+      <Breadcrumbs 
+        separator={<ChevronRight size={14} />} 
+        sx={{ mb: 3, '& .MuiBreadcrumbs-li': { fontSize: '0.875rem', fontWeight: 600 } }}
+      >
+        <Link 
+          underline="hover" 
+          color="inherit" 
+          href="/projects" 
+          onClick={(e) => { e.preventDefault(); navigate('/projects'); }}
+          sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}
+        >
+          Projects
+        </Link>
+        <Typography color="text.primary" sx={{ fontWeight: 700 }}>{project.name}</Typography>
+      </Breadcrumbs>
+
+      {/* Hero Header */}
+      <Paper 
+        elevation={0}
+        sx={{ 
+          p: { xs: 4, md: 6 }, 
+          borderRadius: 6, 
+          background: theme.palette.mode === 'light' 
+            ? 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+            : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+          border: '1px solid',
+          borderColor: 'divider',
+          mb: 6,
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Decorative elements */}
+        <Box sx={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%)' }} />
+        
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 4, position: 'relative', zIndex: 1 }}>
+          <Box sx={{ flex: 1, minWidth: { xs: '100%', md: 400 } }}>
+            <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2 }}>
+              <Chip 
+                icon={<TrendingUp size={14} />}
+                label={project.status} 
+                size="small" 
+                sx={{ 
+                  fontWeight: 700, 
+                  borderRadius: 2,
+                  bgcolor: project.status === 'On Track' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                  color: project.status === 'On Track' ? '#10b981' : '#3b82f6',
+                  pl: 0.5
+                }}
+              />
+              <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.5 }} />
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                Created on {new Date(project.created_at).toLocaleDateString()}
+              </Typography>
+            </Stack>
+
+            <Typography variant="h3" sx={{ fontWeight: 900, letterSpacing: '-0.03em', mb: 2, color: 'text.primary' }}>
+              {project.name}
+            </Typography>
+            
+            <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
+              {project.description || 'No description provided.'}
+            </Typography>
+            
+            <Grid container spacing={4}>
+              <Grid size="auto">
+                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                  Client Partner
+                </Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                  {clients.find(c => c.id === project.client_id)?.name || 'Unknown Client'}
+                </Typography>
+              </Grid>
+              <Grid size="auto">
+                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                  Target Delivery
+                </Typography>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <Calendar size={18} color="#64748b" />
+                  <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                    {project.due_date}
+                  </Typography>
+                </Stack>
+              </Grid>
+              <Grid size="auto">
+                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                  Priority Level
+                </Typography>
+                <Chip 
+                  label={project.priority} 
+                  sx={{ 
+                    height: 28, 
+                    fontWeight: 800, 
+                    borderRadius: 1.5,
+                    bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(0,0,0,0.05)',
+                    color: project.priority === 'High' ? '#ef4444' : 'text.primary'
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+
+          <Paper 
+            sx={{ 
+              p: 4, 
+              minWidth: 320, 
+              borderRadius: 6, 
+              bgcolor: 'background.paper',
+              boxShadow: theme.palette.mode === 'light' ? '0 20px 50px rgba(0,0,0,0.04)' : '0 20px 50px rgba(0,0,0,0.4)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              border: '1px solid',
+              borderColor: 'divider'
+            }}
+          >
+            <Box sx={{ position: 'relative', display: 'inline-flex', mb: 3 }}>
+              <CircularProgress 
+                variant="determinate" 
+                value={100} 
+                size={120} 
+                thickness={4} 
+                sx={{ color: 'rgba(0,0,0,0.03)' }} 
+              />
+              <CircularProgress 
+                variant="determinate" 
+                value={project.progress} 
+                size={120} 
+                thickness={4} 
+                sx={{ 
+                  color: project.progress > 80 ? '#10b981' : 'primary.main',
+                  position: 'absolute',
+                  left: 0,
+                  strokeLinecap: 'round'
+                }} 
+              />
+              <Box sx={{ top: 0, left: 0, bottom: 0, right: 0, position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Typography variant="h4" component="div" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>
+                  {project.progress}%
+                </Typography>
+              </Box>
+            </Box>
+            
+            <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 1 }}>Overall Completion</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, mb: 3 }}>
+              12 of 16 tasks completed
+            </Typography>
+
+            <Divider sx={{ width: '100%', mb: 3, opacity: 0.5 }} />
+
+            <Box sx={{ width: '100%' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
+                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>Team Collaboration</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 800 }}>{project.team?.length || 0} active</Typography>
+              </Box>
+              <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 32, height: 32, fontSize: '0.75rem', border: '2px solid', borderColor: 'background.paper' } }}>
+                {project.team?.map((member) => (
+                  <Avatar key={member.id}>{member.avatar}</Avatar>
+                ))}
+              </AvatarGroup>
+            </Box>
+          </Paper>
+        </Box>
+      </Paper>
+
+      {/* Tabs */}
+      <Box sx={{ mb: 5 }}>
+        <Tabs 
+          value={activeTab} 
+          onChange={handleTabChange}
+          sx={{
+            minHeight: 48,
+            '& .MuiTabs-indicator': { display: 'none' },
+            '& .MuiTabs-flexContainer': { gap: 1.5 }
+          }}
+        >
+          {[
+            { icon: <Layout size={18} />, label: "Kanban Board" },
+            { icon: <Users size={18} />, label: "Team Management" },
+            { icon: <FileText size={18} />, label: "Resource Center" },
+            { icon: <Calendar size={18} />, label: "Timeline" }
+          ].map((tab, index) => (
+            <Tab 
+              key={index}
+              icon={tab.icon} 
+              iconPosition="start" 
+              label={tab.label} 
+              sx={{
+                minWidth: 'auto',
+                px: 3,
+                borderRadius: 3,
+                fontWeight: 700,
+                textTransform: 'none',
+                fontSize: '0.9rem',
+                minHeight: 44,
+                color: 'text.secondary',
+                transition: 'all 0.2s ease',
+                bgcolor: activeTab === index ? 'primary.main' : 'action.hover',
+                color: activeTab === index ? 'primary.contrastText' : 'text.secondary',
+                '&:hover': {
+                  bgcolor: activeTab === index ? 'primary.main' : 'action.selected'
+                },
+                '&.Mui-selected': {
+                  color: 'primary.contrastText'
+                }
+              }}
+            />
+          ))}
+        </Tabs>
+      </Box>
+
+      {/* Tab Panels */}
+      <Box sx={{ minHeight: 400 }}>
+        {activeTab === 0 && <KanbanBoard project={project} />}
+        {activeTab === 1 && <TeamSection project={project} />}
+        {activeTab === 2 && <ResourceCenter project={project} />}
+        {activeTab === 3 && <ProjectRoadmap project={project} />}
+      </Box>
+    </Box>
+  );
+};
+
+export default ProjectDetails;
