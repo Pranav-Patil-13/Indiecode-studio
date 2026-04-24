@@ -86,9 +86,9 @@ const ActivityFeed = () => {
                   fontSize: '0.875rem'
                 }}
               >
-                <Box component="span" sx={{ color: 'text.primary', fontWeight: 700 }}>{item.user}</Box>
+                <Box component="span" sx={{ color: 'text.primary', fontWeight: 500 }}>{item.user}</Box>
                 {` ${item.action} `}
-                <Box component="span" sx={{ color: 'primary.main', fontWeight: 600 }}>{item.target}</Box>
+                <Box component="span" sx={{ color: 'primary.main', fontWeight: 500 }}>{item.target}</Box>
               </Typography>
               <Typography 
                 variant="caption" 

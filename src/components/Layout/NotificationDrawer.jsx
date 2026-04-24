@@ -41,12 +41,12 @@ const NotificationDrawer = () => {
     >
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800 }}>Activity Feed</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 500 }}>Activity Feed</Typography>
           <Chip 
             label={notifications.filter(n => n.unread).length} 
             size="small" 
             color="primary"
-            sx={{ fontWeight: 800, height: 20, fontSize: '0.7rem' }}
+            sx={{ fontWeight: 500, height: 20, fontSize: '0.7rem' }}
           />
         </Box>
         <IconButton onClick={closeNotificationDrawer} size="small">
@@ -90,8 +90,8 @@ const NotificationDrawer = () => {
                   <ListItemText 
                     primary={
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{notif.title}</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 700 }}>{notif.time}</Typography>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>{notif.title}</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 500 }}>{notif.time}</Typography>
                       </Box>
                     }
                     secondary={
@@ -113,7 +113,7 @@ const NotificationDrawer = () => {
             <Box sx={{ p: 3, borderRadius: '50%', bgcolor: 'rgba(0,0,0,0.03)', display: 'inline-flex', mb: 2 }}>
               <Bell size={32} color={theme.palette.text.disabled} />
             </Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 1 }}>All caught up!</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 1 }}>All caught up!</Typography>
             <Typography variant="body2" color="text.secondary">You have no new notifications or activities to review.</Typography>
           </Box>
         )}
@@ -126,7 +126,7 @@ const NotificationDrawer = () => {
           fullWidth 
           variant="outlined" 
           size="small"
-          sx={{ borderRadius: 2, fontWeight: 700, textTransform: 'none' }}
+          sx={{ borderRadius: 2, fontWeight: 500, textTransform: 'none' }}
         >
           View All History
         </Button>

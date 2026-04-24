@@ -21,7 +21,10 @@ import {
   LayoutDashboard, 
   Settings,
   Command,
-  ArrowRight
+  ArrowRight,
+  Receipt,
+  UserPlus,
+  Calendar
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
@@ -54,6 +57,11 @@ const CommandPalette = () => {
   }, []);
 
   const filteredItems = [
+    { category: 'Quick Actions', items: [
+      { id: 'new-invoice', label: 'Create New Invoice', icon: <Receipt size={18} />, path: '/billing', action: 'open-invoice' },
+      { id: 'add-client', label: 'Add New Client', icon: <UserPlus size={18} />, path: '/clients', action: 'open-client' },
+      { id: 'project-timeline', label: 'Jump to Timeline', icon: <Calendar size={18} />, path: '/timeline' },
+    ]},
     { category: 'Navigation', items: [
       { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} />, path: '/' },
       { id: 'projects', label: 'Projects', icon: <Briefcase size={18} />, path: '/projects' },
@@ -163,7 +171,7 @@ const CommandPalette = () => {
             gap: 0.5
           }}
         >
-          <Typography variant="caption" sx={{ fontWeight: 800 }}>ESC</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 500 }}>ESC</Typography>
         </Box>
       </Box>
       
@@ -173,7 +181,7 @@ const CommandPalette = () => {
         {filteredItems.length > 0 ? (
           filteredItems.map((cat, idx) => (
             <Box key={cat.category} sx={{ mb: 2 }}>
-              <Typography variant="caption" sx={{ px: 1.5, mb: 1, display: 'block', fontWeight: 800, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1 }}>
+              <Typography variant="caption" sx={{ px: 1.5, mb: 1, display: 'block', fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1 }}>
                 {cat.category}
               </Typography>
               <List sx={{ p: 0 }}>
@@ -204,8 +212,8 @@ const CommandPalette = () => {
                         {item.icon}
                       </ListItemIcon>
                       <ListItemText 
-                        primary={<Typography variant="body2" sx={{ fontWeight: 700, color: isSelected ? 'primary.main' : 'text.primary' }}>{item.label}</Typography>}
-                        secondary={item.subtitle && <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>{item.subtitle}</Typography>}
+                        primary={<Typography variant="body2" sx={{ fontWeight: 500, color: isSelected ? 'primary.main' : 'text.primary' }}>{item.label}</Typography>}
+                        secondary={item.subtitle && <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>{item.subtitle}</Typography>}
                       />
                       <ArrowRight 
                         className="arrow-icon"
@@ -225,7 +233,7 @@ const CommandPalette = () => {
           ))
         ) : (
           <Box sx={{ py: 6, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>No results found for "{search}"</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>No results found for "{search}"</Typography>
           </Box>
         )}
       </Box>
@@ -235,15 +243,15 @@ const CommandPalette = () => {
       <Box sx={{ p: 1.5, bgcolor: alpha(theme.palette.text.disabled, 0.03), display: 'flex', gap: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box sx={{ p: 0.5, borderRadius: 1, bgcolor: alpha(theme.palette.text.disabled, 0.1), display: 'flex' }}>
-            <Typography sx={{ fontSize: '10px', fontWeight: 800 }}>↵</Typography>
+            <Typography sx={{ fontSize: '10px', fontWeight: 500 }}>↵</Typography>
           </Box>
-          <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>to select</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>to select</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Box sx={{ p: 0.5, borderRadius: 1, bgcolor: alpha(theme.palette.text.disabled, 0.1), display: 'flex' }}>
-            <Typography sx={{ fontSize: '10px', fontWeight: 800 }}>↑↓</Typography>
+            <Typography sx={{ fontSize: '10px', fontWeight: 500 }}>↑↓</Typography>
           </Box>
-          <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>to navigate</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>to navigate</Typography>
         </Box>
       </Box>
     </Dialog>

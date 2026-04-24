@@ -1,29 +1,99 @@
-import React from 'react';
-import { Box, Paper, Typography, Stack, Button, IconButton, Grid, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Divider } from '@mui/material';
+import React, { useRef, useState } from 'react';
+import { 
+  Box, 
+  Paper, 
+  Typography, 
+  Stack, 
+  Button, 
+  IconButton, 
+  Grid, 
+  List, 
+  ListItem, 
+  ListItemIcon, 
+  ListItemText, 
+  ListItemSecondaryAction, 
+  Divider,
+  CircularProgress
+} from '@mui/material';
 import { Plus, File, Link as LinkIcon, Download, MoreVertical, ExternalLink } from 'lucide-react';
+import { useApp } from '../../../context/AppContext';
+import { supabase } from '../../../lib/supabase';
 
 const ResourceCenter = ({ project }) => {
+  const { user, showNotification, updateProject } = useApp();
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${project.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('resources')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('resources')
+        .getPublicUrl(filePath);
+
+      const newResource = {
+        id: crypto.randomUUID(),
+        name: file.name,
+        type: 'file',
+        url: publicUrl,
+        added_by: user?.user_metadata?.full_name || user?.email,
+        created_at: new Date().toISOString(),
+        size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+      };
+
+      const updatedResources = [...(project.resources || []), newResource];
+      await updateProject(project.id, { resources: updatedResources });
+      showNotification('File uploaded successfully', 'success');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      showNotification('Error uploading file: ' + error.message, 'error');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 900, letterSpacing: '-0.02em', mb: 0.5 }}>Resource Hub</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>Centralized project assets and documentation</Typography>
+          <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Resource Hub</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Centralized project assets and documentation</Typography>
         </Box>
         <Stack direction="row" spacing={2}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+          />
           <Button 
             variant="outlined" 
             startIcon={<LinkIcon size={18} />}
-            sx={{ borderRadius: 2.5, fontWeight: 700 }}
+            sx={{ borderRadius: 2.5, fontWeight: 500 }}
           >
             Add Link
           </Button>
           <Button 
             variant="contained" 
-            startIcon={<Plus size={18} />}
+            startIcon={uploading ? <CircularProgress size={18} color="inherit" /> : <Plus size={18} />}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
             sx={{ borderRadius: 2.5 }}
           >
-            Upload File
+            {uploading ? 'Uploading...' : 'Upload File'}
           </Button>
         </Stack>
       </Box>
@@ -73,12 +143,12 @@ const ResourceCenter = ({ project }) => {
                     }
                     secondary={
                       <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-                          {resource.type === 'link' ? 'External Web Link' : 'PDF Document • 2.4 MB'}
+                        <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>
+                          {resource.type === 'link' ? 'External Web Link' : `Document • ${resource.size || 'Unknown'}`}
                         </Typography>
                         <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'rgba(0,0,0,0.1)' }} />
-                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled' }}>
-                          Added by Alex R. • 2 days ago
+                        <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled' }}>
+                          Added by {resource.added_by || 'Unknown'} • {new Date(resource.created_at).toLocaleDateString()}
                         </Typography>
                       </Stack>
                     }
@@ -87,6 +157,9 @@ const ResourceCenter = ({ project }) => {
                     <Stack direction="row" spacing={1}>
                       <IconButton 
                         size="small" 
+                        component="a"
+                        href={resource.url}
+                        target="_blank"
                         sx={{ 
                           bgcolor: 'action.hover', 
                           '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } 
@@ -103,8 +176,15 @@ const ResourceCenter = ({ project }) => {
             ))
           ) : (
             <Box sx={{ py: 10, textAlign: 'center' }}>
-              <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 600 }}>No resources available for this project.</Typography>
-              <Button variant="text" startIcon={<Plus size={18} />} sx={{ mt: 2, fontWeight: 700 }}>Add your first resource</Button>
+              <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 500 }}>No resources available for this project.</Typography>
+              <Button 
+                variant="text" 
+                startIcon={<Plus size={18} />} 
+                onClick={() => fileInputRef.current?.click()}
+                sx={{ mt: 2, fontWeight: 500 }}
+              >
+                Add your first resource
+              </Button>
             </Box>
           )}
         </List>

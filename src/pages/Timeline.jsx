@@ -19,10 +19,13 @@ import {
   ChevronRight, 
   Calendar,
   Flag as FlagIcon,
-  Plus
+  Plus,
+  Check
 } from 'lucide-react';
 
 import { useApp } from '../context/AppContext';
+import QuickPromptModal from '../components/Modals/QuickPromptModal';
+import ConfirmDialog from '../components/Modals/ConfirmDialog';
 
 const Timeline = () => {
   const theme = useTheme();
@@ -33,14 +36,16 @@ const Timeline = () => {
     id: p.id,
     name: p.name,
     phases: p.phases || [
-      { name: 'Initial Development', status: 'active', start: 0, width: p.progress || 10 },
-      { name: 'Future Phases', status: 'pending', start: p.progress || 10, width: 100 - (p.progress || 10) }
+      { name: 'Frontend', status: 'pending', start: 0, width: 25, color: '#3b82f6' },
+      { name: 'Backend', status: 'pending', start: 25, width: 25, color: '#8b5cf6' },
+      { name: 'Testing', status: 'pending', start: 50, width: 25, color: '#f59e0b' },
+      { name: 'Deploying', status: 'pending', start: 75, width: 25, color: '#10b981' }
     ],
     milestones: p.milestones || []
   }));
 
 
-  const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -87,35 +92,18 @@ const Timeline = () => {
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>Project Roadmap</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 500, mb: 1 }}>Project Roadmap</Typography>
           <Typography variant="body2" color="text.secondary">Strategic timeline and milestones across all active development cycles</Typography>
         </Box>
         
-        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-          <Box sx={{ p: 0.5, bgcolor: 'action.hover', borderRadius: 2, display: 'flex', border: '1px solid', borderColor: 'divider' }}>
-            <IconButton size="small"><ChevronLeft size={18} /></IconButton>
-            <Box sx={{ px: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Calendar size={16} color={theme.palette.text.secondary} />
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>Q2 2026</Typography>
-            </Box>
-            <IconButton size="small"><ChevronRight size={18} /></IconButton>
-          </Box>
-          <Button variant="contained" startIcon={<Plus size={18} />} sx={{ borderRadius: 2, px: 3 }}>Add Event</Button>
-        </Stack>
+
       </Box>
 
       <Paper sx={{ p: 4, overflowX: 'auto', border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'background.paper' }}>
-        <Box sx={{ display: 'flex', mb: 4, ml: '250px', position: 'relative' }}>
-          {months.map((month) => (
-            <Box key={month} sx={{ flex: 1, textAlign: 'center' }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1 }}>
-                {month}
-              </Typography>
-            </Box>
-          ))}
-          <Box sx={{ position: 'absolute', top: 30, left: 0, right: 0, height: 600, display: 'flex', zIndex: 0, pointerEvents: 'none' }}>
-            {months.map((_, i) => (
-              <Box key={i} sx={{ flex: 1, borderLeft: '1px dashed', borderColor: 'divider' }} />
+        <Box sx={{ position: 'relative', ml: '250px' }}>
+          <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100%', display: 'flex', zIndex: 0, pointerEvents: 'none' }}>
+            {[1, 2, 3, 4].map((_, i) => (
+              <Box key={i} sx={{ flex: 1, borderLeft: '1px solid', borderColor: 'rgba(0,0,0,0.03)' }} />
             ))}
           </Box>
         </Box>
@@ -124,7 +112,7 @@ const Timeline = () => {
           {projectsData.map((project) => (
             <Box key={project.id} sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
               <Box sx={{ width: 250, pr: 4 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.5 }}>
                   {project.name}
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
@@ -134,34 +122,52 @@ const Timeline = () => {
               </Box>
 
               <Box sx={{ flex: 1, height: 40, bgcolor: 'action.hover', borderRadius: 2, position: 'relative', display: 'flex', alignItems: 'center' }}>
-                {project.phases.map((phase, idx) => (
-                  <Tooltip key={idx} title={`${phase.name} (${phase.status}) - Drag to reschedule`} arrow>
-                    <Box 
-                      component={motion.div}
-                      drag="x"
-                      dragConstraints={{ left: 0, right: 800 }}
-                      dragElastic={0.1}
-                      whileHover={{ scaleY: 1.1, cursor: 'grab' }}
-                      whileDrag={{ scaleY: 1.2, cursor: 'grabbing', zIndex: 10, boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
-                      sx={{ 
-                        position: 'absolute',
-                        left: `${phase.start}%`,
-                        width: `${phase.width}%`,
-                        height: 24,
-                        bgcolor: getStatusColor(phase.status),
-                        borderRadius: 1.5,
-                        display: 'flex',
-                        alignItems: 'center',
-                        px: 1.5,
-                        zIndex: 1
-                      }}
-                    >
-                      <Typography variant="caption" sx={{ color: phase.status === 'pending' ? 'text.secondary' : 'white', fontWeight: 700, fontSize: '0.65rem', whiteSpace: 'nowrap', overflow: 'hidden' }}>
-                        {phase.name}
-                      </Typography>
-                    </Box>
-                  </Tooltip>
-                ))}
+                {project.phases.map((phase, idx) => {
+                  const startPos = phase.start !== undefined ? phase.start : project.phases.slice(0, idx).reduce((acc, p) => acc + (p.width || 0), 0);
+                  
+                  return (
+                    <Tooltip key={idx} title={`${phase.name} (${phase.status})`} arrow>
+                      <Box 
+                        sx={{ 
+                          position: 'absolute',
+                          left: `${startPos}%`,
+                          width: `${phase.width || 25}%`,
+                          height: 28,
+                          bgcolor: phase.status === 'pending' ? 'transparent' : (phase.color || getStatusColor(phase.status)),
+                          border: phase.status === 'pending' ? '1px dashed' : '1px solid',
+                          borderColor: phase.status === 'pending' ? 'rgba(0,0,0,0.1)' : 'transparent',
+                          borderRadius: 2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          px: 1,
+                          zIndex: 1,
+                          opacity: 1,
+                          boxShadow: phase.status === 'active' ? `0 4px 15px ${(phase.color || theme.palette.primary.main)}40` : 'none',
+                          '&:hover': { transform: 'scaleY(1.1)', boxShadow: `0 4px 10px ${phase.color || '#000'}40`, opacity: 1 }
+                        }}
+                      >
+                        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', width: '100%', justifyContent: 'center', pointerEvents: 'none' }}>
+                          {phase.status === 'completed' && <Check size={12} color="white" />}
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              color: phase.status === 'pending' ? 'text.secondary' : 'white', 
+                              fontWeight: 600, 
+                              fontSize: '0.625rem', 
+                              whiteSpace: 'nowrap', 
+                              overflow: 'hidden',
+                              textDecoration: phase.status === 'completed' ? 'line-through' : 'none',
+                              opacity: phase.status === 'completed' ? 0.8 : 1
+                            }}
+                          >
+                            {phase.name}
+                          </Typography>
+                        </Stack>
+                      </Box>
+                    </Tooltip>
+                  );
+                })}
 
                 {project.milestones.map((milestone, idx) => (
                   <Box 
@@ -207,15 +213,15 @@ const Timeline = () => {
       <Stack direction="row" spacing={4} sx={{ mt: 4, justifyContent: 'center' }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Box sx={{ width: 12, height: 12, borderRadius: 0.5, bgcolor: '#10b981' }} />
-          <Typography variant="caption" sx={{ fontWeight: 600 }}>Completed</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 500 }}>Completed</Typography>
         </Stack>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Box sx={{ width: 12, height: 12, borderRadius: 0.5, bgcolor: theme.palette.primary.main }} />
-          <Typography variant="caption" sx={{ fontWeight: 600 }}>Active</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 500 }}>Active</Typography>
         </Stack>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Box sx={{ width: 12, height: 12, borderRadius: 0.5, bgcolor: 'action.hover', border: '1px solid', borderColor: 'divider' }} />
-          <Typography variant="caption" sx={{ fontWeight: 600 }}>Pending</Typography>
+          <Typography variant="caption" sx={{ fontWeight: 500 }}>Pending</Typography>
         </Stack>
       </Stack>
     </Container>

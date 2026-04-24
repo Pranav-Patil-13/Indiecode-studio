@@ -17,15 +17,14 @@ import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [role, setRole] = useState('admin'); // 'admin' or 'client'
   
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    fullName: ''
+    password: ''
   });
 
   const handleAuth = async (e) => {
@@ -34,25 +33,11 @@ const Auth = () => {
     setError(null);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: formData.email,
-          password: formData.password,
-        });
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            data: {
-              full_name: formData.fullName,
-            }
-          }
-        });
-        if (error) throw error;
-        alert('Check your email for the confirmation link!');
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+      if (error) throw error;
     } catch (error) {
       setError(error.message);
     } finally {
@@ -88,11 +73,11 @@ const Auth = () => {
             }}
           >
             <Box sx={{ mb: 4, textAlign: 'center' }}>
-              <Typography variant="h4" sx={{ fontWeight: 900, letterSpacing: '-0.05em', mb: 1 }}>
+              <Typography variant="h4" sx={{ fontWeight: 500, letterSpacing: '-0.05em', mb: 1 }}>
                 IndieCode Studio
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
-                {isLogin ? 'Welcome back to your workspace' : 'Create your professional workspace'}
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+                Sign in to your account
               </Typography>
             </Box>
 
@@ -100,27 +85,6 @@ const Auth = () => {
 
             <form onSubmit={handleAuth}>
               <Stack spacing={2.5}>
-                <AnimatePresence mode="wait">
-                  {!isLogin && (
-                    <motion.div
-                      key="name"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                    >
-                      <TextField
-                        fullWidth
-                        label="Full Name"
-                        required
-                        value={formData.fullName}
-                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                        slotProps={{
-                          input: { sx: { borderRadius: 3 } }
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
 
                 <TextField
                   fullWidth
@@ -176,29 +140,17 @@ const Auth = () => {
                   sx={{ 
                     py: 1.5, 
                     borderRadius: 3, 
-                    fontWeight: 800,
+                    fontWeight: 500,
                     textTransform: 'none',
                     fontSize: '1rem'
                   }}
                 >
-                  {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Get Started'}
+                  {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </Stack>
             </form>
 
-            <Box sx={{ mt: 4, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
-                <Link
-                  component="button"
-                  variant="body2"
-                  onClick={() => setIsLogin(!isLogin)}
-                  sx={{ fontWeight: 800, textDecoration: 'none' }}
-                >
-                  {isLogin ? 'Create Account' : 'Sign In'}
-                </Link>
-              </Typography>
-            </Box>
+
           </Paper>
         </motion.div>
       </Container>

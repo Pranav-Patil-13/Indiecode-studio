@@ -47,47 +47,40 @@ const ActivityItemSkeleton = () => (
 
 export const DashboardSkeleton = () => (
   <Container maxWidth="xl" sx={{ py: 4 }}>
-    <Grid container spacing={3} sx={{ mb: 4 }}>
+    <Grid container spacing={4}>
+      {/* Stats Row */}
       {[1, 2, 3, 4].map((i) => (
-        <Grid item xs={12} sm={6} md={3} key={i}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={i}>
           <StatCardSkeleton />
         </Grid>
       ))}
-    </Grid>
 
-    <Grid container spacing={4}>
-      <Grid item xs={12} lg={8}>
-        <Paper sx={{ p: 4, borderRadius: 5, mb: 5, border: '1px solid', borderColor: 'divider' }}>
-          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
+      {/* Main Content */}
+      <Grid size={{ xs: 12 }}>
+        {/* Chart Section */}
+        <Paper sx={{ p: 4, borderRadius: 5, mb: 5, border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
+          <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box>
               <Skeleton width={200} height={32} sx={{ mb: 1 }} />
               <Skeleton width={300} height={20} />
             </Box>
-            <Skeleton variant="rounded" width={100} height={36} />
+            <Skeleton variant="rounded" width={100} height={36} sx={{ borderRadius: 2 }} />
           </Box>
-          <Skeleton variant="rounded" height={300} sx={{ borderRadius: 4 }} />
+          <Skeleton variant="rounded" height={350} sx={{ borderRadius: 4, width: '100%' }} />
         </Paper>
 
-        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Skeleton width={180} height={32} />
           <Skeleton width={100} height={24} />
         </Box>
+        
         <Grid container spacing={3}>
           {[1, 2, 3, 4].map((i) => (
-            <Grid item xs={12} md={6} key={i}>
+            <Grid size={{ xs: 12, md: 6 }} key={i}>
               <ProjectCardSkeleton />
             </Grid>
           ))}
         </Grid>
-      </Grid>
-
-      <Grid item xs={12} lg={4}>
-        <Paper sx={{ p: 4, borderRadius: 5, border: '1px solid', borderColor: 'divider' }}>
-          <Skeleton width={150} height={28} sx={{ mb: 4 }} />
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <ActivityItemSkeleton key={i} />
-          ))}
-        </Paper>
       </Grid>
     </Grid>
   </Container>
@@ -130,7 +123,7 @@ export const ProjectDetailsSkeleton = () => (
     </Paper>
 
     <Grid container spacing={4}>
-      <Grid item xs={12} md={8}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Paper sx={{ p: 4, borderRadius: 5, border: '1px solid', borderColor: 'divider' }}>
           <Skeleton width={200} height={32} sx={{ mb: 4 }} />
           {[1, 2, 3].map((i) => (
@@ -144,7 +137,7 @@ export const ProjectDetailsSkeleton = () => (
           ))}
         </Paper>
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <Stack spacing={4}>
           <Paper sx={{ p: 4, borderRadius: 5, border: '1px solid', borderColor: 'divider' }}>
             <Skeleton width="60%" height={28} sx={{ mb: 3 }} />

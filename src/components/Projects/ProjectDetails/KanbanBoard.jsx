@@ -2,8 +2,11 @@ import React from 'react';
 import { Box, Paper, Typography, Stack, IconButton, Chip, Avatar, Divider, useTheme } from '@mui/material';
 import { Plus, MoreHorizontal, MessageSquare, Paperclip } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useApp } from '../../../context/AppContext';
+import { useState } from 'react';
+import QuickPromptModal from '../../Modals/QuickPromptModal';
 
-const KanbanColumn = ({ title, tasks, color }) => {
+const KanbanColumn = ({ title, tasks, color, onAddTask, project }) => {
   const theme = useTheme();
   return (
   <Box 
@@ -22,11 +25,11 @@ const KanbanColumn = ({ title, tasks, color }) => {
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, px: 1 }}>
       <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
         <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: color, boxShadow: `0 0 10px ${color}40` }} />
-        <Typography variant="subtitle1" sx={{ fontWeight: 850, letterSpacing: '-0.01em' }}>{title}</Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: 500, letterSpacing: '-0.01em' }}>{title}</Typography>
         <Typography 
           variant="caption" 
           sx={{ 
-            fontWeight: 800, 
+            fontWeight: 500, 
             bgcolor: 'background.paper', 
             color: 'text.secondary',
             px: 1, 
@@ -40,7 +43,11 @@ const KanbanColumn = ({ title, tasks, color }) => {
           {tasks.length}
         </Typography>
       </Stack>
-      <IconButton size="small" sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', '&:hover': { bgcolor: 'background.paper', color: 'primary.main' } }}>
+      <IconButton 
+        size="small" 
+        onClick={() => onAddTask(title)}
+        sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', '&:hover': { bgcolor: 'background.paper', color: 'primary.main' } }}
+      >
         <Plus size={18} />
       </IconButton>
     </Box>
@@ -78,7 +85,7 @@ const KanbanColumn = ({ title, tasks, color }) => {
                 sx={{ 
                   height: 22, 
                   fontSize: '0.65rem', 
-                  fontWeight: 800,
+                  fontWeight: 500,
                   textTransform: 'uppercase',
                   letterSpacing: 0.5,
                   bgcolor: task.priority === 'High' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(0,0,0,0.04)',
@@ -100,11 +107,11 @@ const KanbanColumn = ({ title, tasks, color }) => {
               <Stack direction="row" spacing={2.5}>
                 <Stack direction="row" spacing={0.8} sx={{ alignItems: "center", color: 'text.disabled' }}>
                   <MessageSquare size={14} />
-                  <Typography variant="caption" sx={{ fontWeight: 700 }}>2</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 500 }}>2</Typography>
                 </Stack>
                 <Stack direction="row" spacing={0.8} sx={{ alignItems: "center", color: 'text.disabled' }}>
                   <Paperclip size={14} />
-                  <Typography variant="caption" sx={{ fontWeight: 700 }}>1</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 500 }}>1</Typography>
                 </Stack>
               </Stack>
               <Avatar 
@@ -112,7 +119,7 @@ const KanbanColumn = ({ title, tasks, color }) => {
                   width: 28, 
                   height: 28, 
                   fontSize: '0.65rem', 
-                  fontWeight: 800,
+                  fontWeight: 500,
                   bgcolor: 'primary.light',
                   color: 'primary.main',
                   border: '2px solid',
@@ -131,20 +138,67 @@ const KanbanColumn = ({ title, tasks, color }) => {
 };
 
 const KanbanBoard = ({ project }) => {
-  const columns = [
-    { title: 'To Do', color: '#6C757D', tasks: project.tasks?.filter(t => t.status === 'To Do') || [] },
-    { title: 'In Progress', color: '#3b82f6', tasks: project.tasks?.filter(t => t.status === 'In Progress') || [] },
-    { title: 'Done', color: '#10b981', tasks: project.tasks?.filter(t => t.status === 'Done') || [] }
-  ];
+  const { addProjectTask, addProjectSection } = useApp();
+  const [promptConfig, setPromptConfig] = useState({ open: false, title: '', label: '', placeholder: '', onConfirm: () => {} });
+  const sections = project.sections || ['To Do', 'In Progress', 'Done'];
+  
+  const colors = {
+    'To Do': '#6C757D',
+    'In Progress': '#3b82f6',
+    'Done': '#10b981',
+    'In Review': '#8b5cf6',
+    'Testing': '#f59e0b'
+  };
+
+  const handleAddTask = (status) => {
+    setPromptConfig({
+      open: true,
+      title: 'Add New Task',
+      label: 'Task Title',
+      placeholder: `What needs to be done in ${status}?`,
+      onConfirm: (title) => {
+        addProjectTask(project.id, { 
+          title, 
+          status, 
+          priority: 'Medium', 
+          assignee: 'Pranav Patil' 
+        });
+      }
+    });
+  };
+
+  const handleAddSection = () => {
+    setPromptConfig({
+      open: true,
+      title: 'Add New Flow',
+      label: 'Section Name',
+      placeholder: 'e.g. In Review, Testing...',
+      onConfirm: (title) => {
+        addProjectSection(project.id, title);
+      }
+    });
+  };
+
+  const columns = sections.map(section => ({
+    title: section,
+    color: colors[section] || '#6C757D',
+    tasks: project.tasks?.filter(t => t.status === section) || []
+  }));
 
   return (
     <Box sx={{ display: 'flex', gap: 3, overflowX: 'auto', pb: 4, minHeight: 600, width: '100%' }}>
       {columns.map(column => (
-        <KanbanColumn key={column.title} {...column} />
+        <KanbanColumn 
+          key={column.title} 
+          {...column} 
+          onAddTask={handleAddTask}
+          project={project}
+        />
       ))}
       
       {/* Add Column Button */}
       <Box 
+        onClick={handleAddSection}
         sx={{ 
           minWidth: 320, 
           height: 100, 
@@ -156,6 +210,7 @@ const KanbanBoard = ({ project }) => {
           justifyContent: 'center',
           cursor: 'pointer',
           color: 'text.disabled',
+          transition: 'all 0.2s ease',
           '&:hover': {
             bgcolor: 'action.hover',
             borderColor: 'primary.main',
@@ -165,9 +220,18 @@ const KanbanBoard = ({ project }) => {
       >
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Plus size={20} />
-          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Add Section</Typography>
+          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>Add Section</Typography>
         </Stack>
       </Box>
+
+      <QuickPromptModal 
+        open={promptConfig.open}
+        onClose={() => setPromptConfig({ ...promptConfig, open: false })}
+        title={promptConfig.title}
+        label={promptConfig.label}
+        placeholder={promptConfig.placeholder}
+        onConfirm={promptConfig.onConfirm}
+      />
     </Box>
   );
 };

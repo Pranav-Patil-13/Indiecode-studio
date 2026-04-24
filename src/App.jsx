@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Sidebar from './components/Layout/Sidebar';
 import Navbar from './components/Layout/Navbar';
 import Dashboard from './pages/Dashboard';
@@ -9,6 +9,8 @@ import Timeline from './pages/Timeline';
 import Messages from './pages/Messages';
 import Settings from './pages/Settings';
 import ProjectDetails from './pages/ProjectDetails';
+import Billing from './pages/Billing';
+import ClientPortal from './pages/ClientPortal';
 
 
 
@@ -23,9 +25,18 @@ import Auth from './pages/Auth';
 
 function AppContent() {
   const location = useLocation();
-  const { snackbar, closeNotification, themeMode, accentColor, user, loading } = useApp();
+  const { snackbar, closeNotification, themeMode, accentColor, user, loading, clients } = useApp();
   
   const theme = getTheme(themeMode, accentColor);
+  
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const role = user?.user_metadata?.role || 'admin';
+  const isClient = role === 'client';
   
   // Helper to get page title from route
   const getPageTitle = (path) => {
@@ -36,13 +47,18 @@ function AppContent() {
       case '/timeline': return 'Development Timeline';
       case '/messages': return 'Client Communication';
       case '/settings': return 'System Settings';
+      case '/billing': return 'Financial Hub';
+      case '/portal': return 'Client Portal';
       default: 
         if (path.startsWith('/projects/')) return 'Project Command Center';
         return 'IndieCode Studio';
     }
   };
 
-  if (loading) {
+  // Only show the full-screen loader on the absolute first mount when we have no user and no data
+  const isInitialBoot = loading && !user && clients.length === 0;
+  
+  if (isInitialBoot) {
     return (
       <Box sx={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
         <CircularProgress size={40} thickness={4} />
@@ -62,30 +78,58 @@ function AppContent() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        <Sidebar />
+      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+        {!isClient && (
+          <Sidebar 
+            mobileOpen={mobileOpen} 
+            onDrawerToggle={handleDrawerToggle} 
+          />
+        )}
         <Box 
           component="main" 
           sx={{ 
             flexGrow: 1, 
-            ml: '280px', // Matches --sidebar-width
-            width: 'calc(100% - 280px)',
             bgcolor: 'background.default',
-            minHeight: '100vh',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            width: '100%',
+            height: '100vh',
+            overflow: 'hidden'
           }}
         >
-          <Navbar title={getPageTitle(location.pathname)} />
-          <Box sx={{ flexGrow: 1, p: { xs: 3, md: 5, lg: 6 }, maxWidth: 1600, mx: 'auto', width: '100%' }}>
+          <Navbar 
+            title={getPageTitle(location.pathname)} 
+            onDrawerToggle={handleDrawerToggle}
+          />
+          <Box 
+            sx={{ 
+              flexGrow: 1, 
+              p: { xs: 3, md: 5, lg: 6 }, 
+              width: '100%',
+              overflowY: 'auto',
+              bgcolor: 'background.default'
+            }}
+          >
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/timeline" element={<Timeline />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/projects/:id" element={<ProjectDetails />} />
+              {isClient ? (
+                <>
+                  <Route path="/portal" element={<ClientPortal />} />
+                  <Route path="*" element={<Navigate to="/portal" replace />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/clients" element={<Clients />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/timeline" element={<Timeline />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/billing" element={<Billing />} />
+                  <Route path="/portal" element={<ClientPortal />} />
+                  <Route path="/projects/:id" element={<ProjectDetails />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </>
+              )}
             </Routes>
           </Box>
         </Box>
@@ -100,7 +144,7 @@ function AppContent() {
           onClose={closeNotification}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         >
-          <Alert onClose={closeNotification} severity={snackbar.severity} sx={{ width: '100%', borderRadius: 3, fontWeight: 600 }}>
+          <Alert onClose={closeNotification} severity={snackbar.severity} sx={{ width: '100%', borderRadius: 3, fontWeight: 500 }}>
             {snackbar.message}
           </Alert>
         </Snackbar>

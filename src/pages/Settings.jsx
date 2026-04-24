@@ -77,7 +77,7 @@ const Settings = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, fontFamily: "'Outfit', sans-serif" }}>
+      <Typography variant="h4" sx={{ fontWeight: 500, mb: 1, fontFamily: "'Outfit', sans-serif" }}>
         Settings
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
@@ -94,7 +94,7 @@ const Settings = () => {
             borderBottom: '1px solid',
             borderColor: 'divider',
             '& .MuiTab-root': {
-              fontWeight: 600,
+              fontWeight: 500,
               textTransform: 'none',
               fontSize: '0.9rem',
               minWidth: 120,
@@ -111,7 +111,7 @@ const Settings = () => {
           {/* Profile Tab */}
           <TabPanel value={activeTab} index={0}>
             <Grid container spacing={4}>
-              <Grid item xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Box sx={{ textAlign: 'center' }}>
                   <Box sx={{ position: 'relative', display: 'inline-block' }}>
                     <Avatar 
@@ -132,17 +132,17 @@ const Settings = () => {
                       <Camera size={16} />
                     </IconButton>
                   </Box>
-                  <Typography variant="h6" sx={{ mt: 2, fontWeight: 700 }}>Pranav Patil</Typography>
+                  <Typography variant="h6" sx={{ mt: 2, fontWeight: 500 }}>Pranav Patil</Typography>
                   <Typography variant="body2" color="text.secondary">Founder & Lead Developer</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} md={8}>
+              <Grid size={{ xs: 12, md: 8 }}>
                 <Stack spacing={3}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField label="First Name" fullWidth defaultValue="Pranav" size="small" />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <TextField label="Last Name" fullWidth defaultValue="Patil" size="small" />
                     </Grid>
                   </Grid>
@@ -160,11 +160,11 @@ const Settings = () => {
           <TabPanel value={activeTab} index={1}>
             <Stack spacing={4}>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Layout size={18} /> Interface Appearance
                 </Typography>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Card 
                       variant="outlined" 
                       onClick={() => themeMode === 'dark' && toggleTheme()}
@@ -179,7 +179,7 @@ const Settings = () => {
                       <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Sun size={20} color={themeMode === 'light' ? theme.palette.primary.main : 'inherit'} />
                         <Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Light Mode</Typography>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>Light Mode</Typography>
                           <Typography variant="caption" color="text.secondary">Default bright interface</Typography>
                         </Box>
                         <Box sx={{ ml: 'auto' }}>
@@ -188,7 +188,7 @@ const Settings = () => {
                       </CardContent>
                     </Card>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Card 
                       variant="outlined" 
                       onClick={() => themeMode === 'light' && toggleTheme()}
@@ -203,7 +203,7 @@ const Settings = () => {
                       <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         <Moon size={20} color={themeMode === 'dark' ? theme.palette.primary.main : 'inherit'} />
                         <Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Dark Mode</Typography>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>Dark Mode</Typography>
                           <Typography variant="caption" color="text.secondary">Premium Midnight experience</Typography>
                         </Box>
                         <Box sx={{ ml: 'auto' }}>
@@ -218,7 +218,7 @@ const Settings = () => {
               <Divider />
 
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Palette size={18} /> Accent Color
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -254,7 +254,7 @@ const Settings = () => {
               <Divider />
 
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Bell size={18} /> Notifications
                 </Typography>
                 <Stack spacing={1}>
@@ -274,7 +274,7 @@ const Settings = () => {
           <TabPanel value={activeTab} index={2}>
             <Stack spacing={4}>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Key size={18} /> API Keys
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -283,8 +283,8 @@ const Settings = () => {
                 <Card variant="outlined" sx={{ borderRadius: 3, p: 2, bgcolor: 'rgba(0,0,0,0.02)' }}>
                   <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
                     <Box>
-                      <Typography variant="caption" sx={{ fontWeight: 700, textTransform: 'uppercase', color: 'text.disabled' }}>Secret Key</Typography>
-                      <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>ic_live_••••••••••••••••••••••••4k2p</Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'uppercase', color: 'text.disabled' }}>Secret Key</Typography>
+                      <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 500 }}>ic_live_••••••••••••••••••••••••4k2p</Typography>
                     </Box>
                     <Button size="small" variant="outlined" sx={{ borderRadius: 2 }}>Reveal Key</Button>
                   </Stack>
@@ -294,14 +294,14 @@ const Settings = () => {
               <Divider />
 
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Lock size={18} /> Password & Security
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Button variant="outlined" fullWidth startIcon={<Lock size={16} />} sx={{ borderRadius: 2 }}>Change Password</Button>
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <Button variant="outlined" fullWidth startIcon={<Globe size={16} />} sx={{ borderRadius: 2 }}>Two-Factor Auth</Button>
                   </Grid>
                 </Grid>

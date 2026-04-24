@@ -32,13 +32,16 @@ import {
   CheckCircle2,
   Plus,
   ChevronRight,
-  TrendingUp
+  TrendingUp,
+  Edit2,
+  Receipt
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import KanbanBoard from '../components/Projects/ProjectDetails/KanbanBoard';
 import TeamSection from '../components/Projects/ProjectDetails/TeamSection';
 import ResourceCenter from '../components/Projects/ProjectDetails/ResourceCenter';
 import ProjectRoadmap from '../components/Projects/ProjectDetails/ProjectRoadmap';
+import ProjectFinancials from '../components/Projects/ProjectDetails/ProjectFinancials';
 import confetti from 'canvas-confetti';
 import { ProjectDetailsSkeleton } from '../components/Feedback/LoadingSkeleton';
 import { useEffect } from 'react';
@@ -47,7 +50,7 @@ const ProjectDetails = () => {
   const theme = useTheme();
   const { id } = useParams();
   const navigate = useNavigate();
-  const { projects, clients, loading } = useApp();
+  const { projects, clients, loading, openEditProjectModal } = useApp();
   const [activeTab, setActiveTab] = useState(0);
 
   const project = projects.find(p => p.id === id);
@@ -83,21 +86,26 @@ const ProjectDetails = () => {
   return (
     <Box sx={{ width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
       {/* Breadcrumbs */}
-      <Breadcrumbs 
-        separator={<ChevronRight size={14} />} 
-        sx={{ mb: 3, '& .MuiBreadcrumbs-li': { fontSize: '0.875rem', fontWeight: 600 } }}
-      >
-        <Link 
-          underline="hover" 
-          color="inherit" 
-          href="/projects" 
-          onClick={(e) => { e.preventDefault(); navigate('/projects'); }}
-          sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}
+      <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 3 }}>
+        <IconButton onClick={() => navigate('/projects')} size="small" sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
+          <ArrowLeft size={18} />
+        </IconButton>
+        <Breadcrumbs 
+          separator={<ChevronRight size={14} />} 
+          sx={{ '& .MuiBreadcrumbs-li': { fontSize: '0.875rem', fontWeight: 500 } }}
         >
-          Projects
-        </Link>
-        <Typography color="text.primary" sx={{ fontWeight: 700 }}>{project.name}</Typography>
-      </Breadcrumbs>
+          <Link 
+            underline="hover" 
+            color="inherit" 
+            href="/projects" 
+            onClick={(e) => { e.preventDefault(); navigate('/projects'); }}
+            sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}
+          >
+            Projects
+          </Link>
+          <Typography color="text.primary" sx={{ fontWeight: 500 }}>{project.name}</Typography>
+        </Breadcrumbs>
+      </Stack>
 
       {/* Hero Header */}
       <Paper 
@@ -126,7 +134,7 @@ const ProjectDetails = () => {
                 label={project.status} 
                 size="small" 
                 sx={{ 
-                  fontWeight: 700, 
+                  fontWeight: 500, 
                   borderRadius: 2,
                   bgcolor: project.status === 'On Track' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
                   color: project.status === 'On Track' ? '#10b981' : '#3b82f6',
@@ -134,14 +142,28 @@ const ProjectDetails = () => {
                 }}
               />
               <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.5 }} />
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                 Created on {new Date(project.created_at).toLocaleDateString()}
               </Typography>
             </Stack>
 
-            <Typography variant="h3" sx={{ fontWeight: 900, letterSpacing: '-0.03em', mb: 2, color: 'text.primary' }}>
-              {project.name}
-            </Typography>
+            <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2 }}>
+              <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: 'text.primary' }}>
+                {project.name}
+              </Typography>
+              <IconButton 
+                size="small" 
+                onClick={() => openEditProjectModal(project)}
+                sx={{ 
+                  bgcolor: 'background.paper', 
+                  border: '1px solid', 
+                  borderColor: 'divider',
+                  '&:hover': { bgcolor: 'action.hover', color: 'primary.main' }
+                }}
+              >
+                <Edit2 size={18} />
+              </IconButton>
+            </Stack>
             
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
               {project.description || 'No description provided.'}
@@ -149,33 +171,33 @@ const ProjectDetails = () => {
             
             <Grid container spacing={4}>
               <Grid size="auto">
-                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Client Partner
                 </Typography>
-                <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                   {clients.find(c => c.id === project.client_id)?.name || 'Unknown Client'}
                 </Typography>
               </Grid>
               <Grid size="auto">
-                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Target Delivery
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   <Calendar size={18} color="#64748b" />
-                  <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                     {project.due_date}
                   </Typography>
                 </Stack>
               </Grid>
               <Grid size="auto">
-                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Priority Level
                 </Typography>
                 <Chip 
                   label={project.priority} 
                   sx={{ 
                     height: 28, 
-                    fontWeight: 800, 
+                    fontWeight: 500, 
                     borderRadius: 1.5,
                     bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(0,0,0,0.05)',
                     color: project.priority === 'High' ? '#ef4444' : 'text.primary'
@@ -221,23 +243,23 @@ const ProjectDetails = () => {
                 }} 
               />
               <Box sx={{ top: 0, left: 0, bottom: 0, right: 0, position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h4" component="div" sx={{ fontWeight: 900, letterSpacing: '-1px' }}>
+                <Typography variant="h4" component="div" sx={{ fontWeight: 500, letterSpacing: '-1px' }}>
                   {project.progress}%
                 </Typography>
               </Box>
             </Box>
             
-            <Typography variant="subtitle2" sx={{ fontWeight: 800, mb: 1 }}>Overall Completion</Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, mb: 3 }}>
-              12 of 16 tasks completed
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1 }}>Overall Completion</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, mb: 3 }}>
+              {project.phases?.filter(p => p.status === 'completed' || p.status === 'Done').length || 0} of {project.phases?.length || 4} phases completed
             </Typography>
 
             <Divider sx={{ width: '100%', mb: 3, opacity: 0.5 }} />
 
             <Box sx={{ width: '100%' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>Team Collaboration</Typography>
-                <Typography variant="caption" sx={{ fontWeight: 800 }}>{project.team?.length || 0} active</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>Team Collaboration</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 500 }}>{project.team?.length || 0} active</Typography>
               </Box>
               <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 32, height: 32, fontSize: '0.75rem', border: '2px solid', borderColor: 'background.paper' } }}>
                 {project.team?.map((member) => (
@@ -257,14 +279,15 @@ const ProjectDetails = () => {
           sx={{
             minHeight: 48,
             '& .MuiTabs-indicator': { display: 'none' },
-            '& .MuiTabs-flexContainer': { gap: 1.5 }
+            '& .MuiTabs-flexContainer': { justifyContent: 'space-around' }
           }}
         >
           {[
             { icon: <Layout size={18} />, label: "Kanban Board" },
             { icon: <Users size={18} />, label: "Team Management" },
             { icon: <FileText size={18} />, label: "Resource Center" },
-            { icon: <Calendar size={18} />, label: "Timeline" }
+            { icon: <Calendar size={18} />, label: "Timeline" },
+            { icon: <Receipt size={18} />, label: "Financials" }
           ].map((tab, index) => (
             <Tab 
               key={index}
@@ -275,7 +298,7 @@ const ProjectDetails = () => {
                 minWidth: 'auto',
                 px: 3,
                 borderRadius: 3,
-                fontWeight: 700,
+                fontWeight: 500,
                 textTransform: 'none',
                 fontSize: '0.9rem',
                 minHeight: 44,
@@ -301,6 +324,7 @@ const ProjectDetails = () => {
         {activeTab === 1 && <TeamSection project={project} />}
         {activeTab === 2 && <ResourceCenter project={project} />}
         {activeTab === 3 && <ProjectRoadmap project={project} />}
+        {activeTab === 4 && <ProjectFinancials project={project} />}
       </Box>
     </Box>
   );

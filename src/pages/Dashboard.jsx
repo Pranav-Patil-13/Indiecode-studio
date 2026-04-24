@@ -16,30 +16,29 @@ import { DashboardSkeleton } from '../components/Feedback/LoadingSkeleton';
 import { useApp } from '../context/AppContext';
 
 const Dashboard = () => {
-  const { clients, projects, loading } = useApp();
+  const { clients, projects, invoices, loading } = useApp();
 
   if (loading) return <DashboardSkeleton />;
 
-  const totalRevenue = clients.reduce((acc, client) => {
-    const amount = parseFloat(client.revenue?.replace(/[₹,L]/g, '') || 0);
-    return acc + amount;
-  }, 0);
+  const totalRevenue = invoices
+    .filter(inv => inv.status === 'Paid')
+    .reduce((acc, inv) => acc + (parseFloat(inv.total_amount) || 0), 0);
 
   const stats = [
-    { icon: Users, label: 'Active Clients', value: clients.length.toString(), trend: 'up', trendValue: '+0', color: '#3b82f6' },
-    { icon: Briefcase, label: 'Ongoing Projects', value: projects.length.toString(), trend: 'up', trendValue: '+0', color: '#10b981' },
-    { icon: Clock, label: 'Pending Updates', value: '0', trend: 'down', trendValue: '-0', color: '#6366f1' },
-    { icon: TrendingUp, label: 'Total Revenue', value: `₹${totalRevenue.toFixed(1)}L`, trend: 'up', trendValue: '+0%', color: '#8b5cf6' },
+    { icon: Users, label: 'Active Clients', value: clients.length.toString(), trend: 'up', trendValue: '+12%', color: '#3b82f6' },
+    { icon: Briefcase, label: 'Ongoing Projects', value: projects.length.toString(), trend: 'up', trendValue: '+5%', color: '#10b981' },
+    { icon: Clock, label: 'Pending Updates', value: '0', trend: 'down', trendValue: 'None', color: '#6366f1' },
+    { icon: TrendingUp, label: 'Total Revenue', value: `₹${Math.round(totalRevenue).toLocaleString('en-IN')}`, trend: 'up', trendValue: '+8%', color: '#8b5cf6' },
   ];
 
   const recentProjects = projects.slice(0, 4);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Grid container spacing={4}>
+    <Container maxWidth={false} sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, sm: 3, md: 5 } }}>
+      <Grid container spacing={{ xs: 2, md: 4 }}>
         {/* Stats Row */}
         {stats.map((stat, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+          <Grid size={{ xs: 6, md: 3 }} key={index}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -53,31 +52,33 @@ const Dashboard = () => {
         {/* Main Content */}
         <Grid size={{ xs: 12 }}>
           {/* Chart Section */}
-          <Paper sx={{ p: 4, borderRadius: 5, mb: 5, border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
-            <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Paper sx={{ p: { xs: 2, sm: 3, md: 4 }, borderRadius: 5, mb: 5, border: '1px solid', borderColor: 'divider', boxShadow: 'none', overflow: 'hidden' }}>
+            <Box sx={{ mb: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
               <Box>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>Revenue Performance</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.5 }}>Revenue Performance</Typography>
                 <Typography variant="body2" color="text.secondary">Financial growth overview for the current half-year</Typography>
               </Box>
               <Button 
                 variant="outlined" 
                 size="small" 
                 startIcon={<Download size={16} />}
-                sx={{ borderRadius: 2, borderColor: 'divider', color: 'text.primary' }}
+                sx={{ borderRadius: 2, borderColor: 'divider', color: 'text.primary', alignSelf: { xs: 'flex-start', sm: 'center' } }}
               >
                 Export
               </Button>
             </Box>
-            <RevenueChart />
+            <Box sx={{ height: { xs: 300, sm: 400 }, width: '100%' }}>
+              <RevenueChart />
+            </Box>
           </Paper>
 
-          <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6" sx={{ textTransform: 'uppercase', letterSpacing: 2, color: 'text.secondary', fontSize: '0.875rem', fontWeight: 700 }}>
+          <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+            <Typography variant="h6" sx={{ textTransform: 'uppercase', letterSpacing: 2, color: 'text.secondary', fontSize: '0.875rem', fontWeight: 500 }}>
               Active Projects
             </Typography>
             <Button 
               endIcon={<ArrowRight size={16} />} 
-              sx={{ color: 'primary.main', fontWeight: 700 }}
+              sx={{ color: 'primary.main', fontWeight: 500 }}
             >
               View All
             </Button>

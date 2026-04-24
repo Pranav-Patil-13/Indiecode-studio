@@ -8,8 +8,8 @@ const TeamSection = ({ project }) => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 900, letterSpacing: '-0.02em', mb: 0.5 }}>Team Collaboration</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>Manage access and roles for this project</Typography>
+          <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Team Collaboration</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Manage access and roles for this project</Typography>
         </Box>
         <Button 
           variant="contained" 
@@ -45,7 +45,7 @@ const TeamSection = ({ project }) => {
                     width: 64, 
                     height: 64, 
                     fontSize: '1.5rem', 
-                    fontWeight: 900,
+                    fontWeight: 500,
                     bgcolor: 'primary.light',
                     color: 'primary.main',
                     boxShadow: '0 8px 20px rgba(59, 130, 246, 0.1)'
@@ -59,7 +59,7 @@ const TeamSection = ({ project }) => {
               <Typography variant="h6" sx={{ fontWeight: 850, mb: 0.5, letterSpacing: '-0.01em' }}>
                 {member.name}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
                 {member.role === 'Project Lead' ? <Shield size={16} color="#f59e0b" fill="#fef3c7" /> : <User size={16} />}
                 {member.role}
               </Typography>
@@ -71,7 +71,7 @@ const TeamSection = ({ project }) => {
                   size="small" 
                   disableElevation
                   startIcon={<Mail size={14} />}
-                  sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 800, py: 1 }}
+                  sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 500, py: 1 }}
                 >
                   Message
                 </Button>
@@ -80,7 +80,7 @@ const TeamSection = ({ project }) => {
                   variant="outlined" 
                   size="small"
                   color="inherit"
-                  sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 800, borderColor: 'divider', py: 1 }}
+                  sx={{ borderRadius: 2.5, textTransform: 'none', fontWeight: 500, borderColor: 'divider', py: 1 }}
                 >
                   Profile
                 </Button>

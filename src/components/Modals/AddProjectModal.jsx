@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog, 
   DialogTitle, 
@@ -14,21 +14,65 @@ import {
   Select,
   FormControl,
   InputLabel,
-  FormHelperText
+  FormHelperText,
+  Slider
 } from '@mui/material';
 import { X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 const AddProjectModal = () => {
-  const { clients, addProject, isAddProjectModalOpen, closeAddProjectModal } = useApp();
+  const { clients, addProject, updateProject, isAddProjectModalOpen, closeAddProjectModal, editProjectData } = useApp();
   const [formData, setFormData] = useState({
     name: '',
     client_id: '',
     status: 'On Track',
     due_date: '',
+    budget: '',
     priority: 'Medium',
-    description: ''
+    description: '',
+    phases: [
+      { name: 'Frontend', status: 'pending', start: 0, width: 25, date: 'TBD', color: '#3b82f6' },
+      { name: 'Backend', status: 'pending', start: 25, width: 25, date: 'TBD', color: '#8b5cf6' },
+      { name: 'Testing', status: 'pending', start: 50, width: 25, date: 'TBD', color: '#f59e0b' },
+      { name: 'Deploying', status: 'pending', start: 75, width: 25, date: 'TBD', color: '#10b981' }
+    ]
   });
+
+  useEffect(() => {
+    if (editProjectData) {
+      setFormData({
+        name: editProjectData.name || '',
+        client_id: editProjectData.client_id || '',
+        status: editProjectData.status || 'On Track',
+        due_date: editProjectData.due_date || '',
+        budget: editProjectData.budget || '',
+        priority: editProjectData.priority || 'Medium',
+        description: editProjectData.description || '',
+        phases: editProjectData.phases || [
+          { name: 'Frontend', status: 'pending', start: 0, width: 25, date: 'TBD', color: '#3b82f6' },
+          { name: 'Backend', status: 'pending', start: 25, width: 25, date: 'TBD', color: '#8b5cf6' },
+          { name: 'Testing', status: 'pending', start: 50, width: 25, date: 'TBD', color: '#f59e0b' },
+          { name: 'Deploying', status: 'pending', start: 75, width: 25, date: 'TBD', color: '#10b981' }
+        ]
+      });
+    } else {
+      setFormData({ 
+        name: '', 
+        client_id: '', 
+        status: 'On Track', 
+        due_date: '', 
+        budget: '',
+        priority: 'Medium', 
+        description: '', 
+        phases: [
+          { name: 'Frontend', status: 'pending', start: 0, width: 25, date: 'TBD', color: '#3b82f6' },
+          { name: 'Backend', status: 'pending', start: 25, width: 25, date: 'TBD', color: '#8b5cf6' },
+          { name: 'Testing', status: 'pending', start: 50, width: 25, date: 'TBD', color: '#f59e0b' },
+          { name: 'Deploying', status: 'pending', start: 75, width: 25, date: 'TBD', color: '#10b981' }
+        ]
+      });
+    }
+  }, [editProjectData]);
 
   const [errors, setErrors] = useState({});
 
@@ -43,8 +87,16 @@ const AddProjectModal = () => {
 
   const handleSubmit = () => {
     if (validate()) {
-      addProject(formData);
-      setFormData({ name: '', client_id: '', status: 'On Track', due_date: '', priority: 'Medium', description: '' });
+      const submissionData = {
+        ...formData,
+        budget: formData.budget ? parseFloat(formData.budget) : 0
+      };
+      
+      if (editProjectData) {
+        updateProject(editProjectData.id, submissionData);
+      } else {
+        addProject(submissionData);
+      }
       closeAddProjectModal();
     }
   };
@@ -60,7 +112,9 @@ const AddProjectModal = () => {
       }}
     >
       <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6" component="span" sx={{ fontWeight: 700 }}>Create New Project</Typography>
+        <Typography variant="h6" component="span" sx={{ fontWeight: 500 }}>
+          {editProjectData ? 'Edit Project' : 'Create New Project'}
+        </Typography>
         <IconButton onClick={closeAddProjectModal} size="small">
           <X size={20} />
         </IconButton>
@@ -122,6 +176,23 @@ const AddProjectModal = () => {
           </Stack>
 
           <TextField
+            label="Project Budget"
+            type="number"
+            fullWidth
+            size="small"
+            value={formData.budget}
+            onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+            placeholder="e.g. 50000"
+            slotProps={{
+              input: {
+                startAdornment: <Typography variant="body2" sx={{ mr: 1, color: 'text.secondary', fontWeight: 500 }}>₹</Typography>
+              }
+            }}
+          />
+
+
+
+          <TextField
             label="Due Date"
             type="text"
             fullWidth
@@ -132,17 +203,28 @@ const AddProjectModal = () => {
             helperText={errors.due_date || "e.g. May 20, 2026"}
             placeholder="May 20, 2026"
           />
+
+          <TextField
+            label="Project Description"
+            multiline
+            rows={3}
+            fullWidth
+            size="small"
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Provide a brief overview of the project goals and scope..."
+          />
         </Stack>
       </DialogContent>
 
       <DialogActions sx={{ p: 2, pt: 1 }}>
-        <Button onClick={closeAddProjectModal} color="inherit" sx={{ fontWeight: 600 }}>Cancel</Button>
+        <Button onClick={closeAddProjectModal} color="inherit" sx={{ fontWeight: 500 }}>Cancel</Button>
         <Button 
           variant="contained" 
           onClick={handleSubmit}
-          sx={{ borderRadius: 2, px: 3, fontWeight: 600 }}
+          sx={{ borderRadius: 2, px: 3, fontWeight: 500 }}
         >
-          Create Project
+          {editProjectData ? 'Save Changes' : 'Create Project'}
         </Button>
       </DialogActions>
     </Dialog>
