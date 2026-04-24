@@ -5,7 +5,8 @@ import {
   Clock, 
   TrendingUp, 
   ArrowRight,
-  Download
+  Download,
+  Smartphone
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import StatCard from '../components/Dashboard/StatCard';
@@ -35,6 +36,40 @@ const Dashboard = () => {
 
   return (
     <Container maxWidth={false} sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, sm: 3, md: 5 } }}>
+      {/* Mobile App Download Banner */}
+      <Box
+        component="a"
+        href="/indiecode-studio.apk"
+        download
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          bgcolor: 'primary.main',
+          color: 'primary.contrastText',
+          p: 2,
+          borderRadius: 3,
+          mb: 3,
+          textDecoration: 'none',
+          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Smartphone size={24} />
+          <Box>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+              Download IndieCode Studio App
+            </Typography>
+            <Typography variant="caption" sx={{ opacity: 0.9 }}>
+              Experience the native Android app
+            </Typography>
+          </Box>
+        </Box>
+        <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', p: 1, borderRadius: '50%', display: 'flex' }}>
+          <Download size={18} />
+        </Box>
+      </Box>
+
       <Grid container spacing={{ xs: 2, md: 4 }}>
         {/* Stats Row */}
         {stats.map((stat, index) => (

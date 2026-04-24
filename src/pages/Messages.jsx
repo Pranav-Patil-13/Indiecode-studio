@@ -28,7 +28,8 @@ import {
   Check, 
   CheckCheck,
   Circle,
-  FileText
+  FileText,
+  ChevronLeft
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import logoImg from '../assets/logo.jpg';
@@ -88,7 +89,7 @@ const INITIAL_MESSAGES = {
 const Messages = ({ isClientPortal = false }) => {
   const theme = useTheme();
   const { clients, messages: allMessages, sendMessage, user } = useApp();
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [showMobileChat, setShowMobileChat] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -151,27 +152,34 @@ const Messages = ({ isClientPortal = false }) => {
     setInputValue('');
   };
 
+  const handleContactSelect = (contact) => {
+    setSelectedContact(contact);
+    setShowMobileChat(true);
+  };
+
   if (!selectedContact && contacts.length > 0) return null;
   if (contacts.length === 0) return <Box p={10} textAlign="center">No clients to message.</Box>;
 
   return (
     <Box sx={{ 
       display: 'flex', 
-      height: 'calc(100vh - 180px)', 
+      height: { xs: 'calc(100vh - 120px)', md: 'calc(100vh - 180px)' }, 
       bgcolor: 'background.paper', 
-      borderRadius: 4, 
+      borderRadius: { xs: 0, sm: 4 }, 
       overflow: 'hidden',
       boxShadow: theme.palette.mode === 'light' ? '0 4px 20px rgba(0, 0, 0, 0.03)' : '0 10px 40px rgba(0,0,0,0.4)',
-      border: '1px solid',
-      borderColor: 'divider'
+      border: { xs: 'none', sm: '1px solid' },
+      borderColor: 'divider',
+      mx: { xs: -3, sm: 0 }, // Offset container padding on mobile
+      mt: { xs: -3, sm: 0 }
     }}>
-      {/* Sidebar */}
+      {/* Sidebar - Hidden on mobile when chat is shown */}
       {!isClientPortal && (
         <Box sx={{ 
-          width: 360, 
+          width: { xs: '100%', md: 360 }, 
+          display: { xs: showMobileChat ? 'none' : 'flex', md: 'flex' },
           borderRight: '1px solid', 
           borderColor: 'divider',
-          display: 'flex', 
           flexDirection: 'column',
           bgcolor: 'background.paper'
         }}>
@@ -202,7 +210,7 @@ const Messages = ({ isClientPortal = false }) => {
               <ListItem disablePadding>
                 <ListItemButton 
                   selected={selectedContact.id === contact.id}
-                  onClick={() => setSelectedContact(contact)}
+                  onClick={() => handleContactSelect(contact)}
                   sx={{ 
                     py: 2, 
                     px: 3,
@@ -270,7 +278,12 @@ const Messages = ({ isClientPortal = false }) => {
       )}
 
       {/* Chat Window */}
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+      <Box sx={{ 
+        flexGrow: 1, 
+        display: { xs: showMobileChat || isClientPortal ? 'flex' : 'none', md: 'flex' }, 
+        flexDirection: 'column', 
+        bgcolor: 'background.default' 
+      }}>
         {/* Chat Header */}
         <Box sx={{ 
           p: 2, 
@@ -283,6 +296,15 @@ const Messages = ({ isClientPortal = false }) => {
           borderColor: 'divider'
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Back button for mobile */}
+            {!isClientPortal && (
+              <IconButton 
+                onClick={() => setShowMobileChat(false)}
+                sx={{ display: { xs: 'flex', md: 'none' }, mr: -1 }}
+              >
+                <ChevronLeft size={20} />
+              </IconButton>
+            )}
             <Avatar src={selectedContact.avatar} sx={{ width: 40, height: 40 }} />
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: 500, lineHeight: 1.2 }}>{selectedContact.name}</Typography>
@@ -294,7 +316,7 @@ const Messages = ({ isClientPortal = false }) => {
               </Box>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 1 }}>
             <Tooltip title="Voice Call">
               <IconButton size="small"><Phone size={18} /></IconButton>
             </Tooltip>

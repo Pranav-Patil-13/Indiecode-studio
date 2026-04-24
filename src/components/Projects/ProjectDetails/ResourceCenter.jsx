@@ -67,12 +67,12 @@ const ResourceCenter = ({ project }) => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, mb: 4 }}>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Resource Hub</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Centralized project assets and documentation</Typography>
         </Box>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{ width: { xs: '100%', sm: 'auto' } }}>
           <input
             type="file"
             ref={fileInputRef}
@@ -81,6 +81,7 @@ const ResourceCenter = ({ project }) => {
           />
           <Button 
             variant="outlined" 
+            fullWidth
             startIcon={<LinkIcon size={18} />}
             sx={{ borderRadius: 2.5, fontWeight: 500 }}
           >
@@ -88,6 +89,7 @@ const ResourceCenter = ({ project }) => {
           </Button>
           <Button 
             variant="contained" 
+            fullWidth
             startIcon={uploading ? <CircularProgress size={18} color="inherit" /> : <Plus size={18} />}
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
@@ -115,12 +117,15 @@ const ResourceCenter = ({ project }) => {
                 <ListItem 
                   sx={{ 
                     py: 3, 
-                    px: 4,
+                    px: { xs: 2, sm: 4 },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    gap: { xs: 2, sm: 0 },
                     transition: 'all 0.2s ease',
                     '&:hover': { bgcolor: 'action.hover' }
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 64 }}>
+                  <ListItemIcon sx={{ minWidth: { xs: 'auto', sm: 64 } }}>
                     <Box 
                       sx={{ 
                         p: 2, 
@@ -137,39 +142,43 @@ const ResourceCenter = ({ project }) => {
                   </ListItemIcon>
                   <ListItemText 
                     primary={
-                      <Typography variant="subtitle1" sx={{ fontWeight: 850, mb: 0.2 }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 850, mb: 0.2, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                         {resource.name}
                       </Typography>
                     }
                     secondary={
-                      <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 2 }} sx={{ alignItems: { xs: 'flex-start', sm: 'center' } }}>
                         <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>
                           {resource.type === 'link' ? 'External Web Link' : `Document • ${resource.size || 'Unknown'}`}
                         </Typography>
-                        <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'rgba(0,0,0,0.1)' }} />
+                        <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'rgba(0,0,0,0.1)', display: { xs: 'none', sm: 'block' } }} />
                         <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled' }}>
                           Added by {resource.added_by || 'Unknown'} • {new Date(resource.created_at).toLocaleDateString()}
                         </Typography>
                       </Stack>
                     }
                   />
-                  <ListItemSecondaryAction sx={{ right: 32 }}>
-                    <Stack direction="row" spacing={1}>
-                      <IconButton 
-                        size="small" 
-                        component="a"
-                        href={resource.url}
-                        target="_blank"
-                        sx={{ 
-                          bgcolor: 'action.hover', 
-                          '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } 
-                        }}
-                      >
-                        {resource.type === 'link' ? <ExternalLink size={18} /> : <Download size={18} />}
-                      </IconButton>
-                      <IconButton size="small"><MoreVertical size={18} /></IconButton>
-                    </Stack>
-                  </ListItemSecondaryAction>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    gap: 1, 
+                    ml: { xs: 0, sm: 'auto' }, 
+                    width: { xs: '100%', sm: 'auto' }, 
+                    justifyContent: { xs: 'flex-end', sm: 'flex-start' } 
+                  }}>
+                    <IconButton 
+                      size="small" 
+                      component="a"
+                      href={resource.url}
+                      target="_blank"
+                      sx={{ 
+                        bgcolor: 'action.hover', 
+                        '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } 
+                      }}
+                    >
+                      {resource.type === 'link' ? <ExternalLink size={18} /> : <Download size={18} />}
+                    </IconButton>
+                    <IconButton size="small"><MoreVertical size={18} /></IconButton>
+                  </Box>
                 </ListItem>
                 {index < project.resources.length - 1 && <Divider sx={{ mx: 4, opacity: 0.5 }} />}
               </React.Fragment>

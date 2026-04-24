@@ -143,7 +143,16 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Avatar 
             src={profilePic}
-            sx={{ width: 36, height: 36, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'primary.main', fontSize: '0.875rem' }} 
+            sx={{ 
+              width: 36, 
+              height: 36, 
+              borderRadius: 2, 
+              border: '1px solid', 
+              borderColor: 'divider', 
+              bgcolor: 'primary.main', 
+              fontSize: '0.875rem',
+              '& .MuiAvatar-img': { objectPosition: 'top' }
+            }} 
           />
           <Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 120 }}>

@@ -77,48 +77,46 @@ const ClientPortal = () => {
   };
 
   return (
-    <Container maxWidth={false} sx={{ py: 6, px: { md: 8 } }}>
-      <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <Container maxWidth={false} sx={{ py: { xs: 3, md: 6 }, px: { xs: 2, md: 8 } }}>
+      <Box sx={{ mb: 6, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'flex-end' }, gap: 3 }}>
         <Box>
-          <Typography variant="h3" fontWeight={600} sx={{ letterSpacing: '-0.04em', mb: 1 }}>
+          <Typography variant="h3" fontWeight={600} sx={{ letterSpacing: '-0.04em', mb: 1, fontSize: { xs: '2rem', sm: '3rem' } }}>
             Welcome back, {client.name.split(' ')[0]}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
             Track your project progress, approve milestones, and manage billing.
           </Typography>
         </Box>
-        <Stack direction="row" spacing={1} sx={{ bgcolor: 'action.hover', p: 0.5, borderRadius: 3 }}>
-          <Button 
-            variant={activeTab === 'roadmap' ? "contained" : "text"} 
-            onClick={() => setActiveTab('roadmap')}
-            sx={{ borderRadius: 2.5, px: 3, fontWeight: 500, color: activeTab === 'roadmap' ? 'primary.contrastText' : 'text.secondary', boxShadow: activeTab === 'roadmap' ? 1 : 'none' }}
-          >
-            Roadmap
-          </Button>
-          <Button 
-            variant={activeTab === 'messages' ? "contained" : "text"} 
-            onClick={() => setActiveTab('messages')}
-            sx={{ borderRadius: 2.5, px: 3, fontWeight: 500, color: activeTab === 'messages' ? 'primary.contrastText' : 'text.secondary', boxShadow: activeTab === 'messages' ? 1 : 'none' }}
-          >
-            Messages
-          </Button>
-          <Button 
-            variant={activeTab === 'billing' ? "contained" : "text"} 
-            onClick={() => setActiveTab('billing')}
-            sx={{ borderRadius: 2.5, px: 3, fontWeight: 500, color: activeTab === 'billing' ? 'primary.contrastText' : 'text.secondary', boxShadow: activeTab === 'billing' ? 1 : 'none' }}
-          >
-            Billing
-          </Button>
+        <Stack direction="row" spacing={0.5} sx={{ bgcolor: 'action.hover', p: 0.5, borderRadius: 3, width: { xs: '100%', sm: 'auto' }, overflowX: 'auto' }}>
+          {['roadmap', 'messages', 'billing'].map((tab) => (
+            <Button 
+              key={tab}
+              variant={activeTab === tab ? "contained" : "text"} 
+              onClick={() => setActiveTab(tab)}
+              sx={{ 
+                borderRadius: 2.5, 
+                px: { xs: 2, sm: 3 }, 
+                flex: { xs: 1, sm: 'auto' },
+                whiteSpace: 'nowrap',
+                fontWeight: 500, 
+                color: activeTab === tab ? 'primary.contrastText' : 'text.secondary', 
+                boxShadow: activeTab === tab ? 1 : 'none',
+                textTransform: 'capitalize'
+              }}
+            >
+              {tab}
+            </Button>
+          ))}
         </Stack>
       </Box>
 
-      <Grid container spacing={6}>
+      <Grid container spacing={{ xs: 4, md: 6 }}>
         {/* Left Sidebar: My Projects */}
         <Grid item xs={12} md={4} lg={3}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, textTransform: 'uppercase', letterSpacing: 1, color: 'text.disabled' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2, textTransform: 'uppercase', letterSpacing: 1, color: 'text.disabled', fontSize: '0.75rem' }}>
             My Projects
           </Typography>
-          <Stack spacing={2}>
+          <Stack direction={{ xs: 'row', md: 'column' }} spacing={2} sx={{ overflowX: { xs: 'auto', md: 'visible' }, pb: { xs: 1, md: 0 } }}>
             {clientProjects.map((p) => (
               <Paper 
                 key={p.id}
@@ -127,14 +125,15 @@ const ClientPortal = () => {
                   p: 2.5, 
                   borderRadius: 4, 
                   cursor: 'pointer',
+                  minWidth: { xs: 200, md: 'auto' },
                   border: '1px solid',
                   borderColor: selectedProjectId === p.id ? 'primary.main' : 'divider',
                   bgcolor: selectedProjectId === p.id ? `${theme.palette.primary.main}08` : 'background.paper',
                   transition: 'all 0.2s ease',
-                  '&:hover': { transform: 'translateX(5px)' }
+                  '&:hover': { transform: { md: 'translateX(5px)', xs: 'none' } }
                 }}
               >
-                <Typography variant="subtitle1" fontWeight={600}>{p.name}</Typography>
+                <Typography variant="subtitle1" fontWeight={600} noWrap>{p.name}</Typography>
                 <Box sx={{ mt: 1.5 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                     <Typography variant="caption" color="text.secondary">Progress</Typography>
@@ -150,7 +149,7 @@ const ClientPortal = () => {
         {/* Main Content */}
         <Grid item xs={12} md={8} lg={9}>
           {activeTab === 'messages' ? (
-            <Paper sx={{ p: 0, borderRadius: 6, overflow: 'hidden', border: '1px solid', borderColor: 'divider', height: 'calc(100vh - 250px)' }}>
+            <Paper sx={{ p: 0, borderRadius: 6, overflow: 'hidden', border: '1px solid', borderColor: 'divider', height: { xs: 'calc(100vh - 350px)', md: 'calc(100vh - 250px)' } }}>
               <Messages isClientPortal={true} />
             </Paper>
           ) : activeTab === 'billing' ? (
@@ -158,8 +157,8 @@ const ClientPortal = () => {
               <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
                 <Typography variant="h6" fontWeight={600}>Invoices & Billing</Typography>
               </Box>
-              <TableContainer>
-                <Table>
+              <TableContainer sx={{ overflowX: 'auto' }}>
+                <Table sx={{ minWidth: { xs: 600, md: '100%' } }}>
                   <TableHead sx={{ bgcolor: 'action.hover' }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 600 }}>Invoice #</TableCell>
@@ -217,7 +216,7 @@ const ClientPortal = () => {
             <Box>
               <Paper 
                 sx={{ 
-                  p: 4, 
+                  p: { xs: 3, sm: 4 }, 
                   borderRadius: 6, 
                   mb: 4, 
                   border: '1px solid', 
@@ -225,8 +224,8 @@ const ClientPortal = () => {
                   bgcolor: 'background.paper'
                 }}
               >
-                <Stack direction="row" spacing={3} sx={{ alignItems: 'center', mb: 4 }}>
-                  <Box sx={{ width: 64, height: 64, borderRadius: 3, bgcolor: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ alignItems: { xs: 'flex-start', sm: 'center' }, mb: 4 }}>
+                  <Box sx={{ width: 64, height: 64, borderRadius: 3, bgcolor: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
                     <TrendingUp size={32} />
                   </Box>
                   <Box>

@@ -10,7 +10,7 @@ import { Reorder, motion } from 'framer-motion';
 const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, onEdit, paymentStatus, onInvoice, approvalStatus, onRequestApproval, onApprove, isClientView }) => {
   const theme = useTheme();
   return (
-    <Box sx={{ display: 'flex', gap: 4 }}>
+    <Box sx={{ display: 'flex', gap: { xs: 2, sm: 4 } }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Box 
           onClick={onToggle}
@@ -36,7 +36,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
         <Paper 
           elevation={0}
           sx={{ 
-            p: 3, 
+            p: { xs: 2, sm: 3 }, 
             borderRadius: 4, 
             border: '1px solid',
             borderColor: 'divider',
@@ -51,19 +51,20 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
             cursor: 'grab',
             '&:active': { cursor: 'grabbing' },
             '&:hover': {
-              transform: 'translateX(8px)',
+              transform: { md: 'translateX(8px)', xs: 'none' },
               boxShadow: status === 'In Progress' ? `0 15px 40px ${color}30` : '0 15px 35px rgba(0,0,0,0.06)',
               '& .action-btns': { opacity: 1 }
             }
           }}
         >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
             <Box>
               <Typography 
                 variant="subtitle1" 
                 sx={{ 
                   fontWeight: 600, 
                   mb: 1, 
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
                   color: status === 'Done' ? 'text.secondary' : 'text.primary',
                   textDecoration: status === 'Done' ? 'line-through' : 'none',
                   opacity: status === 'Done' ? 0.7 : 1
@@ -71,19 +72,19 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
               >
                 {title}
               </Typography>
-              <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
+              <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", flexWrap: 'wrap', gap: 1 }}>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center", color: 'text.secondary' }}>
                   <Calendar size={14} />
                   <Typography variant="caption" sx={{ fontWeight: 500 }}>{date}</Typography>
                 </Stack>
-                <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'rgba(0,0,0,0.1)' }} />
+                <Box sx={{ width: 4, height: 4, borderRadius: '50%', bgcolor: 'rgba(0,0,0,0.1)', display: { xs: 'none', sm: 'block' } }} />
                 <Chip 
                   label={status} 
                   size="small"
                   onClick={onToggle}
                   sx={{ 
                     height: 20, 
-                    fontSize: '0.65rem', 
+                    fontSize: '0.6rem', 
                     fontWeight: 600, 
                     textTransform: 'uppercase',
                     cursor: 'pointer',
@@ -99,7 +100,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
                     variant="outlined"
                     sx={{ 
                       height: 20, 
-                      fontSize: '0.65rem', 
+                      fontSize: '0.6rem', 
                       fontWeight: 600, 
                       textTransform: 'uppercase',
                       borderColor: paymentStatus === 'Paid' ? '#10b98140' : '#f59e0b40',
@@ -114,7 +115,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
                     variant="outlined"
                     sx={{ 
                       height: 20, 
-                      fontSize: '0.65rem', 
+                      fontSize: '0.6rem', 
                       fontWeight: 600, 
                       textTransform: 'uppercase',
                       borderColor: approvalStatus === 'Approved' ? '#10b98140' : '#3b82f640',
@@ -125,7 +126,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
                 )}
               </Stack>
             </Box>
-            <Stack direction="row" spacing={0.5} className="action-btns" sx={{ opacity: 0, transition: 'opacity 0.2s ease' }}>
+            <Stack direction="row" spacing={0.5} className="action-btns" sx={{ opacity: { xs: 1, md: 0 }, transition: 'opacity 0.2s ease', ml: { xs: -1, sm: 0 } }}>
               {status === 'Done' && !approvalStatus && !isClientView && (
                 <Button 
                   size="small" 

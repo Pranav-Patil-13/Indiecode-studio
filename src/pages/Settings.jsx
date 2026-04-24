@@ -117,7 +117,13 @@ const Settings = () => {
                   <Box sx={{ position: 'relative', display: 'inline-block' }}>
                     <Avatar 
                       src={profilePic}
-                      sx={{ width: 120, height: 120, border: '4px solid white', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                      sx={{ 
+                        width: 120, 
+                        height: 120, 
+                        border: '4px solid white', 
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        '& .MuiAvatar-img': { objectPosition: 'top' }
+                      }}
                     />
                     <IconButton 
                       sx={{ 

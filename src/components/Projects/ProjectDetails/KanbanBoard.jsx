@@ -12,7 +12,7 @@ const KanbanColumn = ({ title, tasks, color, onAddTask, project }) => {
   <Box 
     sx={{ 
       flex: 1, 
-      minWidth: 320, 
+      minWidth: { xs: 280, sm: 320 }, 
       bgcolor: 'action.hover', 
       borderRadius: 5, 
       p: 2,

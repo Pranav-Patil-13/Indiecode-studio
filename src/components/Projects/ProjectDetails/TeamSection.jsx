@@ -6,7 +6,7 @@ const TeamSection = ({ project }) => {
   const theme = useTheme();
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2, mb: 4 }}>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Team Collaboration</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Manage access and roles for this project</Typography>
@@ -14,7 +14,7 @@ const TeamSection = ({ project }) => {
         <Button 
           variant="contained" 
           startIcon={<Plus size={18} />}
-          sx={{ borderRadius: 2.5 }}
+          sx={{ borderRadius: 2.5, width: { xs: '100%', sm: 'auto' } }}
         >
           Invite Member
         </Button>

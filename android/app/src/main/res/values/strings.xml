@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Indiecode Studio</string>
+    <string name="title_activity_main">Indiecode Studio</string>
+    <string name="package_name">com.indiecode.app</string>
+    <string name="custom_url_scheme">com.indiecode.app</string>
+</resources>

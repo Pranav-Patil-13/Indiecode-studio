@@ -57,26 +57,17 @@ const Timeline = () => {
 
   if (loading) return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ mb: 6, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
         <Box>
           <Skeleton width={300} height={48} sx={{ mb: 1 }} />
           <Skeleton width={450} height={24} />
         </Box>
-        <Stack direction="row" spacing={2}>
-          <Skeleton variant="rounded" width={180} height={44} />
-          <Skeleton variant="rounded" width={140} height={44} />
-        </Stack>
       </Box>
-      <Paper sx={{ p: 4, borderRadius: 5, border: '1px solid', borderColor: 'divider' }}>
-        <Box sx={{ display: 'flex', mb: 4, ml: '250px' }}>
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} sx={{ flex: 1, mx: 2 }} height={24} />
-          ))}
-        </Box>
+      <Paper sx={{ p: { xs: 2, sm: 4 }, borderRadius: 5, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
         <Stack spacing={6}>
           {[1, 2, 3].map((i) => (
             <Box key={i} sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ width: 250, pr: 4 }}>
+              <Box sx={{ width: { xs: 150, sm: 250 }, pr: 4, flexShrink: 0 }}>
                 <Skeleton width="80%" height={28} sx={{ mb: 1 }} />
                 <Skeleton width="40%" height={20} />
               </Box>
@@ -90,29 +81,27 @@ const Timeline = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ mb: 6, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 2 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 500, mb: 1 }}>Project Roadmap</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 500, mb: 1, fontSize: { xs: '1.75rem', sm: '2.125rem' } }}>Project Roadmap</Typography>
           <Typography variant="body2" color="text.secondary">Strategic timeline and milestones across all active development cycles</Typography>
         </Box>
-        
-
       </Box>
 
-      <Paper sx={{ p: 4, overflowX: 'auto', border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'background.paper' }}>
-        <Box sx={{ position: 'relative', ml: '250px' }}>
-          <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100%', display: 'flex', zIndex: 0, pointerEvents: 'none' }}>
-            {[1, 2, 3, 4].map((_, i) => (
-              <Box key={i} sx={{ flex: 1, borderLeft: '1px solid', borderColor: 'rgba(0,0,0,0.03)' }} />
-            ))}
-          </Box>
-        </Box>
-
-        <Stack spacing={6}>
+      <Paper sx={{ p: { xs: 2, sm: 4 }, overflowX: 'auto', border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'background.paper' }}>
+        <Stack spacing={6} sx={{ minWidth: 800 }}>
           {projectsData.map((project) => (
             <Box key={project.id} sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-              <Box sx={{ width: 250, pr: 4 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.5 }}>
+              <Box sx={{ 
+                width: { xs: 150, sm: 250 }, 
+                pr: 4, 
+                flexShrink: 0,
+                position: 'sticky',
+                left: 0,
+                bgcolor: 'background.paper',
+                zIndex: 5
+              }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.5, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                   {project.name}
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
@@ -210,7 +199,7 @@ const Timeline = () => {
         </Stack>
       </Paper>
 
-      <Stack direction="row" spacing={4} sx={{ mt: 4, justifyContent: 'center' }}>
+      <Stack direction="row" spacing={4} sx={{ mt: 4, justifyContent: 'center', flexWrap: 'wrap', gap: 2 }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
           <Box sx={{ width: 12, height: 12, borderRadius: 0.5, bgcolor: '#10b981' }} />
           <Typography variant="caption" sx={{ fontWeight: 500 }}>Completed</Typography>
