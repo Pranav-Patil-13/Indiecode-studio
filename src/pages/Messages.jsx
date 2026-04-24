@@ -92,6 +92,7 @@ const Messages = ({ isClientPortal = false }) => {
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedContact, setSelectedContact] = useState(null);
 
   // For client portal, the only "contact" is the Studio
   const studioContact = {
