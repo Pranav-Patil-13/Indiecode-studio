@@ -148,7 +148,7 @@ const ProjectDetails = () => {
             </Stack>
 
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2 }}>
-              <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: 'text.primary' }}>
+              <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: 'text.primary', fontSize: { xs: '2rem', sm: '3rem' } }}>
                 {project.name}
               </Typography>
               <IconButton 
@@ -165,12 +165,12 @@ const ProjectDetails = () => {
               </IconButton>
             </Stack>
             
-            <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: '1.1rem', lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
+            <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '1rem', sm: '1.1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
               {project.description || 'No description provided.'}
             </Typography>
             
-            <Grid container spacing={4}>
-              <Grid size="auto">
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, sm: 'auto' }}>
                 <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Client Partner
                 </Typography>
@@ -178,7 +178,7 @@ const ProjectDetails = () => {
                   {clients.find(c => c.id === project.client_id)?.name || 'Unknown Client'}
                 </Typography>
               </Grid>
-              <Grid size="auto">
+              <Grid size={{ xs: 6, sm: 'auto' }}>
                 <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Target Delivery
                 </Typography>
@@ -189,7 +189,7 @@ const ProjectDetails = () => {
                   </Typography>
                 </Stack>
               </Grid>
-              <Grid size="auto">
+              <Grid size={{ xs: 6, sm: 'auto' }}>
                 <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Priority Level
                 </Typography>
@@ -210,7 +210,8 @@ const ProjectDetails = () => {
           <Paper 
             sx={{ 
               p: 4, 
-              minWidth: 320, 
+              width: { xs: '100%', md: 320 },
+              minWidth: { xs: '100%', md: 320 }, 
               borderRadius: 6, 
               bgcolor: 'background.paper',
               boxShadow: theme.palette.mode === 'light' ? '0 20px 50px rgba(0,0,0,0.04)' : '0 20px 50px rgba(0,0,0,0.4)',
@@ -272,14 +273,17 @@ const ProjectDetails = () => {
       </Paper>
 
       {/* Tabs */}
-      <Box sx={{ mb: 5 }}>
+      <Box sx={{ mb: 5, mx: { xs: -2, sm: 0 }, px: { xs: 2, sm: 0 } }}>
         <Tabs 
           value={activeTab} 
           onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons="auto"
+          allowScrollButtonsMobile
           sx={{
             minHeight: 48,
             '& .MuiTabs-indicator': { display: 'none' },
-            '& .MuiTabs-flexContainer': { justifyContent: 'space-around' }
+            '& .MuiTabs-scroller': { overflow: 'visible' }
           }}
         >
           {[
@@ -297,10 +301,11 @@ const ProjectDetails = () => {
               sx={{
                 minWidth: 'auto',
                 px: 3,
+                mr: 1,
                 borderRadius: 3,
                 fontWeight: 500,
                 textTransform: 'none',
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
                 minHeight: 44,
                 color: 'text.secondary',
                 transition: 'all 0.2s ease',
