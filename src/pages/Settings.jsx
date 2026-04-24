@@ -35,6 +35,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import profilePic from '../assets/profile.png';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -115,7 +116,7 @@ const Settings = () => {
                 <Box sx={{ textAlign: 'center' }}>
                   <Box sx={{ position: 'relative', display: 'inline-block' }}>
                     <Avatar 
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
+                      src={profilePic}
                       sx={{ width: 120, height: 120, border: '4px solid white', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                     />
                     <IconButton 

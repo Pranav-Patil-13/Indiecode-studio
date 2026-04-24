@@ -25,6 +25,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { supabase } from '../../lib/supabase';
 import logoImg from '../../assets/logo.jpg';
+import profilePic from '../../assets/profile.png';
 
 const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
   const location = useLocation();
@@ -141,10 +142,9 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
       <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Avatar 
+            src={profilePic}
             sx={{ width: 36, height: 36, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'primary.main', fontSize: '0.875rem' }} 
-          >
-            {user?.user_metadata?.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
-          </Avatar>
+          />
           <Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 120 }}>
               {user?.user_metadata?.full_name || 'User'}
