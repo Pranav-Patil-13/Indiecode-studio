@@ -1,5 +1,7 @@
 import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
+import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import Sidebar from './components/Layout/Sidebar';
 import Navbar from './components/Layout/Navbar';
 import Dashboard from './pages/Dashboard';
@@ -30,6 +32,39 @@ function AppContent() {
   const theme = getTheme(themeMode, accentColor);
   
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const setupUpdater = async () => {
+      if (Capacitor.isNativePlatform()) {
+        try {
+          // Tell CapacitorUpdater the app loaded successfully
+          await CapacitorUpdater.notifyAppReady();
+          
+          // Check for updates
+          const response = await fetch('https://indiecode-studio.com/version.json');
+          const data = await response.json();
+          
+          const currentVersion = localStorage.getItem('appVersion') || '1.0.0';
+          
+          if (data.version !== currentVersion) {
+            console.log('New update found! Downloading version:', data.version);
+            const update = await CapacitorUpdater.download({
+              url: data.url,
+              version: data.version,
+            });
+            
+            // Set the new version and reload
+            await CapacitorUpdater.set(update);
+            localStorage.setItem('appVersion', data.version);
+          }
+        } catch (error) {
+          console.error('Update check failed:', error);
+        }
+      }
+    };
+    
+    setupUpdater();
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
