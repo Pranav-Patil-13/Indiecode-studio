@@ -272,55 +272,93 @@ const ProjectDetails = () => {
         </Box>
       </Paper>
 
-      {/* Tabs */}
-      <Box sx={{ mb: 5, mx: { xs: -2, sm: 0 }, px: { xs: 2, sm: 0 } }}>
-        <Tabs 
-          value={activeTab} 
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          allowScrollButtonsMobile
-          sx={{
-            minHeight: 48,
-            '& .MuiTabs-indicator': { display: 'none' },
-            '& .MuiTabs-scroller': { overflow: 'visible' }
-          }}
-        >
-          {[
-            { icon: <Layout size={18} />, label: "Kanban Board" },
-            { icon: <Users size={18} />, label: "Team Management" },
-            { icon: <FileText size={18} />, label: "Resource Center" },
-            { icon: <Calendar size={18} />, label: "Timeline" },
-            { icon: <Receipt size={18} />, label: "Financials" }
-          ].map((tab, index) => (
-            <Tab 
-              key={index}
-              icon={tab.icon} 
-              iconPosition="start" 
-              label={tab.label} 
-              sx={{
-                minWidth: 'auto',
-                px: 3,
-                mr: 1,
-                borderRadius: 3,
-                fontWeight: 500,
-                textTransform: 'none',
-                fontSize: '0.85rem',
-                minHeight: 44,
-                color: 'text.secondary',
-                transition: 'all 0.2s ease',
-                bgcolor: activeTab === index ? 'primary.main' : 'action.hover',
-                color: activeTab === index ? 'primary.contrastText' : 'text.secondary',
-                '&:hover': {
-                  bgcolor: activeTab === index ? 'primary.main' : 'action.selected'
-                },
-                '&.Mui-selected': {
-                  color: 'primary.contrastText'
+      {/* Tab Navigation: Select for Mobile, Tabs for Desktop */}
+      <Box sx={{ mb: 5 }}>
+        {/* Mobile Select Dropdown */}
+        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+          <TextField
+            select
+            fullWidth
+            value={activeTab}
+            onChange={(e) => setActiveTab(parseInt(e.target.value))}
+            label="Select View"
+            slotProps={{
+              select: {
+                native: true,
+              },
+              input: {
+                sx: { 
+                  borderRadius: 3, 
+                  bgcolor: 'background.paper',
+                  '& select': { py: 1.5 }
                 }
-              }}
-            />
-          ))}
-        </Tabs>
+              }
+            }}
+          >
+            {[
+              "Kanban Board",
+              "Team Management",
+              "Resource Center",
+              "Timeline",
+              "Financials"
+            ].map((label, index) => (
+              <option key={index} value={index}>
+                {label}
+              </option>
+            ))}
+          </TextField>
+        </Box>
+
+        {/* Desktop Tabs */}
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Tabs 
+            value={activeTab} 
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            sx={{
+              minHeight: 48,
+              '& .MuiTabs-indicator': { display: 'none' },
+              '& .MuiTabs-scroller': { overflow: 'visible' }
+            }}
+          >
+            {[
+              { icon: <Layout size={18} />, label: "Kanban Board" },
+              { icon: <Users size={18} />, label: "Team Management" },
+              { icon: <FileText size={18} />, label: "Resource Center" },
+              { icon: <Calendar size={18} />, label: "Timeline" },
+              { icon: <Receipt size={18} />, label: "Financials" }
+            ].map((tab, index) => (
+              <Tab 
+                key={index}
+                icon={tab.icon} 
+                iconPosition="start" 
+                label={tab.label} 
+                sx={{
+                  minWidth: 'auto',
+                  px: 3,
+                  mr: 1,
+                  borderRadius: 3,
+                  fontWeight: 500,
+                  textTransform: 'none',
+                  fontSize: '0.85rem',
+                  minHeight: 44,
+                  color: 'text.secondary',
+                  transition: 'all 0.2s ease',
+                  bgcolor: activeTab === index ? 'primary.main' : 'action.hover',
+                  color: activeTab === index ? 'primary.contrastText' : 'text.secondary',
+                  '&:hover': {
+                    bgcolor: activeTab === index ? 'primary.main' : 'action.selected'
+                  },
+                  '&.Mui-selected': {
+                    color: 'primary.contrastText'
+                  }
+                }}
+              />
+            ))}
+          </Tabs>
+        </Box>
       </Box>
 
       {/* Tab Panels */}
