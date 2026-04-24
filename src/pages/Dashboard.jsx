@@ -58,10 +58,10 @@ const Dashboard = () => {
           <Smartphone size={24} />
           <Box>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
-              Download IndieCode Studio App
+              IndieCode Studio v1.0.1 (Live Update Test)
             </Typography>
             <Typography variant="caption" sx={{ opacity: 0.9 }}>
-              Experience the native Android app
+              This was updated via OTA!
             </Typography>
           </Box>
         </Box>

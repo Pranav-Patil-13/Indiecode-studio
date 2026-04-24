@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, InputBase, Badge, Button, Paper } from '@mui/material';
+import { Box, Typography, IconButton, InputBase, Badge, Button, Paper, alpha } from '@mui/material';
 import { Search, Bell, Plus, LogOut, Menu } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useApp } from '../../context/AppContext';
@@ -25,7 +25,8 @@ const Navbar = ({ title, onDrawerToggle }) => {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'space-between',
-        bgcolor: 'background.paper',
+        bgcolor: (theme) => alpha(theme.palette.background.paper, 0.4),
+        backdropFilter: 'blur(12px)',
         borderBottom: '1px solid',
         borderColor: 'divider',
         position: 'sticky',

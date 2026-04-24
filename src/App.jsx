@@ -41,7 +41,7 @@ function AppContent() {
           await CapacitorUpdater.notifyAppReady();
           
           // Check for updates
-          const response = await fetch('https://indiecode-studio.com/version.json');
+          const response = await fetch('https://studio.indiecode.in/version.json');
           const data = await response.json();
           
           const currentVersion = localStorage.getItem('appVersion') || '1.0.0';
