@@ -25,6 +25,8 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
 
+const APP_VERSION = '1.0.0'; // This should match the version in your native APK
+
 function AppContent() {
   const location = useLocation();
   const { snackbar, closeNotification, themeMode, accentColor, user, loading, clients } = useApp();
@@ -44,10 +46,11 @@ function AppContent() {
           const response = await fetch('https://studio.indiecode.in/version.json');
           const data = await response.json();
           
-          const currentVersion = localStorage.getItem('appVersion') || '1.0.0';
+          const currentVersion = APP_VERSION;
           
           if (data.version !== currentVersion) {
             console.log('New update found! Downloading version:', data.version);
+            
             const update = await CapacitorUpdater.download({
               url: data.url,
               version: data.version,
@@ -55,7 +58,6 @@ function AppContent() {
             
             // Set the new version and reload
             await CapacitorUpdater.set(update);
-            localStorage.setItem('appVersion', data.version);
           }
         } catch (error) {
           console.error('Update check failed:', error);
