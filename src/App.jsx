@@ -37,9 +37,7 @@ function AppContent() {
 
   React.useEffect(() => {
     const setupUpdater = async () => {
-      alert('OTA: checking if native...');
       if (Capacitor.isNativePlatform()) {
-        alert('OTA: is native! starting...');
         try {
           console.log('OTA: Native platform detected');
           // Tell CapacitorUpdater the app loaded successfully
@@ -60,8 +58,6 @@ function AppContent() {
             console.log('OTA: Update found!');
             showNotification(`New update v${data.version} available!`, 'info');
             
-            // alert(`OTA: Found v${data.version}. Downloading...`);
-            
             const update = await CapacitorUpdater.download({
               url: data.url,
               version: data.version,
@@ -69,7 +65,6 @@ function AppContent() {
             
             console.log('OTA: Download complete', update);
             showNotification('Update downloaded. Applying...', 'success');
-            // alert('OTA: Downloaded. Reloading...');
             
             // Set the new version and reload
             await CapacitorUpdater.set(update);
@@ -83,7 +78,6 @@ function AppContent() {
           }
         }
       } else {
-        alert('OTA: Not a native platform');
         console.log('OTA: Not a native platform, skipping update check');
       }
     };
