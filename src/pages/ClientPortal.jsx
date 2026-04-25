@@ -83,8 +83,9 @@ const ClientPortal = () => {
           <Typography variant="h3" fontWeight={600} sx={{ letterSpacing: '-0.04em', mb: 1, fontSize: { xs: '2rem', sm: '3rem' } }}>
             Welcome back, {client.name.split(' ')[0]}
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
+          <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.9rem', sm: '1.1rem' }, display: 'flex', alignItems: 'center', gap: 2 }}>
             Track your project progress, approve milestones, and manage billing.
+            <Chip label="OTA Works" size="small" color="primary" sx={{ height: 20, fontSize: '0.65rem', fontWeight: 700 }} />
           </Typography>
         </Box>
         <Stack direction="row" spacing={0.5} sx={{ bgcolor: 'action.hover', p: 0.5, borderRadius: 3, width: { xs: '100%', sm: 'auto' }, overflowX: 'auto' }}>
