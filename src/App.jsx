@@ -25,7 +25,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
 
-const APP_VERSION = '1.0.5'; // This should match the version in your native APK
+const APP_VERSION = '1.0.0'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
@@ -37,7 +37,9 @@ function AppContent() {
 
   React.useEffect(() => {
     const setupUpdater = async () => {
+      alert('OTA: checking if native...');
       if (Capacitor.isNativePlatform()) {
+        alert('OTA: is native! starting...');
         try {
           console.log('OTA: Native platform detected');
           // Tell CapacitorUpdater the app loaded successfully
@@ -81,6 +83,7 @@ function AppContent() {
           }
         }
       } else {
+        alert('OTA: Not a native platform');
         console.log('OTA: Not a native platform, skipping update check');
       }
     };
