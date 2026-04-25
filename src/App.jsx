@@ -25,7 +25,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
 
-const APP_VERSION = '1.0.4'; // This should match the version in your native APK
+const APP_VERSION = '1.0.5'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
@@ -39,35 +39,49 @@ function AppContent() {
     const setupUpdater = async () => {
       if (Capacitor.isNativePlatform()) {
         try {
+          console.log('OTA: Native platform detected');
           // Tell CapacitorUpdater the app loaded successfully
           await CapacitorUpdater.notifyAppReady();
           
           // Check for updates
+          console.log('OTA: Fetching version.json...');
           const response = await fetch('https://studio.indiecode.in/version.json');
+          if (!response.ok) throw new Error('Failed to fetch version.json');
+          
           const data = await response.json();
+          console.log('OTA: Server version:', data.version);
           
           const currentVersion = APP_VERSION;
+          console.log('OTA: Current version:', currentVersion);
           
           if (data.version !== currentVersion) {
-            console.log('New update found! Downloading version:', data.version);
-            showNotification(`Updating to v${data.version}...`, 'info');
+            console.log('OTA: Update found!');
+            showNotification(`New update v${data.version} available!`, 'info');
+            
+            // alert(`OTA: Found v${data.version}. Downloading...`);
             
             const update = await CapacitorUpdater.download({
               url: data.url,
               version: data.version,
             });
             
+            console.log('OTA: Download complete', update);
             showNotification('Update downloaded. Applying...', 'success');
+            // alert('OTA: Downloaded. Reloading...');
+            
             // Set the new version and reload
             await CapacitorUpdater.set(update);
+          } else {
+            console.log('OTA: Already on latest version');
           }
         } catch (error) {
-          console.error('Update check failed:', error);
-          // Only show error if it's not a network error (which might happen on airplane mode)
+          console.error('OTA: Error:', error);
           if (navigator.onLine) {
-            showNotification('Update check failed', 'error');
+            showNotification(`Update Error: ${error.message}`, 'error');
           }
         }
+      } else {
+        console.log('OTA: Not a native platform, skipping update check');
       }
     };
     
