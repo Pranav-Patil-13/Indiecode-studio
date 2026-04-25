@@ -25,10 +25,10 @@ const Navbar = ({ title, onDrawerToggle }) => {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'space-between',
-        bgcolor: '#f44336',
-        color: 'white',
+        bgcolor: (theme) => alpha(theme.palette.background.paper, 0.4),
+        backdropFilter: 'blur(12px)',
         borderBottom: '1px solid',
-        borderColor: 'rgba(0,0,0,0.1)',
+        borderColor: 'divider',
         position: 'sticky',
         top: 0,
         zIndex: 1100

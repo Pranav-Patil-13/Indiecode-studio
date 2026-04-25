@@ -159,8 +159,6 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
               {user?.user_metadata?.full_name || 'User'}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>Founder</Typography>
-            <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, display: 'block', mt: -0.5, fontSize: '0.65rem' }}>OTA Works</Typography>
-            <Typography variant="caption" sx={{ color: 'success.main', fontWeight: 600, display: 'block', mt: 0, fontSize: '0.6rem' }}>v1.0.7 Update Success 🎉</Typography>
           </Box>
         </Box>
         <IconButton size="small" sx={{ color: 'text.secondary' }} onClick={handleLogout}>
