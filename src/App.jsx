@@ -29,7 +29,7 @@ const APP_VERSION = '1.0.4'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
-  const { snackbar, closeNotification, themeMode, accentColor, user, loading, clients } = useApp();
+  const { snackbar, showNotification, closeNotification, themeMode, accentColor, user, loading, clients } = useApp();
   
   const theme = getTheme(themeMode, accentColor);
   
@@ -50,17 +50,23 @@ function AppContent() {
           
           if (data.version !== currentVersion) {
             console.log('New update found! Downloading version:', data.version);
+            showNotification(`Updating to v${data.version}...`, 'info');
             
             const update = await CapacitorUpdater.download({
               url: data.url,
               version: data.version,
             });
             
+            showNotification('Update downloaded. Applying...', 'success');
             // Set the new version and reload
             await CapacitorUpdater.set(update);
           }
         } catch (error) {
           console.error('Update check failed:', error);
+          // Only show error if it's not a network error (which might happen on airplane mode)
+          if (navigator.onLine) {
+            showNotification('Update check failed', 'error');
+          }
         }
       }
     };
