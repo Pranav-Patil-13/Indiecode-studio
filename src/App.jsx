@@ -56,10 +56,10 @@ function AppContent() {
           
           if (data.version !== currentVersion) {
             console.log('OTA: Update found!');
-            showNotification(`New update v${data.version} available!`, 'info');
+            showNotification(`Update v${data.version} available (Current: v${currentVersion}). Downloading...`, 'info');
             
             const update = await CapacitorUpdater.download({
-              url: data.url,
+              url: `${data.url}?t=${Date.now()}`,
               version: data.version,
             });
             
