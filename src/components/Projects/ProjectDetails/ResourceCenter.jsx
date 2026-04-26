@@ -32,7 +32,8 @@ const ResourceCenter = ({ project }) => {
       setUploading(true);
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${project.id}/${fileName}`;
+      const folderName = project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const filePath = `${folderName}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('resources')
