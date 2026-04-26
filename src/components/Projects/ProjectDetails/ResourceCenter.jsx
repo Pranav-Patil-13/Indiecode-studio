@@ -18,6 +18,7 @@ import {
 import { Plus, File, Link as LinkIcon, Download, Trash2, ExternalLink } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import { supabase } from '../../../lib/supabase';
+import { sendPushNotification } from '../../../utils/pushNotifications';
 
 const ResourceCenter = ({ project }) => {
   const { user, showNotification, updateProject } = useApp();
@@ -70,6 +71,20 @@ const ResourceCenter = ({ project }) => {
       const updatedResources = [...(project.resources || []), newResource];
       await updateProject(project.id, { resources: updatedResources });
       showNotification('File uploaded successfully', 'success');
+
+      // Trigger Push Notification to project stakeholders
+      // For now, we attempt to notify the client if this is an admin upload
+      if (user?.user_metadata?.role === 'admin' && project.client_id) {
+        // We'd need to find the user_id associated with the client_id
+        // This is a placeholder for the notification logic
+        console.log('Push: Notifying client about new resource:', file.name);
+        sendPushNotification(
+          project.client_id, // Assuming client_id matches auth.uid for simplicity in this example
+          'New Resource Shared',
+          `${user.user_metadata.full_name || 'Admin'} shared a new resource: ${file.name}`,
+          { projectId: project.id, resourceId: newResource.id }
+        );
+      }
     } catch (error) {
       console.error('Error uploading file:', error);
       showNotification('Error uploading file: ' + error.message, 'error');

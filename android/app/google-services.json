@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "788584958155",
+    "project_id": "indiecodestudio-685e3",
+    "storage_bucket": "indiecodestudio-685e3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788584958155:android:261314de11a02aeaa3334e",
+        "android_client_info": {
+          "package_name": "com.indiecode.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmy8Tz6DH_Pu90MDL8WEKIrxy68uyyN5o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

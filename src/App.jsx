@@ -24,6 +24,7 @@ import CommandPalette from './components/Modals/CommandPalette';
 import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
+import { initializePushNotifications } from './utils/pushNotifications';
 
 const APP_VERSION = '1.1.7'; // This should match the version in your native APK
 
@@ -83,6 +84,13 @@ function AppContent() {
     
     setupUpdater();
   }, []);
+
+  React.useEffect(() => {
+    if (user && Capacitor.isNativePlatform()) {
+      console.log('Initializing push notifications for user:', user.id);
+      initializePushNotifications(user.id);
+    }
+  }, [user]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

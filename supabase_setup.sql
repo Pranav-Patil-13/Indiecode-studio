@@ -72,3 +72,20 @@ DROP POLICY IF EXISTS "Allow all for authenticated users" ON public.projects;
 
 CREATE POLICY "Allow all for authenticated users" ON public.clients FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow all for authenticated users" ON public.projects FOR ALL USING (auth.role() = 'authenticated');
+
+-- 8. Push Notifications Support
+CREATE TABLE IF NOT EXISTS public.user_push_tokens (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    token TEXT NOT NULL,
+    device_info JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    UNIQUE(user_id, token)
+);
+
+ALTER TABLE public.user_push_tokens ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own tokens" 
+ON public.user_push_tokens 
+FOR ALL 
+USING (auth.uid() = user_id);
