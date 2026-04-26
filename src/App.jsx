@@ -25,7 +25,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
 
-const APP_VERSION = '1.1.3'; // This should match the version in your native APK
+const APP_VERSION = '1.1.4'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
@@ -105,7 +105,7 @@ function AppContent() {
       case '/portal': return 'Client Portal';
       default: 
         if (path.startsWith('/projects/')) return 'Project Command Center';
-        return 'IndieCode Studio v1.1.3';
+        return 'IndieCode Studio v1.1.4';
     }
   };
 
