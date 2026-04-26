@@ -25,7 +25,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
 
-const APP_VERSION = '1.1.0'; // This should match the version in your native APK
+const APP_VERSION = '1.1.1'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
