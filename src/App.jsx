@@ -25,7 +25,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
 
-const APP_VERSION = '1.1.6'; // This should match the version in your native APK
+const APP_VERSION = '1.1.7'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
@@ -59,12 +59,11 @@ function AppContent() {
             showNotification(`Update v${data.version} available (Current: v${currentVersion}). Downloading...`, 'info');
             
             const update = await CapacitorUpdater.download({
-              url: `${data.url}?t=${Date.now()}`,
+              url: data.url,
               version: data.version,
             });
             
             console.log('OTA: Download complete', update);
-            showNotification('Update downloaded. Applying...', 'success');
             
             // Set the new version and reload
             await CapacitorUpdater.set(update);
@@ -105,7 +104,7 @@ function AppContent() {
       case '/portal': return 'Client Portal';
       default: 
         if (path.startsWith('/projects/')) return 'Project Command Center';
-        return 'IndieCode Studio v1.1.6';
+        return 'IndieCode Studio v1.1.7';
     }
   };
 
