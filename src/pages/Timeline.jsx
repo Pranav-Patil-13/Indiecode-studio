@@ -88,29 +88,41 @@ const Timeline = () => {
         </Box>
       </Box>
 
-      <Paper sx={{ p: { xs: 1.5, sm: 4 }, overflowX: 'auto', border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'background.paper', borderRadius: 4 }}>
-        <Stack spacing={6} sx={{ minWidth: { xs: 700, sm: 800 } }}>
-          {projectsData.map((project) => (
-            <Box key={project.id} sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+      <Paper sx={{ p: 0, overflowX: 'auto', border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'background.paper', borderRadius: 4 }}>
+        <Stack spacing={0} sx={{ minWidth: { xs: 700, sm: 900 } }}>
+          {projectsData.map((project, pIdx) => (
+            <Box 
+              key={project.id} 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                py: 4,
+                px: { xs: 0, sm: 0 },
+                borderBottom: pIdx !== projectsData.length - 1 ? '1px solid' : 'none',
+                borderColor: 'divider',
+                '&:hover': { bgcolor: 'rgba(0,0,0,0.01)' }
+              }}
+            >
               <Box sx={{ 
-                width: { xs: 110, sm: 250 }, 
+                width: { xs: 120, sm: 260 }, 
+                pl: { xs: 2, sm: 4 },
                 pr: { xs: 2, sm: 4 }, 
                 flexShrink: 0,
                 position: 'sticky',
                 left: 0,
                 bgcolor: 'background.paper',
-                zIndex: 5,
-                borderRight: { xs: '1px solid', sm: 'none' },
+                zIndex: 10,
+                borderRight: '1px solid',
                 borderColor: 'divider',
-                boxShadow: { xs: '8px 0 12px -10px rgba(0,0,0,0.1)', sm: 'none' }
+                boxShadow: '4px 0 10px rgba(0,0,0,0.03)'
               }}>
                 <Typography 
                   variant="subtitle1" 
                   sx={{ 
-                    fontWeight: 600, 
+                    fontWeight: 650, 
                     color: 'text.primary', 
                     mb: 0.5, 
-                    fontSize: { xs: '0.75rem', sm: '1rem' },
+                    fontSize: { xs: '0.8rem', sm: '1rem' },
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis'
@@ -120,13 +132,14 @@ const Timeline = () => {
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: theme.palette.primary.main }} />
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.625rem', sm: '0.75rem' } }}>In Development</Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' }, fontWeight: 500 }}>In Development</Typography>
                 </Stack>
               </Box>
 
               <Box sx={{ 
                 flex: 1, 
-                ml: { xs: 2, sm: 0 },
+                ml: 0,
+                pr: 4,
                 height: 40, 
                 bgcolor: 'action.hover', 
                 borderRadius: 2, 
