@@ -191,6 +191,7 @@ export const generateInvoicePDF = async (invoice, client, project) => {
         dialogTitle: 'Save or Share Invoice',
       });
     } catch (error) {
+      alert(`PDF Error: ${error.message}\nStack: ${error.stack}`);
       console.error('Error generating or sharing native PDF:', error);
     }
   } else {
