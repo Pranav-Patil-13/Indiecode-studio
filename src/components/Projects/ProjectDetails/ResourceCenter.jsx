@@ -74,16 +74,25 @@ const ResourceCenter = ({ project }) => {
 
       // Trigger Push Notification to project stakeholders
       // For now, we attempt to notify the client if this is an admin upload
-      if (user?.user_metadata?.role === 'admin' && project.client_id) {
+      console.log('Push: Checking if we should notify client...');
+      const userRole = user?.user_metadata?.role || 'admin';
+      console.log('Push: Effective User Role:', userRole);
+      console.log('Push: Project Client ID:', project.client_id);
+
+      if (userRole === 'admin' && project.client_id) {
         const client = (clients || []).find(c => c.id === project.client_id);
+        console.log('Push: Found Client Object:', client ? 'Yes' : 'No');
+        
         if (client && client.email) {
-          console.log('Push: Notifying client about new resource:', file.name);
+          console.log('Push: Notifying client email:', client.email);
           sendPushNotification(
             client.email, // Using email for lookup now
             'New Resource Shared',
             `${user.user_metadata.full_name || 'Admin'} shared a new resource: ${file.name}`,
             { projectId: project.id, resourceId: newResource.id }
           );
+        } else {
+          console.log('Push: Client email missing or client not found in list.');
         }
       }
     } catch (error) {

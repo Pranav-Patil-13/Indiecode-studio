@@ -25,13 +25,16 @@ serve(async (req: Request) => {
     if (!serviceAccountKey) throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_KEY");
     const serviceAccount = JSON.parse(serviceAccountKey);
 
-    // 2. Get tokens for the target user (by email or user_id)
-    const { data: tokens, error: tokenError } = await supabase
-      .from("user_push_tokens")
-      .select("token")
-      .or(`user_id.eq.${targetUserId},email.eq.${targetUserId}`);
+    // 2. Get tokens for the target user (Detect if it's an email or a UUID)
+    let query = supabase.from("user_push_tokens").select("token");
+    
+    if (targetUserId.includes('@')) {
+      query = query.eq("email", targetUserId);
+    } else {
+      query = query.eq("user_id", targetUserId);
+    }
 
-    if (tokenError) throw tokenError;
+    const { data: tokens, error: tokenError } = await query;
     if (!tokens || tokens.length === 0) {
       return new Response(JSON.stringify({ success: false, message: "No tokens found" }), { 
         status: 200, 

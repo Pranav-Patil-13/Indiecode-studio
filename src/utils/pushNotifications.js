@@ -76,20 +76,23 @@ const saveTokenToDatabase = async (userId, email, token) => {
 
 export const sendPushNotification = async (targetUserId, title, body, data = {}) => {
   try {
-    // This calls a Supabase Edge Function that you'll need to deploy
-    // The Edge Function will use the Firebase Admin SDK to send the actual push
+    console.log('Push: Attempting to call Edge Function: send-push-notification');
+    console.log('Push: Target:', targetUserId);
+    console.log('Push: Title:', title);
+
     const { data: response, error } = await supabase.functions.invoke('send-push-notification', {
       body: { targetUserId, title, body, data }
     });
     
     if (error) {
-      console.warn('Push notification trigger failed (Function might not be deployed yet):', error);
+      console.warn('Push: Edge Function call failed:', error);
       return null;
     }
     
+    console.log('Push: Success response from Edge Function:', response);
     return response;
   } catch (err) {
-    console.error('Error triggering push notification:', err);
+    console.error('Push: Unexpected error triggering notification:', err);
     return null;
   }
 };
