@@ -18,6 +18,7 @@ import {
 import { Trash2, Plus, Download, Send, Receipt, X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { generateInvoicePDF } from '../../utils/pdfGenerator';
+import { sendPushNotification } from '../../utils/pushNotifications';
 
 const InvoiceModal = ({ open, onClose, project, initialItems = [] }) => {
   const theme = useTheme();
@@ -136,6 +137,17 @@ const InvoiceModal = ({ open, onClose, project, initialItems = [] }) => {
       };
       const client = clients.find(c => c.id === activeProject.client_id) || { name: 'Unknown Client' };
       generateInvoicePDF(invoiceDataForPDF, client, activeProject);
+
+      // Send push notification to the client
+      if (activeProject.client_id && client.email) {
+        sendPushNotification(
+          client.email,
+          'New Invoice Generated',
+          `Invoice #${invoiceNumber} for ₹${total.toLocaleString('en-IN')} has been generated.`,
+          { invoiceNumber, projectId: activeProject.id }
+        );
+      }
+
       onClose();
     } catch (error) {
       showNotification('Error saving invoice: ' + error.message, 'error');
