@@ -41,7 +41,7 @@ const Dashboard = () => {
       {!Capacitor.isNativePlatform() && (
         <Box
           component="a"
-          href="/indiecode-studio.apk"
+          href="https://drive.google.com/uc?export=download&id=1y5P-y1Jg6_vIT8MlGf2TMco-8Yh50AZC"
           download
           sx={{
             display: { xs: 'flex', md: 'none' },
