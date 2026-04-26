@@ -25,7 +25,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 
 import Auth from './pages/Auth';
 
-const APP_VERSION = '1.1.1'; // This should match the version in your native APK
+const APP_VERSION = '1.1.2'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
@@ -63,18 +63,15 @@ function AppContent() {
               version: data.version,
             });
             
-            alert(`OTA: Downloaded v${data.version}. Setting update...`);
             console.log('OTA: Download complete', update);
             showNotification('Update downloaded. Applying...', 'success');
             
             // Set the new version and reload
             await CapacitorUpdater.set(update);
-            alert('OTA: Set complete. App should reload now.');
           } else {
             console.log('OTA: Already on latest version');
           }
         } catch (error) {
-          alert(`OTA Error: ${error.message}`);
           console.error('OTA: Error:', error);
           if (navigator.onLine) {
             showNotification(`Update Error: ${error.message}`, 'error');
