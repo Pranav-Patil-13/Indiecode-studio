@@ -223,6 +223,7 @@ const ResourceCenter = ({ project }) => {
                     </Box>
                   </ListItemIcon>
                   <ListItemText 
+                    secondaryTypographyProps={{ component: 'div' }}
                     primary={
                       <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.2, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                         {resource.name}
