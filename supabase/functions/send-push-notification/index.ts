@@ -25,11 +25,11 @@ serve(async (req: Request) => {
     if (!serviceAccountKey) throw new Error("Missing FIREBASE_SERVICE_ACCOUNT_KEY");
     const serviceAccount = JSON.parse(serviceAccountKey);
 
-    // 2. Get tokens for the target user
+    // 2. Get tokens for the target user (by email or user_id)
     const { data: tokens, error: tokenError } = await supabase
       .from("user_push_tokens")
       .select("token")
-      .eq("user_id", targetUserId);
+      .or(`user_id.eq.${targetUserId},email.eq.${targetUserId}`);
 
     if (tokenError) throw tokenError;
     if (!tokens || tokens.length === 0) {

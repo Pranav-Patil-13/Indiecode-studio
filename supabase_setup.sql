@@ -77,6 +77,7 @@ CREATE POLICY "Allow all for authenticated users" ON public.projects FOR ALL USI
 CREATE TABLE IF NOT EXISTS public.user_push_tokens (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    email TEXT, -- Added for easier lookup
     token TEXT NOT NULL,
     device_info JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ DEFAULT now(),

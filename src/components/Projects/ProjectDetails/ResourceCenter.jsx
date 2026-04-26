@@ -21,7 +21,7 @@ import { supabase } from '../../../lib/supabase';
 import { sendPushNotification } from '../../../utils/pushNotifications';
 
 const ResourceCenter = ({ project }) => {
-  const { user, showNotification, updateProject } = useApp();
+  const { user, clients, showNotification, updateProject } = useApp();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -75,15 +75,16 @@ const ResourceCenter = ({ project }) => {
       // Trigger Push Notification to project stakeholders
       // For now, we attempt to notify the client if this is an admin upload
       if (user?.user_metadata?.role === 'admin' && project.client_id) {
-        // We'd need to find the user_id associated with the client_id
-        // This is a placeholder for the notification logic
-        console.log('Push: Notifying client about new resource:', file.name);
-        sendPushNotification(
-          project.client_id, // Assuming client_id matches auth.uid for simplicity in this example
-          'New Resource Shared',
-          `${user.user_metadata.full_name || 'Admin'} shared a new resource: ${file.name}`,
-          { projectId: project.id, resourceId: newResource.id }
-        );
+        const client = (clients || []).find(c => c.id === project.client_id);
+        if (client && client.email) {
+          console.log('Push: Notifying client about new resource:', file.name);
+          sendPushNotification(
+            client.email, // Using email for lookup now
+            'New Resource Shared',
+            `${user.user_metadata.full_name || 'Admin'} shared a new resource: ${file.name}`,
+            { projectId: project.id, resourceId: newResource.id }
+          );
+        }
       }
     } catch (error) {
       console.error('Error uploading file:', error);

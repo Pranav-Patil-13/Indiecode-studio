@@ -2,9 +2,9 @@ import { PushNotifications } from '@capacitor/push-notifications';
 import { supabase } from '../lib/supabase';
 import { Capacitor } from '@capacitor/core';
 
-export const initializePushNotifications = async (userId) => {
-  if (!Capacitor.isNativePlatform()) {
-    console.log('Push notifications not supported on web.');
+export const initializePushNotifications = async (user) => {
+  if (!user || !Capacitor.isNativePlatform()) {
+    console.log('Push notifications not supported on web or no user.');
     return;
   }
 
@@ -28,7 +28,7 @@ export const initializePushNotifications = async (userId) => {
   // On success, we should be able to receive notifications
   PushNotifications.addListener('registration', async (token) => {
     console.log('Push registration success, token: ' + token.value);
-    await saveTokenToDatabase(userId, token.value);
+    await saveTokenToDatabase(user.id, user.email, token.value);
   });
 
   // Some error occurred
@@ -47,13 +47,14 @@ export const initializePushNotifications = async (userId) => {
   });
 };
 
-const saveTokenToDatabase = async (userId, token) => {
+const saveTokenToDatabase = async (userId, email, token) => {
   try {
     const { error } = await supabase
       .from('user_push_tokens')
       .upsert(
         { 
-          user_id: userId, 
+          user_id: userId,
+          email: email,
           token: token,
           device_info: {
             platform: Capacitor.getPlatform(),

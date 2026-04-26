@@ -41,7 +41,7 @@ const Dashboard = () => {
       {!Capacitor.isNativePlatform() && (
         <Box
           component="a"
-          href="https://docs.google.com/uc?export=download&id=1_JLIKQwRhUYtWmlpXMCfM2TQ-FcoCJCX"
+          href="https://docs.google.com/uc?export=download&id=1Th6zZE_aXtGww2ctnu9e8pNoUzW4HlG8"
           download
           sx={{
             display: { xs: 'flex', md: 'none' },

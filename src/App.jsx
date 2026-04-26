@@ -88,7 +88,7 @@ function AppContent() {
   React.useEffect(() => {
     if (user && Capacitor.isNativePlatform()) {
       console.log('Initializing push notifications for user:', user.id);
-      initializePushNotifications(user.id);
+      initializePushNotifications(user);
     }
   }, [user]);
 
