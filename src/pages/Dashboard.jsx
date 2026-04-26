@@ -15,6 +15,7 @@ import ActivityFeed from '../components/Timeline/ActivityFeed';
 import RevenueChart from '../components/Dashboard/RevenueChart';
 import { DashboardSkeleton } from '../components/Feedback/LoadingSkeleton';
 import { useApp } from '../context/AppContext';
+import { Capacitor } from '@capacitor/core';
 
 const Dashboard = () => {
   const { clients, projects, invoices, loading } = useApp();
@@ -36,39 +37,41 @@ const Dashboard = () => {
 
   return (
     <Container maxWidth={false} sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, sm: 3, md: 5 } }}>
-      {/* Mobile App Download Banner */}
-      <Box
-        component="a"
-        href="/indiecode-studio.apk"
-        download
-        sx={{
-          display: { xs: 'flex', md: 'none' },
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          bgcolor: 'primary.main',
-          color: 'primary.contrastText',
-          p: 2,
-          borderRadius: 3,
-          mb: 3,
-          textDecoration: 'none',
-          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Smartphone size={24} />
-          <Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
-              IndieCode Studio v1.0.1 (Live Update Test)
-            </Typography>
-            <Typography variant="caption" sx={{ opacity: 0.9 }}>
-              This was updated via OTA!
-            </Typography>
+      {/* Mobile App Download Banner - Only shown on mobile browser, hidden on native app */}
+      {!Capacitor.isNativePlatform() && (
+        <Box
+          component="a"
+          href="/indiecode-studio.apk"
+          download
+          sx={{
+            display: { xs: 'flex', md: 'none' },
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
+            p: 2,
+            borderRadius: 3,
+            mb: 3,
+            textDecoration: 'none',
+            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Smartphone size={24} />
+            <Box>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+                Get IndieCode Studio for Android
+              </Typography>
+              <Typography variant="caption" sx={{ opacity: 0.9 }}>
+                Seamless project tracking, anytime, anywhere.
+              </Typography>
+            </Box>
+          </Box>
+          <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', p: 1, borderRadius: '50%', display: 'flex' }}>
+            <Download size={18} />
           </Box>
         </Box>
-        <Box sx={{ bgcolor: 'rgba(255,255,255,0.2)', p: 1, borderRadius: '50%', display: 'flex' }}>
-          <Download size={18} />
-        </Box>
-      </Box>
+      )}
 
       <Grid container spacing={{ xs: 2, md: 4 }}>
         {/* Stats Row */}

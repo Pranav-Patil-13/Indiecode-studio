@@ -41,9 +41,15 @@ const Navbar = ({ title, onDrawerToggle }) => {
             aria-label="open drawer"
             edge="start"
             onClick={onDrawerToggle}
-            sx={{ display: { lg: 'none' }, mr: 1 }}
+            sx={{ 
+              display: { lg: 'none' }, 
+              mr: 1,
+              bgcolor: 'action.hover',
+              p: 1.25,
+              borderRadius: 2.5
+            }}
           >
-            <Menu size={20} />
+            <Menu size={26} />
           </IconButton>
         )}
         <Typography variant="h6" sx={{ fontWeight: 500, display: { xs: 'none', sm: 'block' }, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>

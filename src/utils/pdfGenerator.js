@@ -1,7 +1,10 @@
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
-export const generateInvoicePDF = (invoice, client, project) => {
+export const generateInvoicePDF = async (invoice, client, project) => {
   const doc = new jsPDF();
   
   // Determine if this is a receipt based on status
@@ -169,5 +172,29 @@ export const generateInvoicePDF = (invoice, client, project) => {
   doc.text('Thank you for your business!', 105, pageHeight - 10, { align: 'center' });
   
   // --- Output ---
-  doc.save(`${project.name.replace(/\s+/g, '_')}_${documentPrefix}_${invoice.invoice_number || Date.now()}.pdf`);
+  const fileName = `${project.name.replace(/\s+/g, '_')}_${documentPrefix}_${invoice.invoice_number || Date.now()}.pdf`;
+
+  if (Capacitor.isNativePlatform()) {
+    try {
+      // For native platforms, save to filesystem and share
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
+      const savedFile = await Filesystem.writeFile({
+        path: fileName,
+        data: pdfBase64,
+        directory: Directory.Cache,
+      });
+
+      await Share.share({
+        title: fileName,
+        text: `Invoice from IndieCode Studio: ${project.name}`,
+        url: savedFile.uri,
+        dialogTitle: 'Save or Share Invoice',
+      });
+    } catch (error) {
+      console.error('Error generating or sharing native PDF:', error);
+    }
+  } else {
+    // For web browsers, use standard save
+    doc.save(fileName);
+  }
 };
