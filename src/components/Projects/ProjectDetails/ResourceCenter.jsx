@@ -15,7 +15,7 @@ import {
   Divider,
   CircularProgress
 } from '@mui/material';
-import { Plus, File, Link as LinkIcon, Download, MoreVertical, ExternalLink } from 'lucide-react';
+import { Plus, File, Link as LinkIcon, Download, Trash2, ExternalLink } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import { supabase } from '../../../lib/supabase';
 
@@ -49,6 +49,7 @@ const ResourceCenter = ({ project }) => {
         name: file.name,
         type: 'file',
         url: publicUrl,
+        storagePath: filePath,
         added_by: user?.user_metadata?.full_name || user?.email,
         created_at: new Date().toISOString(),
         size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`
@@ -62,6 +63,49 @@ const ResourceCenter = ({ project }) => {
       showNotification('Error uploading file: ' + error.message, 'error');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDeleteResource = async (resource) => {
+    if (user?.user_metadata?.role !== 'admin') {
+      showNotification('Only admins can delete resources', 'error');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete this resource?')) return;
+
+    try {
+      // 1. Delete from storage if it's a file
+      if (resource.type === 'file') {
+        let filePath = resource.storagePath;
+        
+        // Fallback: extract from URL if storagePath is missing
+        if (!filePath) {
+          const urlParts = resource.url.split('/resources/');
+          if (urlParts.length > 1) {
+            filePath = urlParts[1];
+          }
+        }
+
+        if (filePath) {
+          const { error: storageError } = await supabase.storage
+            .from('resources')
+            .remove([filePath]);
+          
+          if (storageError) {
+            console.warn('Storage deletion warning:', storageError);
+            // We continue even if storage delete fails (file might be gone already)
+          }
+        }
+      }
+
+      // 2. Update database
+      const updatedResources = project.resources.filter(r => r.id !== resource.id);
+      await updateProject(project.id, { resources: updatedResources });
+      showNotification('Resource deleted successfully', 'success');
+    } catch (error) {
+      console.error('Error deleting resource:', error);
+      showNotification('Error deleting resource: ' + error.message, 'error');
     }
   };
 
@@ -142,7 +186,7 @@ const ResourceCenter = ({ project }) => {
                   </ListItemIcon>
                   <ListItemText 
                     primary={
-                      <Typography variant="subtitle1" sx={{ fontWeight: 850, mb: 0.2, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.2, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                         {resource.name}
                       </Typography>
                     }
@@ -177,7 +221,19 @@ const ResourceCenter = ({ project }) => {
                     >
                       {resource.type === 'link' ? <ExternalLink size={18} /> : <Download size={18} />}
                     </IconButton>
-                    <IconButton size="small"><MoreVertical size={18} /></IconButton>
+                    {user?.user_metadata?.role === 'admin' && (
+                      <IconButton 
+                        size="small"
+                        onClick={() => handleDeleteResource(resource)}
+                        sx={{ 
+                          bgcolor: 'action.hover',
+                          color: 'error.main',
+                          '&:hover': { bgcolor: 'error.main', color: 'white' }
+                        }}
+                      >
+                        <Trash2 size={18} />
+                      </IconButton>
+                    )}
                   </Box>
                 </ListItem>
                 {index < project.resources.length - 1 && <Divider sx={{ mx: 4, opacity: 0.5 }} />}
