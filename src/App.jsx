@@ -43,9 +43,9 @@ function AppContent() {
           // Tell CapacitorUpdater the app loaded successfully
           await CapacitorUpdater.notifyAppReady();
           
-          // Check for updates
+          // Check for updates with cache busting
           console.log('OTA: Fetching version.json...');
-          const response = await fetch('https://studio.indiecode.in/version.json');
+          const response = await fetch(`https://studio.indiecode.in/version.json?t=${Date.now()}`);
           if (!response.ok) throw new Error('Failed to fetch version.json');
           
           const data = await response.json();
