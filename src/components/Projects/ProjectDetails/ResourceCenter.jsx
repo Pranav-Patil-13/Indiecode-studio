@@ -67,7 +67,8 @@ const ResourceCenter = ({ project }) => {
   };
 
   const handleDeleteResource = async (resource) => {
-    if (user?.user_metadata?.role !== 'admin') {
+    const role = user?.user_metadata?.role || 'admin';
+    if (role !== 'admin') {
       showNotification('Only admins can delete resources', 'error');
       return;
     }
@@ -221,7 +222,7 @@ const ResourceCenter = ({ project }) => {
                     >
                       {resource.type === 'link' ? <ExternalLink size={18} /> : <Download size={18} />}
                     </IconButton>
-                    {user?.user_metadata?.role === 'admin' && (
+                    {(user?.user_metadata?.role || 'admin') === 'admin' && (
                       <IconButton 
                         size="small"
                         onClick={() => handleDeleteResource(resource)}
