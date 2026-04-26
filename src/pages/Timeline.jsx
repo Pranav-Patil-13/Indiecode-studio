@@ -88,29 +88,52 @@ const Timeline = () => {
         </Box>
       </Box>
 
-      <Paper sx={{ p: { xs: 2, sm: 4 }, overflowX: 'auto', border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'background.paper' }}>
-        <Stack spacing={6} sx={{ minWidth: 800 }}>
+      <Paper sx={{ p: { xs: 1.5, sm: 4 }, overflowX: 'auto', border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'background.paper', borderRadius: 4 }}>
+        <Stack spacing={6} sx={{ minWidth: { xs: 700, sm: 800 } }}>
           {projectsData.map((project) => (
             <Box key={project.id} sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
               <Box sx={{ 
-                width: { xs: 150, sm: 250 }, 
-                pr: 4, 
+                width: { xs: 110, sm: 250 }, 
+                pr: { xs: 2, sm: 4 }, 
                 flexShrink: 0,
                 position: 'sticky',
                 left: 0,
                 bgcolor: 'background.paper',
-                zIndex: 5
+                zIndex: 5,
+                borderRight: { xs: '1px solid', sm: 'none' },
+                borderColor: 'divider',
+                boxShadow: { xs: '8px 0 12px -10px rgba(0,0,0,0.1)', sm: 'none' }
               }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.5, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+                <Typography 
+                  variant="subtitle1" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    color: 'text.primary', 
+                    mb: 0.5, 
+                    fontSize: { xs: '0.75rem', sm: '1rem' },
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
+                >
                   {project.name}
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: theme.palette.primary.main }} />
-                  <Typography variant="caption" color="text.secondary">In Development</Typography>
+                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: theme.palette.primary.main }} />
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.625rem', sm: '0.75rem' } }}>In Development</Typography>
                 </Stack>
               </Box>
 
-              <Box sx={{ flex: 1, height: 40, bgcolor: 'action.hover', borderRadius: 2, position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ 
+                flex: 1, 
+                ml: { xs: 2, sm: 0 },
+                height: 40, 
+                bgcolor: 'action.hover', 
+                borderRadius: 2, 
+                position: 'relative', 
+                display: 'flex', 
+                alignItems: 'center' 
+              }}>
                 {project.phases.map((phase, idx) => {
                   const startPos = phase.start !== undefined ? phase.start : project.phases.slice(0, idx).reduce((acc, p) => acc + (p.width || 0), 0);
                   
