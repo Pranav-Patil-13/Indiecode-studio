@@ -30,9 +30,19 @@ const ResourceCenter = ({ project }) => {
 
     try {
       setUploading(true);
-      const timestamp = Date.now();
-      const sanitizedFileName = file.name.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
-      const fileName = `${timestamp}_${sanitizedFileName}`;
+      let baseName = file.name.substring(0, file.name.lastIndexOf('.')).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const ext = file.name.split('.').pop();
+      let fileName = `${baseName}.${ext}`;
+      
+      // Check for duplicates and append (1), (2), etc.
+      let counter = 1;
+      const existingNames = (project.resources || []).map(r => r.name);
+      
+      while (existingNames.includes(fileName)) {
+        fileName = `${baseName}(${counter}).${ext}`;
+        counter++;
+      }
+
       const folderName = project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
       const filePath = `${folderName}/${fileName}`;
 
