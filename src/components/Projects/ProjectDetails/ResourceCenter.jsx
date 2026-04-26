@@ -30,8 +30,9 @@ const ResourceCenter = ({ project }) => {
 
     try {
       setUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const timestamp = Date.now();
+      const sanitizedFileName = file.name.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+      const fileName = `${timestamp}_${sanitizedFileName}`;
       const folderName = project.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
       const filePath = `${folderName}/${fileName}`;
 
