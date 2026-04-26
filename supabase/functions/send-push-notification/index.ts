@@ -43,12 +43,11 @@ serve(async (req: Request) => {
     }
 
     // 3. Get Google OAuth2 Access Token
-    const jwtClient = new JWT(
-      serviceAccount.client_email,
-      undefined,
-      serviceAccount.private_key,
-      ['https://www.googleapis.com/auth/firebase.messaging']
-    );
+    const jwtClient = new JWT({
+      email: serviceAccount.client_email,
+      key: serviceAccount.private_key,
+      scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
+    });
 
     const authResponse = await jwtClient.getAccessToken();
     const accessToken = authResponse.token;

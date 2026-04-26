@@ -76,23 +76,18 @@ const saveTokenToDatabase = async (userId, email, token) => {
 
 export const sendPushNotification = async (targetUserId, title, body, data = {}) => {
   try {
-    console.log('Push: Attempting to call Edge Function: send-push-notification');
-    console.log('Push: Target:', targetUserId);
-    console.log('Push: Title:', title);
-
     const { data: response, error } = await supabase.functions.invoke('send-push-notification', {
       body: { targetUserId, title, body, data }
     });
     
     if (error) {
-      console.warn('Push: Edge Function call failed:', error);
+      console.warn('Push notification failed:', error);
       return null;
     }
     
-    console.log('Push: Success response from Edge Function:', response);
     return response;
   } catch (err) {
-    console.error('Push: Unexpected error triggering notification:', err);
+    console.error('Error triggering push notification:', err);
     return null;
   }
 };
