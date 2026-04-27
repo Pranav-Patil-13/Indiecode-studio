@@ -197,7 +197,7 @@ const Sidebar = ({ mobileOpen, onDrawerToggle }) => {
       </Box>
       <Box sx={{ px: 2, pb: 1, textAlign: 'center' }}>
         <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem' }}>
-          IndieCode Studio v1.2.3
+          IndieCode Studio v1.2.4
         </Typography>
       </Box>
     </Box>

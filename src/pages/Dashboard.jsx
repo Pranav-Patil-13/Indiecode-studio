@@ -32,7 +32,7 @@ const Dashboard = ({ isClient = false }) => {
   const unreadNotifications = notifications.filter(n => n.unread).length;
   const unreadMessages = messages.filter(m => {
     const isMe = isClient ? m.sender === 'client' : m.sender === 'admin';
-    return !isMe && !m.unread === false; // Assuming unread property exists or will be added
+    return !isMe && m.unread === true;
   }).length;
   const studioUpdatesCount = unreadNotifications + unreadMessages;
 

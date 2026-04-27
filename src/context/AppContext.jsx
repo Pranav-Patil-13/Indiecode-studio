@@ -613,7 +613,7 @@ export const AppProvider = ({ children }) => {
       ...message, 
       id: 'temp-' + Date.now(), 
       user_id: user.id, 
-      unread: true, 
+      unread: false, 
       created_at: new Date().toISOString() 
     };
 
@@ -633,7 +633,7 @@ export const AppProvider = ({ children }) => {
       
       // Update the temporary message with the real one from DB
       // We keep our local unread/sender_name for the UI
-      setMessages(prev => prev.map(m => m.id === newMessage.id ? { ...data[0], unread: true, sender_name: message.sender_name } : m));
+      setMessages(prev => prev.map(m => m.id === newMessage.id ? { ...data[0], unread: false, sender_name: message.sender_name } : m));
       return data[0];
     } catch (error) {
       console.error('Error sending message:', error);
