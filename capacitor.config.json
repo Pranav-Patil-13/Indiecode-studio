@@ -1,5 +1,17 @@
 {
   "appId": "com.indiecode.app",
   "appName": "Indiecode Studio",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "allowNavigation": [
+      "studio.indiecode.in",
+      "lrrpyscbawoidofyfcbl.supabase.co"
+    ]
+  },
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "stats": false
+    }
+  }
 }

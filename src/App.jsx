@@ -26,7 +26,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 import Auth from './pages/Auth';
 import { initializePushNotifications } from './utils/pushNotifications';
 
-const APP_VERSION = '1.2.1'; // This should match the version in your native APK
+const APP_VERSION = '1.2.2'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
@@ -40,8 +40,12 @@ function AppContent() {
     const setupUpdater = async () => {
       if (Capacitor.isNativePlatform()) {
         try {
-          console.log('OTA: Native platform detected');
-          // CapacitorUpdater.notifyAppReady() is now called in main.jsx for earlier execution
+          console.log('OTA: Native platform detected, waiting for bridge...');
+          // Small delay to ensure bridge is ready
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          console.log('OTA: Notifying app ready...');
+          await CapacitorUpdater.notifyAppReady();
           
           // Check for updates with cache busting
           console.log('OTA: Fetching version.json...');
@@ -50,34 +54,25 @@ function AppContent() {
           
           const data = await response.json();
           console.log('OTA: Server version:', data.version);
+          console.log('OTA: Current hardcoded version:', APP_VERSION);
           
-          const currentVersion = APP_VERSION;
-          console.log('OTA: Current version:', currentVersion);
-          
-          if (data.version !== currentVersion) {
-            console.log('OTA: Update found!');
-            showNotification(`Update v${data.version} available (Current: v${currentVersion}). Downloading...`, 'info');
+          if (data.version !== APP_VERSION) {
+            console.log('OTA: Update found!', data.version);
+            showNotification(`Updating to v${data.version}...`, 'info');
             
             const update = await CapacitorUpdater.download({
               url: data.url,
               version: data.version,
             });
             
-            console.log('OTA: Download complete', update);
-            
-            // Set the new version and reload
+            console.log('OTA: Download complete, applying update...', update);
             await CapacitorUpdater.set(update);
           } else {
-            console.log('OTA: Already on latest version');
+            console.log('OTA: App is on latest version');
           }
         } catch (error) {
-          console.error('OTA: Error:', error);
-          if (navigator.onLine) {
-            showNotification(`Update Error: ${error.message}`, 'error');
-          }
+          console.error('OTA: Error in update flow:', error);
         }
-      } else {
-        console.log('OTA: Not a native platform, skipping update check');
       }
     };
     
@@ -111,7 +106,7 @@ function AppContent() {
       case '/portal': return 'Client Portal';
       default: 
         if (path.startsWith('/projects/')) return 'Project Command Center';
-        return 'IndieCode Studio v1.2.1';
+        return 'IndieCode Studio v1.2.2';
     }
   };
 
