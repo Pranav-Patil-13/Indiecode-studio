@@ -26,7 +26,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 import Auth from './pages/Auth';
 import { initializePushNotifications } from './utils/pushNotifications';
 
-const APP_VERSION = '1.1.9'; // This should match the version in your native APK
+const APP_VERSION = '1.2.0'; // This should match the version in your native APK
 
 function AppContent() {
   const location = useLocation();
@@ -112,7 +112,7 @@ function AppContent() {
       case '/portal': return 'Client Portal';
       default: 
         if (path.startsWith('/projects/')) return 'Project Command Center';
-        return 'IndieCode Studio v1.1.9';
+        return 'IndieCode Studio v1.2.0';
     }
   };
 
