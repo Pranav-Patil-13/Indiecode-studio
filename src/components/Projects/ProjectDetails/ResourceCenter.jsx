@@ -20,7 +20,7 @@ import { useApp } from '../../../context/AppContext';
 import { supabase } from '../../../lib/supabase';
 import { sendPushNotification } from '../../../utils/pushNotifications';
 
-const ResourceCenter = ({ project }) => {
+const ResourceCenter = ({ project, isClient = false }) => {
   const { user, clients, showNotification, updateProject } = useApp();
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
@@ -147,32 +147,34 @@ const ResourceCenter = ({ project }) => {
           <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Resource Hub</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Centralized project assets and documentation</Typography>
         </Box>
-        <Stack direction="row" spacing={2} sx={{ width: { xs: '100%', sm: 'auto' } }}>
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleFileUpload}
-          />
-          <Button 
-            variant="outlined" 
-            fullWidth
-            startIcon={<LinkIcon size={18} />}
-            sx={{ borderRadius: 2.5, fontWeight: 500 }}
-          >
-            Add Link
-          </Button>
-          <Button 
-            variant="contained" 
-            fullWidth
-            startIcon={uploading ? <CircularProgress size={18} color="inherit" /> : <Plus size={18} />}
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            sx={{ borderRadius: 2.5 }}
-          >
-            {uploading ? 'Uploading...' : 'Upload File'}
-          </Button>
-        </Stack>
+        {!isClient && (
+          <Stack direction="row" spacing={2} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileUpload}
+            />
+            <Button 
+              variant="outlined" 
+              fullWidth
+              startIcon={<LinkIcon size={18} />}
+              sx={{ borderRadius: 2.5, fontWeight: 500 }}
+            >
+              Add Link
+            </Button>
+            <Button 
+              variant="contained" 
+              fullWidth
+              startIcon={uploading ? <CircularProgress size={18} color="inherit" /> : <Plus size={18} />}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              sx={{ borderRadius: 2.5 }}
+            >
+              {uploading ? 'Uploading...' : 'Upload File'}
+            </Button>
+          </Stack>
+        )}
       </Box>
 
       <Paper 
@@ -218,7 +220,7 @@ const ResourceCenter = ({ project }) => {
                   <ListItemText 
                     slotProps={{ secondary: { component: 'div' } }}
                     primary={
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.2, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                      <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.2, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
                         {resource.name}
                       </Typography>
                     }
@@ -274,14 +276,16 @@ const ResourceCenter = ({ project }) => {
           ) : (
             <Box sx={{ py: 10, textAlign: 'center' }}>
               <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 500 }}>No resources available for this project.</Typography>
-              <Button 
-                variant="text" 
-                startIcon={<Plus size={18} />} 
-                onClick={() => fileInputRef.current?.click()}
-                sx={{ mt: 2, fontWeight: 500 }}
-              >
-                Add your first resource
-              </Button>
+              {!isClient && (
+                <Button 
+                  variant="text" 
+                  startIcon={<Plus size={18} />} 
+                  onClick={() => fileInputRef.current?.click()}
+                  sx={{ mt: 2, fontWeight: 500 }}
+                >
+                  Add your first resource
+                </Button>
+              )}
             </Box>
           )}
         </List>

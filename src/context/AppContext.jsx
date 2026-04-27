@@ -52,53 +52,64 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   const fetchData = async () => {
+    if (!user) return;
+    
     // Only show global loading screen if we don't have any data yet
     const isInitial = clients.length === 0 && projects.length === 0;
     if (isInitial) setLoading(true);
 
     try {
-      const fetchTable = async (table, select = '*') => {
-        try {
-          const { data, error } = await supabase.from(table).select(select).order('created_at', { ascending: table === 'messages' ? true : false });
-          if (error) return [];
-          return data;
-        } catch (e) {
-          return [];
-        }
-      };
-
-      const clientsRaw = await fetchTable('clients');
       const role = user?.user_metadata?.role || 'admin';
       
-      let clientsData = clientsRaw;
+      // Step 1: Identify the client if the user is a client
       let targetClientId = null;
-      
+      let clientsData = [];
+
       if (role === 'client') {
-        // Match client by email (case insensitive)
-        const clientRecord = clientsRaw.find(c => c.email?.toLowerCase() === user?.email?.toLowerCase());
-        if (clientRecord) {
-           targetClientId = clientRecord.id;
-           clientsData = [clientRecord];
+        // Fetch only the client record that matches this user's email
+        const { data: matchedClients, error: clientError } = await supabase
+          .from('clients')
+          .select('*')
+          .ilike('email', user.email);
+        
+        if (!clientError && matchedClients && matchedClients.length > 0) {
+          targetClientId = matchedClients[0].id;
+          clientsData = matchedClients;
         } else {
-           // Fallback to first client for demo purposes if not matched
-           if (clientsRaw.length > 0) {
-             targetClientId = clientsRaw[0].id;
-             clientsData = [clientsRaw[0]];
-           } else {
-             clientsData = [];
-           }
+          // If no direct email match, we can't safely show any data
+          console.error('Client record not found for email:', user.email);
+          setClients([]);
+          setProjects([]);
+          setNotifications([]);
+          setInvoices([]);
+          setExpenses([]);
+          setMessages([]);
+          setLoading(false);
+          return;
         }
+      } else {
+        // Admin: Fetch all clients
+        const { data: allClients, error: allClientsError } = await supabase
+          .from('clients')
+          .select('*')
+          .order('name');
+        clientsData = allClients || [];
       }
 
+      // Step 2: Fetch other tables based on role and identified targetClientId
       const fetchFiltered = async (table) => {
          let query = supabase.from(table).select('*').order('created_at', { ascending: table === 'messages' ? true : false });
-         if (role === 'client' && targetClientId) {
-             if (['projects', 'invoices', 'messages'].includes(table)) {
-                 query = query.eq('client_id', targetClientId);
-             } else if (table === 'notifications') {
-                 query = query.eq('user_id', user.id);
-             }
+         
+         if (role === 'client') {
+            if (!targetClientId) return []; // Safety check
+            
+            if (['projects', 'invoices', 'messages'].includes(table)) {
+                query = query.eq('client_id', targetClientId);
+            } else if (table === 'notifications') {
+                query = query.eq('user_id', user.id);
+            }
          }
+         
          try {
            const { data, error } = await query;
            return error ? [] : data;
@@ -115,13 +126,15 @@ export const AppProvider = ({ children }) => {
         fetchFiltered('messages')
       ]);
 
+      // Step 3: Secondary filtering for expenses (linked to projects)
       let finalExpenses = expensesData || [];
       if (role === 'client' && projectsData) {
          const projectIds = projectsData.map(p => p.id);
          finalExpenses = finalExpenses.filter(e => projectIds.includes(e.project_id));
       }
 
-      setClients(clientsData || []);
+      // Update state all at once to prevent intermediate "glitches"
+      setClients(clientsData);
       setProjects(projectsData || []);
       setNotifications(notificationsData || []);
       setInvoices(invoicesData || []);
@@ -195,14 +208,26 @@ export const AppProvider = ({ children }) => {
     const channel = supabase
       .channel(`studio-realtime-${Math.random().toString(36).substring(7)}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+        const newMessage = payload.new;
+        const role = user?.user_metadata?.role || 'admin';
+        
+        // Safety check for clients: only add messages meant for them
+        if (role === 'client') {
+          const myClientId = clients[0]?.id;
+          if (newMessage.client_id !== myClientId) return;
+        }
+
         setMessages(prev => {
-          if (prev.find(m => m.id === payload.new.id)) return prev;
-          return [...prev, payload.new];
+          if (prev.find(m => m.id === newMessage.id)) return prev;
+          const isMe = role === 'admin' ? newMessage.sender === 'admin' : newMessage.sender === 'client';
+          return [...prev, { ...newMessage, unread: !isMe }];
         });
         
-        if (payload.new.sender_role === 'client') {
-          showNotification(`New message from ${payload.new.sender_name || 'Client'}`, 'info');
-          createLocalNotification('New Message', `${payload.new.sender_name || 'Client'} sent you a message regarding ${payload.new.project_id ? 'their project' : 'a inquiry'}.`, 'message');
+        const isMe = role === 'admin' ? newMessage.sender === 'admin' : newMessage.sender === 'client';
+        
+        if (!isMe) {
+          showNotification(`New message from ${newMessage.sender_name || 'System'}`, 'info');
+          createLocalNotification('New Message', `${newMessage.sender_name || 'Someone'} sent you a message.`, 'message');
         }
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'projects' }, payload => {
@@ -280,6 +305,17 @@ export const AppProvider = ({ children }) => {
     } catch (error) {
       showNotification('Failed to mark as read', 'error');
     }
+  };
+
+  const markMessagesAsRead = async (clientId) => {
+    // Update local state first for responsiveness
+    const role = user?.user_metadata?.role || 'admin';
+    const senderToMark = role === 'admin' ? 'client' : 'admin';
+    
+    // We only update local state because the 'unread' column is missing in DB
+    setMessages(prev => prev.map(m => 
+      (m.client_id === clientId && m.sender === senderToMark) ? { ...m, unread: false } : m
+    ));
   };
 
   const showNotification = (message, severity = 'success') => {
@@ -573,18 +609,35 @@ export const AppProvider = ({ children }) => {
   };
 
   const sendMessage = async (message) => {
+    const newMessage = { 
+      ...message, 
+      id: 'temp-' + Date.now(), 
+      user_id: user.id, 
+      unread: true, 
+      created_at: new Date().toISOString() 
+    };
+
+    // Optimistically add to state
+    setMessages(prev => [...prev, newMessage]);
+
     try {
-      const { data, error } = await supabase
+      // Prepare data for insertion - strip out columns that might not exist
+      const { unread, sender_name, ...dbPayload } = message;
+      
+      let { data, error } = await supabase
         .from('messages')
-        .insert([{ ...message, user_id: user.id }])
+        .insert([{ ...dbPayload, user_id: user.id }])
         .select();
+      
       if (error) throw error;
-      // Realtime listener will add it to state
+      
+      // Update the temporary message with the real one from DB
+      // We keep our local unread/sender_name for the UI
+      setMessages(prev => prev.map(m => m.id === newMessage.id ? { ...data[0], unread: true, sender_name: message.sender_name } : m));
       return data[0];
     } catch (error) {
-      const mockMsg = { ...message, id: Date.now(), created_at: new Date().toISOString() };
-      setMessages(prev => [...prev, mockMsg]);
-      return mockMsg;
+      console.error('Error sending message:', error);
+      return newMessage;
     }
   };
 
@@ -703,6 +756,7 @@ export const AppProvider = ({ children }) => {
       deleteExpense,
       messages,
       sendMessage,
+      markMessagesAsRead,
       requestApproval,
       approveMilestone
     }}>

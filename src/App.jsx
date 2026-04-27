@@ -140,12 +140,10 @@ function AppContent() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-        {!isClient && (
-          <Sidebar 
-            mobileOpen={mobileOpen} 
-            onDrawerToggle={handleDrawerToggle} 
-          />
-        )}
+        <Sidebar 
+          mobileOpen={mobileOpen} 
+          onDrawerToggle={handleDrawerToggle} 
+        />
         <Box 
           component="main" 
           sx={{ 
@@ -165,32 +163,26 @@ function AppContent() {
           <Box 
             sx={{ 
               flexGrow: 1, 
-              p: { xs: 3, md: 5, lg: 6 }, 
+              p: { xs: 2, sm: 3, md: 4, lg: 5 }, 
               width: '100%',
               overflowY: 'auto',
               bgcolor: 'background.default'
             }}
           >
             <Routes>
-              {isClient ? (
-                <>
-                  <Route path="/portal" element={<ClientPortal />} />
-                  <Route path="*" element={<Navigate to="/portal" replace />} />
-                </>
-              ) : (
-                <>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/clients" element={<Clients />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/timeline" element={<Timeline />} />
-                  <Route path="/messages" element={<Messages />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/billing" element={<Billing />} />
-                  <Route path="/portal" element={<ClientPortal />} />
-                  <Route path="/projects/:id" element={<ProjectDetails />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </>
-              )}
+              {/* Common Routes for both Admin and Client */}
+              <Route path="/" element={isClient ? <Dashboard isClient /> : <Dashboard />} />
+              <Route path="/clients" element={isClient ? <Clients isClient /> : <Clients />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/timeline" element={<Timeline />} />
+              <Route path="/messages" element={<Messages isClientPortal={isClient} />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/billing" element={isClient ? <Billing isClient /> : <Billing />} />
+              <Route path="/projects/:id" element={<ProjectDetails isClient={isClient} />} />
+              
+              {/* Redirect any legacy portal links or unknowns */}
+              <Route path="/portal" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Box>
         </Box>

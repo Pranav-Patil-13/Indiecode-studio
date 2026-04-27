@@ -47,7 +47,7 @@ import confetti from 'canvas-confetti';
 import { ProjectDetailsSkeleton } from '../components/Feedback/LoadingSkeleton';
 import { useEffect } from 'react';
 
-const ProjectDetails = () => {
+const ProjectDetails = ({ isClient = false }) => {
   const theme = useTheme();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -152,18 +152,20 @@ const ProjectDetails = () => {
               <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: 'text.primary', fontSize: { xs: '2rem', sm: '3rem' } }}>
                 {project.name}
               </Typography>
-              <IconButton 
-                size="small" 
-                onClick={() => openEditProjectModal(project)}
-                sx={{ 
-                  bgcolor: 'background.paper', 
-                  border: '1px solid', 
-                  borderColor: 'divider',
-                  '&:hover': { bgcolor: 'action.hover', color: 'primary.main' }
-                }}
-              >
-                <Edit2 size={18} />
-              </IconButton>
+              {!isClient && (
+                <IconButton 
+                  size="small" 
+                  onClick={() => openEditProjectModal(project)}
+                  sx={{ 
+                    bgcolor: 'background.paper', 
+                    border: '1px solid', 
+                    borderColor: 'divider',
+                    '&:hover': { bgcolor: 'action.hover', color: 'primary.main' }
+                  }}
+                >
+                  <Edit2 size={18} />
+                </IconButton>
+              )}
             </Stack>
             
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '1rem', sm: '1.1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
@@ -364,11 +366,11 @@ const ProjectDetails = () => {
 
       {/* Tab Panels */}
       <Box sx={{ minHeight: 400 }}>
-        {activeTab === 0 && <KanbanBoard project={project} />}
-        {activeTab === 1 && <TeamSection project={project} />}
-        {activeTab === 2 && <ResourceCenter project={project} />}
-        {activeTab === 3 && <ProjectRoadmap project={project} />}
-        {activeTab === 4 && <ProjectFinancials project={project} />}
+        {activeTab === 0 && <KanbanBoard project={project} isClient={isClient} />}
+        {activeTab === 1 && <TeamSection project={project} isClient={isClient} />}
+        {activeTab === 2 && <ResourceCenter project={project} isClient={isClient} />}
+        {activeTab === 3 && <ProjectRoadmap project={project} isClientView={isClient} />}
+        {activeTab === 4 && <ProjectFinancials project={project} isClient={isClient} />}
       </Box>
     </Box>
   );

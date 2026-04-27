@@ -34,7 +34,7 @@ import ExpenseModal from '../../Modals/ExpenseModal';
 import ConfirmDialog from '../../Modals/ConfirmDialog';
 import { generateInvoicePDF } from '../../../utils/pdfGenerator';
 
-const ProjectFinancials = ({ project }) => {
+const ProjectFinancials = ({ project, isClient = false }) => {
   const { invoices, expenses, clients, deleteInvoice, deleteExpense, updateInvoice } = useApp();
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -71,26 +71,28 @@ const ProjectFinancials = ({ project }) => {
           <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Financial Performance</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Track budget, invoices, and profitability for this project.</Typography>
         </Box>
-        <Stack direction="row" spacing={2}>
-          <Button variant="outlined" startIcon={<TrendingDown size={18} />} onClick={() => setIsExpenseModalOpen(true)} sx={{ borderRadius: 2.5 }}>
-            Record Expense
-          </Button>
-          <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => setIsInvoiceModalOpen(true)} sx={{ borderRadius: 2.5 }}>
-            Create Invoice
-          </Button>
-        </Stack>
+        {!isClient && (
+          <Stack direction="row" spacing={2}>
+            <Button variant="outlined" startIcon={<TrendingDown size={18} />} onClick={() => setIsExpenseModalOpen(true)} sx={{ borderRadius: 2.5 }}>
+              Record Expense
+            </Button>
+            <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => setIsInvoiceModalOpen(true)} sx={{ borderRadius: 2.5 }}>
+              Create Invoice
+            </Button>
+          </Stack>
+        )}
       </Box>
 
       <Grid container spacing={3} sx={{ mb: 6 }}>
         <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3, height: '100%', borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
             <Stack spacing={1}>
-              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase' }}>Total Billed</Typography>
-              <Typography variant="h4" fontWeight={700}>₹{totalBilled.toLocaleString('en-IN')}</Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase' }}>Total Billed</Typography>
+              <Typography variant="h4" fontWeight={500}>₹{totalBilled.toLocaleString('en-IN')}</Typography>
               <Box sx={{ mt: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                  <Typography variant="caption" fontWeight={600}>Collection Status</Typography>
-                  <Typography variant="caption" fontWeight={600}>{Math.round((totalPaid / (totalBilled || 1)) * 100)}% Paid</Typography>
+                  <Typography variant="caption" fontWeight={500}>Collection Status</Typography>
+                  <Typography variant="caption" fontWeight={500}>{Math.round((totalPaid / (totalBilled || 1)) * 100)}% Paid</Typography>
                 </Box>
                 <LinearProgress 
                   variant="determinate" 
@@ -101,42 +103,46 @@ const ProjectFinancials = ({ project }) => {
             </Stack>
           </Paper>
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: 3, height: '100%', borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
-            <Stack spacing={1}>
-              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase' }}>Project Costs</Typography>
-              <Typography variant="h4" fontWeight={700} color="error.main">₹{totalCosts.toLocaleString('en-IN')}</Typography>
-              <Typography variant="caption" sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <AlertCircle size={14} /> Includes {projectExpenses.length} expense items
-              </Typography>
-            </Stack>
-          </Paper>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: 3, height: '100%', borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'primary.main', color: 'white' }}>
-            <Stack spacing={1}>
-              <Typography variant="caption" sx={{ opacity: 0.8, fontWeight: 600, textTransform: 'uppercase' }}>Net Profit</Typography>
-              <Typography variant="h4" fontWeight={700}>₹{projectProfit.toLocaleString('en-IN')}</Typography>
-              <Chip 
-                label={projectProfit >= 0 ? 'Profitable' : 'Loss'} 
-                size="small" 
-                sx={{ width: 'fit-content', mt: 2, bgcolor: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 600 }} 
-              />
-            </Stack>
-          </Paper>
-        </Grid>
+        {!isClient && (
+          <>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Paper sx={{ p: 3, height: '100%', borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
+                <Stack spacing={1}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase' }}>Project Costs</Typography>
+                  <Typography variant="h4" fontWeight={500} color="error.main">₹{totalCosts.toLocaleString('en-IN')}</Typography>
+                  <Typography variant="caption" sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <AlertCircle size={14} /> Includes {projectExpenses.length} expense items
+                  </Typography>
+                </Stack>
+              </Paper>
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Paper sx={{ p: 3, height: '100%', borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: 'none', bgcolor: 'primary.main', color: 'white' }}>
+                <Stack spacing={1}>
+                  <Typography variant="caption" sx={{ opacity: 0.8, fontWeight: 500, textTransform: 'uppercase' }}>Net Profit</Typography>
+                  <Typography variant="h4" fontWeight={500}>₹{projectProfit.toLocaleString('en-IN')}</Typography>
+                  <Chip 
+                    label={projectProfit >= 0 ? 'Profitable' : 'Loss'} 
+                    size="small" 
+                    sx={{ width: 'fit-content', mt: 2, bgcolor: 'rgba(255,255,255,0.2)', color: 'white', fontWeight: 500 }} 
+                  />
+                </Stack>
+              </Paper>
+            </Grid>
+          </>
+        )}
       </Grid>
 
-      <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>Invoices</Typography>
+      <Typography variant="subtitle1" fontWeight={500} sx={{ mb: 2 }}>Invoices</Typography>
       <TableContainer component={Paper} sx={{ borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: 'none', mb: 6 }}>
         <Table>
           <TableHead sx={{ bgcolor: 'action.hover' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, width: '15%' }}>Invoice #</TableCell>
-              <TableCell sx={{ fontWeight: 600, width: '25%' }}>Amount</TableCell>
-              <TableCell sx={{ fontWeight: 600, width: '15%' }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 600, width: '20%' }}>Due Date</TableCell>
-              <TableCell sx={{ fontWeight: 600, width: '25%', textAlign: 'right' }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: 500, width: '15%' }}>Invoice #</TableCell>
+              <TableCell sx={{ fontWeight: 500, width: '25%' }}>Amount</TableCell>
+              <TableCell sx={{ fontWeight: 500, width: '15%' }}>Status</TableCell>
+              <TableCell sx={{ fontWeight: 500, width: '20%' }}>Due Date</TableCell>
+              <TableCell sx={{ fontWeight: 500, width: '25%', textAlign: 'right' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -148,14 +154,14 @@ const ProjectFinancials = ({ project }) => {
               projectInvoices.map((inv) => (
                 <TableRow key={inv.id}>
                   <TableCell sx={{ fontWeight: 500 }}>{inv.invoice_number}</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>₹{inv.total_amount.toLocaleString('en-IN')}</TableCell>
+                  <TableCell sx={{ fontWeight: 500 }}>₹{inv.total_amount.toLocaleString('en-IN')}</TableCell>
                   <TableCell>
-                    <Chip label={inv.status} size="small" color={inv.status === 'Paid' ? 'success' : 'warning'} sx={{ fontWeight: 600, fontSize: '0.65rem' }} />
+                    <Chip label={inv.status} size="small" color={inv.status === 'Paid' ? 'success' : 'warning'} sx={{ fontWeight: 500, fontSize: '0.65rem' }} />
                   </TableCell>
                   <TableCell>{inv.due_date || 'N/A'}</TableCell>
                   <TableCell sx={{ textAlign: 'right' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5, mr: -1 }}>
-                      {inv.status !== 'Paid' && (
+                      {!isClient && inv.status !== 'Paid' && (
                         <IconButton size="small" onClick={() => handleMarkAsPaid(inv.id)} title="Mark as Paid" sx={{ color: 'success.main' }}>
                           <CheckCircle size={18} />
                         </IconButton>
@@ -163,14 +169,16 @@ const ProjectFinancials = ({ project }) => {
                       <IconButton size="small" onClick={() => handleDownloadInvoice(inv)} title="Download Invoice">
                         <Download size={18} />
                       </IconButton>
-                      <IconButton 
-                        size="small" 
-                        onClick={() => setInvoiceToDelete(inv)} 
-                        title="Delete Invoice"
-                        sx={{ color: 'error.main' }}
-                      >
-                        <Trash2 size={18} />
-                      </IconButton>
+                      {!isClient && (
+                        <IconButton 
+                          size="small" 
+                          onClick={() => setInvoiceToDelete(inv)} 
+                          title="Delete Invoice"
+                          sx={{ color: 'error.main' }}
+                        >
+                          <Trash2 size={18} />
+                        </IconButton>
+                      )}
                     </Box>
                   </TableCell>
                 </TableRow>

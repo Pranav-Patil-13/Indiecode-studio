@@ -119,7 +119,7 @@ const Timeline = () => {
                 <Typography 
                   variant="subtitle1" 
                   sx={{ 
-                    fontWeight: 650, 
+                    fontWeight: 500, 
                     color: 'text.primary', 
                     mb: 0.5, 
                     fontSize: { xs: '0.8rem', sm: '1rem' },
@@ -178,7 +178,7 @@ const Timeline = () => {
                             variant="caption" 
                             sx={{ 
                               color: phase.status === 'pending' ? 'text.secondary' : 'white', 
-                              fontWeight: 600, 
+                              fontWeight: 500, 
                               fontSize: '0.625rem', 
                               whiteSpace: 'nowrap', 
                               overflow: 'hidden',

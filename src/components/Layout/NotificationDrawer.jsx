@@ -90,12 +90,12 @@ const NotificationDrawer = () => {
                   <ListItemText 
                     primary={
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>{notif.title}</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 500 }}>{notif.time}</Typography>
+                        <Typography variant="subtitle2" component="div" sx={{ fontWeight: 500 }}>{notif.title}</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 500 }} component="div">{notif.time}</Typography>
                       </Box>
                     }
                     secondary={
-                      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, lineHeight: 1.4 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, lineHeight: 1.4 }} component="div">
                         {notif.description}
                       </Typography>
                     }

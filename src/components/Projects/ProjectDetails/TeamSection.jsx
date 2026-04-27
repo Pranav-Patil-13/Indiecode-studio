@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Paper, Typography, Stack, Avatar, Button, IconButton, Grid, useTheme } from '@mui/material';
 import { Plus, Mail, MoreHorizontal, Shield, User } from 'lucide-react';
 
-const TeamSection = ({ project }) => {
+const TeamSection = ({ project, isClient = false }) => {
   const theme = useTheme();
   return (
     <Box>
@@ -11,13 +11,15 @@ const TeamSection = ({ project }) => {
           <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Team Collaboration</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Manage access and roles for this project</Typography>
         </Box>
-        <Button 
-          variant="contained" 
-          startIcon={<Plus size={18} />}
-          sx={{ borderRadius: 2.5, width: { xs: '100%', sm: 'auto' } }}
-        >
-          Invite Member
-        </Button>
+        {!isClient && (
+          <Button 
+            variant="contained" 
+            startIcon={<Plus size={18} />}
+            sx={{ borderRadius: 2.5, width: { xs: '100%', sm: 'auto' } }}
+          >
+            Invite Member
+          </Button>
+        )}
       </Box>
 
       <Grid container spacing={3}>
@@ -53,10 +55,10 @@ const TeamSection = ({ project }) => {
                 >
                   {member.avatar}
                 </Avatar>
-                <IconButton size="small" sx={{ height: 32, width: 32 }}><MoreHorizontal size={20} /></IconButton>
+                {!isClient && <IconButton size="small" sx={{ height: 32, width: 32 }}><MoreHorizontal size={20} /></IconButton>}
               </Box>
               
-              <Typography variant="h6" sx={{ fontWeight: 850, mb: 0.5, letterSpacing: '-0.01em' }}>
+              <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.5, letterSpacing: '-0.01em' }}>
                 {member.name}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>

@@ -19,7 +19,9 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Grid,
+  Divider
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -28,9 +30,9 @@ import { useApp } from '../context/AppContext';
 import AddClientModal from '../components/Modals/AddClientModal';
 import InvoiceModal from '../components/Modals/InvoiceModal';
 import ConfirmDialog from '../components/Modals/ConfirmDialog';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
-const Clients = () => {
+const Clients = ({ isClient = false }) => {
   const navigate = useNavigate();
   const { clients, projects, invoices, showNotification, deleteClient } = useApp();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,6 +43,26 @@ const Clients = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  // For Client view, "Team" means everyone working on their projects
+  const teamMembers = useMemo(() => {
+    if (!isClient) return [];
+    const membersMap = new Map();
+    projects.forEach(project => {
+      if (Array.isArray(project.team)) {
+        project.team.forEach(member => {
+          if (member && (member.id || member.name)) {
+            membersMap.set(member.id || member.name, member);
+          }
+        });
+      }
+    });
+    // Add a default "Project Manager" (the admin)
+    if (!membersMap.has('admin')) {
+      membersMap.set('admin', { name: 'Pranav Patil', role: 'Founder & Lead Dev', avatar: 'PP', email: 'hello@indiecode.in' });
+    }
+    return Array.from(membersMap.values());
+  }, [isClient, projects]);
 
   const handleOpenInvoiceModal = () => {
     const clientProject = projects.find(p => p.client_id === selectedClient.id);
@@ -79,10 +101,64 @@ const Clients = () => {
   };
 
   const filteredClients = clients.filter(client => 
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.status.toLowerCase().includes(searchTerm.toLowerCase())
+    (client.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (client.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (client.status || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const filteredTeam = teamMembers.filter(member => 
+    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (member.role || '').toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (isClient) {
+    return (
+      <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, sm: 3, md: 4 } }}>
+        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="h4" fontWeight={500} gutterBottom>Your Studio Team</Typography>
+            <Typography variant="body1" color="text.secondary">The specialists dedicated to bringing your projects to life.</Typography>
+          </Box>
+          <TextField 
+            placeholder="Search team members..."
+            size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={18} color="#6C757D" />
+                  </InputAdornment>
+                ),
+                sx: { bgcolor: 'background.paper', borderRadius: 2.5, minWidth: 250 }
+              }
+            }}
+          />
+        </Box>
+
+        <Grid container spacing={3}>
+          {filteredTeam.map((member, idx) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={idx}>
+              <Paper sx={{ p: 3, borderRadius: 4, textAlign: 'center', border: '1px solid', borderColor: 'divider', height: '100%' }}>
+                <Avatar 
+                  sx={{ width: 64, height: 64, mx: 'auto', mb: 2, bgcolor: 'primary.main', fontSize: '1.5rem', fontWeight: 500 }}
+                >
+                  {member.avatar || (member.name ? member.name[0] : '?')}
+                </Avatar>
+                <Typography variant="h6" fontWeight={500}>{member.name}</Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>{member.role || 'Team Specialist'}</Typography>
+                <Divider sx={{ my: 2, opacity: 0.5 }} />
+                <Button variant="outlined" size="small" fullWidth sx={{ borderRadius: 2 }} onClick={() => navigate('/messages')}>
+                  Message
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, sm: 3, md: 4 } }}>
@@ -302,5 +378,4 @@ const Clients = () => {
     </Container>
   );
 };
-
 export default Clients;

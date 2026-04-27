@@ -134,7 +134,7 @@ const RevenueChart = () => {
             sx={{ 
               borderRadius: 2, 
               textTransform: 'none', 
-              fontWeight: 600,
+              fontWeight: 500,
               px: 2,
               color: timeRange === range.value ? 'white' : 'text.secondary',
               bgcolor: timeRange === range.value ? 'primary.main' : 'transparent',

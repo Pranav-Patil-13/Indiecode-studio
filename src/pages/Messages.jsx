@@ -88,11 +88,20 @@ const INITIAL_MESSAGES = {
 
 const Messages = ({ isClientPortal = false }) => {
   const theme = useTheme();
-  const { clients, messages: allMessages, sendMessage, user } = useApp();
+  const { clients, messages: allMessages, sendMessage, markMessagesAsRead, user } = useApp();
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedContact, setSelectedContact] = useState(null);
+
+  useEffect(() => {
+    if (selectedContact) {
+      const clientId = isClientPortal ? clients[0]?.id : selectedContact.id;
+      if (clientId) {
+        markMessagesAsRead(clientId);
+      }
+    }
+  }, [selectedContact, allMessages.length, isClientPortal, clients]);
 
   // For client portal, the only "contact" is the Studio
   const studioContact = {
@@ -106,12 +115,16 @@ const Messages = ({ isClientPortal = false }) => {
 
   // Use clients as contacts for Studio view
   const contacts = useMemo(() => {
-    if (isClientPortal) return [studioContact];
+    if (isClientPortal) {
+      const unreadCount = allMessages.filter(m => m.sender === 'admin' && m.unread === true).length;
+      return [{ ...studioContact, unread: unreadCount }];
+    }
     return clients.map(c => ({
       id: c.id,
       name: c.name,
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random`,
       status: 'online',
+      unread: allMessages.filter(m => m.client_id === c.id && m.sender === 'client' && m.unread === true).length,
       lastMessage: allMessages.filter(m => m.client_id === c.id).slice(-1)[0]?.text || 'No messages yet',
       time: allMessages.filter(m => m.client_id === c.id).slice(-1)[0]?.created_at ? new Date(allMessages.filter(m => m.client_id === c.id).slice(-1)[0].created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
     }));
@@ -129,23 +142,27 @@ const Messages = ({ isClientPortal = false }) => {
 
   const currentMessages = useMemo(() => {
     if (!selectedContact) return [];
-    // If client, we filter messages where client_id matches the LOGGED IN client
-    // For demo, we'll assume first client for now or just show all for the studio contact
+    // If client, we filter messages in the context which are already filtered by client_id in AppContext
     if (isClientPortal) {
-      const clientId = clients[0]?.id; // Demo assumption
-      return allMessages.filter(m => m.client_id === clientId);
+      return allMessages;
     }
     return allMessages.filter(m => m.client_id === selectedContact.id);
-  }, [allMessages, selectedContact, isClientPortal, clients]);
+  }, [allMessages, selectedContact, isClientPortal]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || !selectedContact) return;
     
     const clientId = isClientPortal ? clients[0]?.id : selectedContact.id;
+    if (!clientId && isClientPortal) {
+      console.error("Could not find client ID for message");
+      return;
+    }
+
     const newMessage = {
       text: inputValue,
       client_id: clientId,
-      sender: isClientPortal ? 'them' : 'me', // 'them' is the client from studio perspective, 'me' is studio
+      sender: isClientPortal ? 'client' : 'admin', 
+      sender_name: isClientPortal ? (user?.user_metadata?.full_name || 'Client') : 'IndieCode Studio',
       created_at: new Date().toISOString()
     };
 
@@ -159,7 +176,7 @@ const Messages = ({ isClientPortal = false }) => {
   };
 
   if (!selectedContact && contacts.length > 0) return null;
-  if (contacts.length === 0) return <Box p={10} textAlign="center">No clients to message.</Box>;
+  if (contacts.length === 0) return <Box p={10} sx={{ textAlign: 'center' }}>No clients to message.</Box>;
 
   return (
     <Box sx={{ 
@@ -241,8 +258,8 @@ const Messages = ({ isClientPortal = false }) => {
                   <ListItemText 
                     primary={
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>{contact.name}</Typography>
-                        <Typography variant="caption" color="text.disabled">{contact.time}</Typography>
+                        <Typography variant="subtitle2" component="div" sx={{ fontWeight: 500 }}>{contact.name}</Typography>
+                        <Typography variant="caption" color="text.disabled" component="div">{contact.time}</Typography>
                       </Box>
                     }
                     secondary={
@@ -250,6 +267,7 @@ const Messages = ({ isClientPortal = false }) => {
                         <Typography 
                           variant="body2" 
                           color="text.secondary" 
+                          component="div"
                           sx={{ 
                             overflow: 'hidden', 
                             textOverflow: 'ellipsis', 
@@ -263,11 +281,23 @@ const Messages = ({ isClientPortal = false }) => {
                           <Badge 
                             badgeContent={contact.unread} 
                             color="primary" 
-                            sx={{ '& .MuiBadge-badge': { fontSize: 10, height: 18, minWidth: 18 } }} 
+                            sx={{ 
+                              '& .MuiBadge-badge': { 
+                                fontSize: '0.65rem', 
+                                height: 18, 
+                                minWidth: 18,
+                                position: 'static',
+                                transform: 'none'
+                              } 
+                            }} 
                           />
                         )}
                       </Box>
                     }
+                    slotProps={{
+                      primary: { component: 'div' },
+                      secondary: { component: 'div' }
+                    }}
                   />
                 </ListItemButton>
               </ListItem>
@@ -287,16 +317,18 @@ const Messages = ({ isClientPortal = false }) => {
       }}>
         {/* Chat Header */}
         <Box sx={{ 
-          p: 2, 
-          px: 3, 
+          p: { xs: 2, sm: 3 }, 
+          px: 4, 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between', 
           bgcolor: 'background.paper',
           borderBottom: '1px solid',
-          borderColor: 'divider'
+          borderColor: 'divider',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.02)',
+          zIndex: 10
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
             {/* Back button for mobile */}
             {!isClientPortal && (
               <IconButton 
@@ -306,13 +338,27 @@ const Messages = ({ isClientPortal = false }) => {
                 <ChevronLeft size={20} />
               </IconButton>
             )}
-            <Avatar src={selectedContact.avatar} sx={{ width: 40, height: 40 }} />
+            <Badge
+              overlap="circle"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              variant="dot"
+              sx={{ 
+                '& .MuiBadge-badge': { 
+                  bgcolor: selectedContact.status === 'online' ? '#4CAF50' : '#ADB5BD',
+                  border: '2px solid white',
+                  width: 12,
+                  height: 12,
+                  borderRadius: '50%'
+                } 
+              }}
+            >
+              <Avatar src={selectedContact.avatar} sx={{ width: 48, height: 48, border: '2px solid', borderColor: 'primary.main' }} />
+            </Badge>
             <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: 500, lineHeight: 1.2 }}>{selectedContact.name}</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Circle size={8} fill={selectedContact.status === 'online' ? '#4CAF50' : '#ADB5BD'} color="transparent" />
-                <Typography variant="caption" color="text.secondary">
-                  {selectedContact.status === 'online' ? 'Active now' : 'Offline'}
+              <Typography variant="h6" sx={{ fontWeight: 500, lineHeight: 1.2, letterSpacing: '-0.01em' }}>{selectedContact.name}</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: selectedContact.status === 'online' ? 'success.main' : 'text.disabled', textTransform: 'uppercase', letterSpacing: 0.5, fontSize: '0.65rem' }}>
+                  {selectedContact.status === 'online' ? 'Online' : 'Offline'}
                 </Typography>
               </Box>
             </Box>
@@ -333,7 +379,7 @@ const Messages = ({ isClientPortal = false }) => {
         {/* Messages Area */}
         <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
           {currentMessages.map((msg, index) => {
-            const isMe = isClientPortal ? msg.sender === 'them' : msg.sender === 'me';
+            const isMe = isClientPortal ? msg.sender === 'client' : msg.sender === 'admin';
             return (
               <Box 
                 key={msg.id} 
@@ -377,7 +423,7 @@ const Messages = ({ isClientPortal = false }) => {
                   {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Typography>
                 {isMe && (
-                  msg.status === 'read' ? <CheckCheck size={14} color="#4CAF50" /> : <Check size={14} color="#ADB5BD" />
+                  msg.unread === false ? <CheckCheck size={14} color="#4CAF50" /> : <Check size={14} color="#ADB5BD" />
                 )}
               </Box>
             </Box>

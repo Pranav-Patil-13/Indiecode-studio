@@ -6,7 +6,7 @@ import { useApp } from '../../../context/AppContext';
 import { useState } from 'react';
 import QuickPromptModal from '../../Modals/QuickPromptModal';
 
-const KanbanColumn = ({ title, tasks, color, onAddTask, project }) => {
+const KanbanColumn = ({ title, tasks, color, onAddTask, project, isClient = false }) => {
   const theme = useTheme();
   return (
   <Box 
@@ -43,13 +43,15 @@ const KanbanColumn = ({ title, tasks, color, onAddTask, project }) => {
           {tasks.length}
         </Typography>
       </Stack>
-      <IconButton 
-        size="small" 
-        onClick={() => onAddTask(title)}
-        sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', '&:hover': { bgcolor: 'background.paper', color: 'primary.main' } }}
-      >
-        <Plus size={18} />
-      </IconButton>
+      {!isClient && (
+        <IconButton 
+          size="small" 
+          onClick={() => onAddTask(title)}
+          sx={{ bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', '&:hover': { bgcolor: 'background.paper', color: 'primary.main' } }}
+        >
+          <Plus size={18} />
+        </IconButton>
+      )}
     </Box>
 
     <Stack spacing={2}>
@@ -97,7 +99,7 @@ const KanbanColumn = ({ title, tasks, color, onAddTask, project }) => {
               </IconButton>
             </Box>
             
-            <Typography variant="subtitle2" sx={{ fontWeight: 750, mb: 2, lineHeight: 1.5, color: 'text.primary' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 2, lineHeight: 1.5, color: 'text.primary' }}>
               {task.title}
             </Typography>
 
@@ -137,7 +139,7 @@ const KanbanColumn = ({ title, tasks, color, onAddTask, project }) => {
   );
 };
 
-const KanbanBoard = ({ project }) => {
+const KanbanBoard = ({ project, isClient = false }) => {
   const { addProjectTask, addProjectSection } = useApp();
   const [promptConfig, setPromptConfig] = useState({ open: false, title: '', label: '', placeholder: '', onConfirm: () => {} });
   const sections = project.sections || ['To Do', 'In Progress', 'Done'];
@@ -193,36 +195,39 @@ const KanbanBoard = ({ project }) => {
           {...column} 
           onAddTask={handleAddTask}
           project={project}
+          isClient={isClient}
         />
       ))}
       
       {/* Add Column Button */}
-      <Box 
-        onClick={handleAddSection}
-        sx={{ 
-          minWidth: 320, 
-          height: 100, 
-          border: '2px dashed', 
-          borderColor: 'divider',
-          borderRadius: 4,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          color: 'text.disabled',
-          transition: 'all 0.2s ease',
-          '&:hover': {
-            bgcolor: 'action.hover',
-            borderColor: 'primary.main',
-            color: 'primary.main'
-          }
-        }}
-      >
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-          <Plus size={20} />
-          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>Add Section</Typography>
-        </Stack>
-      </Box>
+      {!isClient && (
+        <Box 
+          onClick={handleAddSection}
+          sx={{ 
+            minWidth: 320, 
+            height: 100, 
+            border: '2px dashed', 
+            borderColor: 'divider',
+            borderRadius: 4,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: 'text.disabled',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              bgcolor: 'action.hover',
+              borderColor: 'primary.main',
+              color: 'primary.main'
+            }
+          }}
+        >
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+            <Plus size={20} />
+            <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>Add Section</Typography>
+          </Stack>
+        </Box>
+      )}
 
       <QuickPromptModal 
         open={promptConfig.open}

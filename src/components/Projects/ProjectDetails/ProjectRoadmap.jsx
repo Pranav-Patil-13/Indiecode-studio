@@ -13,7 +13,6 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
     <Box sx={{ display: 'flex', gap: { xs: 2, sm: 4 } }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Box 
-          onClick={onToggle}
           sx={{ 
             p: 0.8, 
             borderRadius: '50%', 
@@ -21,16 +20,16 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
             color: (status === 'Done' || status === 'In Progress') ? color : 'text.disabled',
             border: '2px solid',
             borderColor: 'background.paper',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.05)',
+            boxShadow: (status === 'In Progress') ? `0 0 20px ${color}30` : '0 4px 10px rgba(0,0,0,0.05)',
             zIndex: 1,
-            cursor: 'pointer',
+            cursor: isClientView ? 'default' : 'pointer',
             transition: 'all 0.2s ease',
-            '&:hover': { transform: 'scale(1.1)' }
+            '&:hover': { transform: isClientView ? 'none' : 'scale(1.1)' }
           }}
         >
           {status === 'Done' ? <CheckCircle2 size={24} /> : <Circle size={24} fill={status === 'In Progress' ? color : 'white'} />}
         </Box>
-        {!isLast && <Box sx={{ width: 3, flexGrow: 1, bgcolor: 'divider', my: 1, borderRadius: 1.5 }} />}
+        {!isLast && <Box sx={{ width: 3, flexGrow: 1, bgcolor: status === 'Done' ? color : 'divider', my: 1, borderRadius: 1.5, opacity: status === 'Done' ? 0.5 : 1 }} />}
       </Box>
       <Box sx={{ pb: isLast ? 0 : 6, flexGrow: 1 }}>
         <Paper 
@@ -48,10 +47,10 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
             overflow: 'hidden',
             opacity: 1,
             borderStyle: status === 'Upcoming' ? 'dashed' : 'solid',
-            cursor: 'grab',
-            '&:active': { cursor: 'grabbing' },
+            cursor: isClientView ? 'default' : 'grab',
+            '&:active': { cursor: isClientView ? 'default' : 'grabbing' },
             '&:hover': {
-              transform: { md: 'translateX(8px)', xs: 'none' },
+              transform: isClientView ? 'none' : { md: 'translateX(8px)', xs: 'none' },
               boxShadow: status === 'In Progress' ? `0 15px 40px ${color}30` : '0 15px 35px rgba(0,0,0,0.06)',
               '& .action-btns': { opacity: 1 }
             }
@@ -62,7 +61,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
               <Typography 
                 variant="subtitle1" 
                 sx={{ 
-                  fontWeight: 600, 
+                  fontWeight: 500, 
                   mb: 1, 
                   fontSize: { xs: '0.9rem', sm: '1rem' },
                   color: status === 'Done' ? 'text.secondary' : 'text.primary',
@@ -85,7 +84,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
                   sx={{ 
                     height: 20, 
                     fontSize: '0.6rem', 
-                    fontWeight: 600, 
+                    fontWeight: 500, 
                     textTransform: 'uppercase',
                     cursor: 'pointer',
                     bgcolor: status === 'Done' ? '#10b98120' : status === 'In Progress' ? `${color}20` : 'rgba(0,0,0,0.05)',
@@ -101,7 +100,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
                     sx={{ 
                       height: 20, 
                       fontSize: '0.6rem', 
-                      fontWeight: 600, 
+                      fontWeight: 500, 
                       textTransform: 'uppercase',
                       borderColor: paymentStatus === 'Paid' ? '#10b98140' : '#f59e0b40',
                       color: paymentStatus === 'Paid' ? '#10b981' : '#f59e0b'
@@ -116,7 +115,7 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
                     sx={{ 
                       height: 20, 
                       fontSize: '0.6rem', 
-                      fontWeight: 600, 
+                      fontWeight: 500, 
                       textTransform: 'uppercase',
                       borderColor: approvalStatus === 'Approved' ? '#10b98140' : '#3b82f640',
                       color: approvalStatus === 'Approved' ? '#10b981' : '#3b82f6',
@@ -143,9 +142,13 @@ const RoadmapItem = ({ title, date, status, color, isLast, onToggle, onDelete, o
                   variant="contained" 
                   color="success"
                   onClick={onApprove}
-                  sx={{ py: 0, fontSize: '0.65rem', height: 24, borderRadius: 1.5 }}
+                  sx={{ 
+                    py: 1, px: 2, fontSize: '0.75rem', height: 32, borderRadius: 2,
+                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                    '&:hover': { transform: 'scale(1.05)' }
+                  }}
                 >
-                  Approve
+                  Approve Milestone
                 </Button>
               )}
               {status === 'Done' && !paymentStatus && !isClientView && (
@@ -298,7 +301,9 @@ const ProjectRoadmap = ({ project, isClientView = false }) => {
       <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 500, letterSpacing: '-0.02em', mb: 0.5 }}>Project Roadmap</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>Reorder milestones by dragging them up or down</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+            {isClientView ? 'Track your project\'s development journey and milestones' : 'Reorder milestones by dragging them up or down'}
+          </Typography>
         </Box>
         {!isClientView && (
           <Button 
@@ -313,28 +318,58 @@ const ProjectRoadmap = ({ project, isClientView = false }) => {
       </Box>
 
       <Box sx={{ maxWidth: 800, mt: 2 }}>
-        <Reorder.Group axis="y" values={phases} onReorder={handleReorder} style={{ listStyle: 'none', padding: 0 }}>
-          {phases.map((phase, index) => (
-            <Reorder.Item key={phase.id || index} value={phase} style={{ marginBottom: '16px' }}>
-              <RoadmapItem 
-                title={phase.name}
-                date={phase.date || 'TBD'}
-                status={mapStatus(phase.status)}
-                color={phase.color || '#3b82f6'}
-                isLast={index === phases.length - 1} 
-                onToggle={() => handleToggleStatus(index)}
-                onDelete={() => handleDeletePhase(index)}
-                onEdit={() => handleEditPhase(index)}
-                paymentStatus={phase.paymentStatus}
-                onInvoice={() => handleInvoiceMilestone(index)}
-                approvalStatus={phase.approvalStatus}
-                onRequestApproval={() => handleRequestApproval(index)}
-                onApprove={() => handleApprove(index)}
-                isClientView={isClientView}
-              />
-            </Reorder.Item>
-          ))}
-        </Reorder.Group>
+        {isClientView ? (
+          <Stack spacing={2}>
+            {phases.map((phase, index) => (
+              <motion.div
+                key={phase.id || index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <RoadmapItem 
+                  title={phase.name}
+                  date={phase.date || 'TBD'}
+                  status={mapStatus(phase.status)}
+                  color={phase.color || '#3b82f6'}
+                  isLast={index === phases.length - 1} 
+                  onToggle={() => {}}
+                  onDelete={() => {}}
+                  onEdit={() => {}}
+                  paymentStatus={phase.paymentStatus}
+                  onInvoice={() => {}}
+                  approvalStatus={phase.approvalStatus}
+                  onRequestApproval={() => {}}
+                  onApprove={() => handleApprove(index)}
+                  isClientView={isClientView}
+                />
+              </motion.div>
+            ))}
+          </Stack>
+        ) : (
+          <Reorder.Group axis="y" values={phases} onReorder={handleReorder} style={{ listStyle: 'none', padding: 0 }}>
+            {phases.map((phase, index) => (
+              <Reorder.Item key={phase.id || index} value={phase} style={{ marginBottom: '16px' }}>
+                <RoadmapItem 
+                  title={phase.name}
+                  date={phase.date || 'TBD'}
+                  status={mapStatus(phase.status)}
+                  color={phase.color || '#3b82f6'}
+                  isLast={index === phases.length - 1} 
+                  onToggle={() => handleToggleStatus(index)}
+                  onDelete={() => handleDeletePhase(index)}
+                  onEdit={() => handleEditPhase(index)}
+                  paymentStatus={phase.paymentStatus}
+                  onInvoice={() => handleInvoiceMilestone(index)}
+                  approvalStatus={phase.approvalStatus}
+                  onRequestApproval={() => handleRequestApproval(index)}
+                  onApprove={() => handleApprove(index)}
+                  isClientView={isClientView}
+                />
+              </Reorder.Item>
+            ))}
+          </Reorder.Group>
+        )}
       </Box>
 
       <InvoiceModal 

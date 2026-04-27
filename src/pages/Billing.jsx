@@ -36,7 +36,9 @@ import {
   MoreVertical,
   ArrowUpRight,
   Trash2,
-  CheckCircle
+  CheckCircle,
+  Clock,
+  Briefcase
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
@@ -45,7 +47,7 @@ import InvoiceModal from '../components/Modals/InvoiceModal';
 import ExpenseModal from '../components/Modals/ExpenseModal';
 import { generateInvoicePDF } from '../utils/pdfGenerator';
 
-const Billing = () => {
+const Billing = ({ isClient = false }) => {
   const { invoices, expenses, clients, projects, deleteInvoice, deleteExpense, updateInvoice } = useApp();
   const [activeTab, setActiveTab] = useState(0);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -73,36 +75,43 @@ const Billing = () => {
     }
   };
 
-  const totalRevenue = useMemo(() => {
+  const totalPaid = useMemo(() => {
     return invoices
       .filter(inv => inv.status === 'Paid')
       .reduce((sum, inv) => sum + inv.total_amount, 0);
   }, [invoices]);
 
-  const pendingRevenue = useMemo(() => {
-    // Total project value across all projects (with client revenue fallback)
-    const totalProjectValue = clients.reduce((sum, client) => {
-      const clientProjects = projects.filter(p => p.client_id === client.id);
-      const budgetFromProjects = clientProjects.reduce((s, p) => s + (parseFloat(p.budget) || 0), 0);
-      const clientRevenue = parseFloat(client.revenue) || 0;
-      return sum + (budgetFromProjects > 0 ? budgetFromProjects : clientRevenue);
-    }, 0);
-    
-    return Math.max(totalProjectValue - totalRevenue, 0);
-  }, [clients, projects, invoices, totalRevenue]);
+  const totalDue = useMemo(() => {
+    return invoices
+      .filter(inv => inv.status !== 'Paid')
+      .reduce((sum, inv) => sum + inv.total_amount, 0);
+  }, [invoices]);
 
-  const totalExpenses = useMemo(() => {
-    return expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  const totalContractValue = useMemo(() => {
+    return projects.reduce((sum, p) => sum + (parseFloat(p.budget) || 0), 0);
+  }, [projects]);
+
+  const totalExpensesValue = useMemo(() => {
+    return (expenses || []).reduce((sum, exp) => sum + (exp.amount || 0), 0);
   }, [expenses]);
 
-  const netProfit = totalRevenue - totalExpenses;
+  const netProfit = totalPaid - totalExpensesValue;
 
-  const stats = [
-    { icon: TrendingUp, label: 'Total Revenue', value: `₹${totalRevenue.toLocaleString('en-IN')}`, trend: 'up', trendValue: 'Growth', color: '#10b981' },
-    { icon: Receipt, label: 'Pending Revenue', value: `₹${pendingRevenue.toLocaleString('en-IN')}`, trend: pendingRevenue > 0 ? 'down' : 'up', trendValue: pendingRevenue > 0 ? 'Uncollected' : 'Settled', color: '#f59e0b' },
-    { icon: TrendingDown, label: 'Total Expenses', value: `₹${totalExpenses.toLocaleString('en-IN')}`, trend: 'down', trendValue: 'Studio costs', color: '#f43f5e' },
+  const adminStats = [
+    { icon: TrendingUp, label: 'Total Revenue', value: `₹${totalPaid.toLocaleString('en-IN')}`, trend: 'up', trendValue: 'Growth', color: '#10b981' },
+    { icon: Receipt, label: 'Pending Revenue', value: `₹${totalDue.toLocaleString('en-IN')}`, trend: totalDue > 0 ? 'down' : 'up', trendValue: totalDue > 0 ? 'Uncollected' : 'Settled', color: '#f59e0b' },
+    { icon: TrendingDown, label: 'Total Expenses', value: `₹${totalExpensesValue.toLocaleString('en-IN')}`, trend: 'down', trendValue: 'Studio costs', color: '#f43f5e' },
     { icon: DollarSign, label: 'Net Profit', value: `₹${netProfit.toLocaleString('en-IN')}`, trend: 'up', trendValue: 'Net', color: '#8b5cf6' },
   ];
+
+  const clientStats = [
+    { icon: CheckCircle, label: 'Total Paid', value: `₹${totalPaid.toLocaleString('en-IN')}`, color: '#10b981' },
+    { icon: Clock, label: 'Pending Payment', value: `₹${totalDue.toLocaleString('en-IN')}`, color: '#f59e0b' },
+    { icon: Briefcase, label: 'Active Projects', value: (projects || []).length.toString(), color: '#3b82f6' },
+    { icon: FileText, label: 'Total Value', value: `₹${totalContractValue.toLocaleString('en-IN')}`, color: '#8b5cf6' },
+  ];
+
+  const stats = isClient ? clientStats : adminStats;
 
   const handleDownloadInvoice = (invoice) => {
     const client = clients.find(c => c.id === invoice.client_id) || { name: 'Unknown' };
@@ -114,34 +123,40 @@ const Billing = () => {
     <Container maxWidth={false} sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, sm: 3, md: 5 } }}>
       <Box sx={{ mb: 6, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, gap: 4 }}>
         <Box>
-          <Typography variant="h4" fontWeight={600} sx={{ letterSpacing: '-0.02em', mb: 1, fontSize: { xs: '1.75rem', md: '2.125rem' } }}>Financial Hub</Typography>
-          <Typography variant="body1" color="text.secondary">Manage your studio's cashflow, invoices, and profitability.</Typography>
+          <Typography variant="h4" fontWeight={500} sx={{ letterSpacing: '-0.02em', mb: 1, fontSize: { xs: '1.75rem', md: '2.125rem' } }}>
+            {isClient ? 'Billing & Invoices' : 'Financial Hub'}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {isClient ? 'Review your payment history and download invoices.' : "Manage your studio's cashflow, invoices, and profitability."}
+          </Typography>
         </Box>
-        <Stack direction="row" spacing={2} sx={{ width: { xs: '100%', md: 'auto' } }}>
-          <Button 
-            fullWidth={false}
-            variant="outlined" 
-            startIcon={<TrendingDown size={18} />} 
-            onClick={() => setIsExpenseModalOpen(true)}
-            sx={{ borderRadius: 3, flex: { xs: 1, md: 'none' } }}
-          >
-            Add Expense
-          </Button>
-          <Button 
-            fullWidth={false}
-            variant="contained" 
-            startIcon={<Plus size={18} />} 
-            onClick={() => setIsInvoiceModalOpen(true)}
-            sx={{ borderRadius: 3, flex: { xs: 1, md: 'none' } }}
-          >
-            New Invoice
-          </Button>
-        </Stack>
+        {!isClient && (
+          <Stack direction="row" spacing={2} sx={{ width: { xs: '100%', md: 'auto' } }}>
+            <Button 
+              fullWidth={false}
+              variant="outlined" 
+              startIcon={<TrendingDown size={18} />} 
+              onClick={() => setIsExpenseModalOpen(true)}
+              sx={{ borderRadius: 3, flex: { xs: 1, md: 'none' } }}
+            >
+              Add Expense
+            </Button>
+            <Button 
+              fullWidth={false}
+              variant="contained" 
+              startIcon={<Plus size={18} />} 
+              onClick={() => setIsInvoiceModalOpen(true)}
+              sx={{ borderRadius: 3, flex: { xs: 1, md: 'none' } }}
+            >
+              New Invoice
+            </Button>
+          </Stack>
+        )}
       </Box>
 
       <Grid container spacing={{ xs: 3, md: 4 }} sx={{ mb: 6 }}>
         {stats.map((stat, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+          <Grid size={{ xs: 6, sm: 6, md: 3 }} key={index}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -154,12 +169,14 @@ const Billing = () => {
       </Grid>
 
       <Paper sx={{ borderRadius: 5, overflow: 'hidden', border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
-        <Box sx={{ px: 3, pt: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
-          <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
-            <Tab label="Invoices" sx={{ fontWeight: 600, py: 2.5 }} />
-            <Tab label="Expenses" sx={{ fontWeight: 600, py: 2.5 }} />
-          </Tabs>
-        </Box>
+        {!isClient && (
+          <Box sx={{ px: 3, pt: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
+            <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
+              <Tab label="Invoices" sx={{ fontWeight: 500, py: 2.5 }} />
+              <Tab label="Expenses" sx={{ fontWeight: 500, py: 2.5 }} />
+            </Tabs>
+          </Box>
+        )}
 
         <Box sx={{ p: 0 }}>
           {activeTab === 0 ? (
@@ -167,12 +184,12 @@ const Billing = () => {
               <Table>
                 <TableHead sx={{ bgcolor: 'action.hover' }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600 }}>Invoice #</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Project</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Due Date</TableCell>
-                    <TableCell sx={{ fontWeight: 600, textAlign: 'right', minWidth: 140 }}>Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Invoice #</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Project</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Amount</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Due Date</TableCell>
+                    <TableCell sx={{ fontWeight: 500, textAlign: 'right', minWidth: 140 }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -182,7 +199,7 @@ const Billing = () => {
                         <Box sx={{ color: 'text.disabled', textAlign: 'center' }}>
                           <FileText size={48} strokeWidth={1} style={{ marginBottom: 16 }} />
                           <Typography variant="body1">No invoices found</Typography>
-                          <Button size="small" onClick={() => setIsInvoiceModalOpen(true)} sx={{ mt: 1 }}>Create your first invoice</Button>
+                          {!isClient && <Button size="small" onClick={() => setIsInvoiceModalOpen(true)} sx={{ mt: 1 }}>Create your first invoice</Button>}
                         </Box>
                       </TableCell>
                     </TableRow>
@@ -191,13 +208,13 @@ const Billing = () => {
                       <TableRow key={inv.id} hover>
                         <TableCell sx={{ fontWeight: 500 }}>{inv.invoice_number}</TableCell>
                         <TableCell>{projects.find(p => p.id === inv.project_id)?.name || 'Deleted Project'}</TableCell>
-                        <TableCell sx={{ fontWeight: 600 }}>₹{inv.total_amount.toLocaleString('en-IN')}</TableCell>
+                        <TableCell sx={{ fontWeight: 500 }}>₹{inv.total_amount.toLocaleString('en-IN')}</TableCell>
                         <TableCell>
                           <Chip 
                             label={inv.status} 
                             size="small" 
                             sx={{ 
-                              fontWeight: 600, 
+                              fontWeight: 500, 
                               fontSize: '0.65rem',
                               bgcolor: inv.status === 'Paid' ? '#10b98120' : '#f59e0b20',
                               color: inv.status === 'Paid' ? '#10b981' : '#f59e0b',
@@ -209,7 +226,7 @@ const Billing = () => {
                         <TableCell>{inv.due_date || 'N/A'}</TableCell>
                         <TableCell sx={{ textAlign: 'right', minWidth: 140 }}>
                           <Stack direction="row" spacing={1} sx={{ justifyContent: 'flex-end' }}>
-                            {inv.status !== 'Paid' && (
+                            {!isClient && inv.status !== 'Paid' && (
                               <Tooltip title="Mark as Paid">
                                 <IconButton size="small" sx={{ color: '#10b981' }} onClick={() => handleMarkAsPaid(inv.id)}>
                                   <CheckCircle size={18} />
@@ -221,9 +238,11 @@ const Billing = () => {
                                 <Download size={18} />
                               </IconButton>
                             </Tooltip>
-                            <IconButton size="small" color="error" onClick={() => deleteInvoice(inv.id)}>
-                              <Trash2 size={18} />
-                            </IconButton>
+                            {!isClient && (
+                              <IconButton size="small" color="error" onClick={() => deleteInvoice(inv.id)}>
+                                <Trash2 size={18} />
+                              </IconButton>
+                            )}
                           </Stack>
                         </TableCell>
                       </TableRow>
@@ -237,12 +256,12 @@ const Billing = () => {
               <Table>
                 <TableHead sx={{ bgcolor: 'action.hover' }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Project</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }} align="right">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Description</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Category</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Project</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Amount</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>Date</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }} align="right">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -264,7 +283,7 @@ const Billing = () => {
                           <Chip label={exp.category} size="small" sx={{ fontSize: '0.7rem', fontWeight: 500 }} />
                         </TableCell>
                         <TableCell>{projects.find(p => p.id === exp.project_id)?.name || 'General'}</TableCell>
-                        <TableCell sx={{ fontWeight: 600, color: 'error.main' }}>₹{exp.amount.toLocaleString('en-IN')}</TableCell>
+                        <TableCell sx={{ fontWeight: 500, color: 'error.main' }}>₹{exp.amount.toLocaleString('en-IN')}</TableCell>
                         <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>
                         <TableCell align="right">
                           <IconButton size="small" color="error" onClick={() => deleteExpense(exp.id)}>
@@ -282,14 +301,18 @@ const Billing = () => {
       </Paper>
 
       {/* Modals */}
-      <InvoiceModal 
-        open={isInvoiceModalOpen} 
-        onClose={() => setIsInvoiceModalOpen(false)} 
-      />
-      <ExpenseModal 
-        open={isExpenseModalOpen} 
-        onClose={() => setIsExpenseModalOpen(false)} 
-      />
+      {!isClient && (
+        <>
+          <InvoiceModal 
+            open={isInvoiceModalOpen} 
+            onClose={() => setIsInvoiceModalOpen(false)} 
+          />
+          <ExpenseModal 
+            open={isExpenseModalOpen} 
+            onClose={() => setIsExpenseModalOpen(false)} 
+          />
+        </>
+      )}
 
       {/* Payment Date Dialog */}
       <Dialog 
@@ -297,7 +320,7 @@ const Billing = () => {
         onClose={() => setPaymentDialogOpen(false)}
         PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
       >
-        <DialogTitle sx={{ fontWeight: 600 }}>Record Payment Date</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 500 }}>Record Payment Date</DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             When was this invoice paid? This helps keep your revenue charts accurate.

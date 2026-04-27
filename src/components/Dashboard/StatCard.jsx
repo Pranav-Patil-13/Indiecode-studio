@@ -7,91 +7,89 @@ const StatCard = ({ icon: Icon, label, value, color, trend, trendValue }) => {
 
   return (
     <motion.div
-      whileHover={{ y: -6, transition: { duration: 0.3, ease: 'easeOut' } }}
+      whileHover={{ y: -8, transition: { duration: 0.3, ease: 'easeOut' } }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
       <Card 
         sx={{ 
-          p: { xs: 2, sm: 3 }, 
-          borderRadius: { xs: 4, sm: 6 }, 
+          p: { xs: 2.5, sm: 3.5 }, 
+          borderRadius: 6, 
           border: '1px solid', 
-          borderColor: alpha(color, 0.12), 
-          boxShadow: `0 20px 40px -20px ${alpha(color, 0.15)}`,
+          borderColor: alpha(color, 0.1), 
+          boxShadow: `0 25px 50px -12px ${alpha(color, 0.12)}`,
           position: 'relative',
           overflow: 'hidden',
-          background: `linear-gradient(145deg, #ffffff 0%, ${alpha(color, 0.03)} 100%)`,
+          background: `linear-gradient(145deg, #ffffff 0%, ${alpha(color, 0.02)} 100%)`,
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
-          minHeight: { xs: 130, sm: 160 },
+          minHeight: { xs: 140, sm: 180 },
         }}
       >
-        {/* Abstract Background Glow */}
+        {/* Decorative Background Shapes */}
         <Box 
           sx={{ 
             position: 'absolute', 
-            top: -30, 
-            right: -30, 
-            width: { xs: 80, sm: 120 }, 
-            height: { xs: 80, sm: 120 }, 
+            top: -20, 
+            right: -20, 
+            width: 100, 
+            height: 100, 
             borderRadius: '50%', 
-            background: `radial-gradient(circle, ${alpha(color, 0.15)} 0%, transparent 70%)`,
-            filter: 'blur(20px)',
+            background: `radial-gradient(circle, ${alpha(color, 0.1)} 0%, transparent 70%)`,
+            filter: 'blur(15px)',
             zIndex: 0
           }} 
         />
 
-        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: { xs: 2, sm: 3 }, position: 'relative', zIndex: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, position: 'relative', zIndex: 1 }}>
           <Box 
             sx={{ 
-              width: { xs: 36, sm: 48 }, 
-              height: { xs: 36, sm: 48 }, 
-              borderRadius: { xs: 1.5, sm: 4 }, 
+              width: 48, 
+              height: 48, 
+              borderRadius: 3.5, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              background: `linear-gradient(135deg, ${color} 0%, ${alpha(color, 0.7)} 100%)`,
+              background: `linear-gradient(135deg, ${color} 0%, ${alpha(color, 0.8)} 100%)`,
               color: '#fff',
-              boxShadow: `0 10px 25px -8px ${color}`,
+              boxShadow: `0 12px 24px -10px ${color}`,
             }}
           >
-            <Icon size={18} strokeWidth={2.5} />
+            <Icon size={22} strokeWidth={2.2} />
           </Box>
 
           {trendValue && (
             <Box 
               sx={{ 
-                display: { xs: 'none', sm: 'flex' }, 
+                display: 'flex', 
                 alignItems: 'center', 
                 gap: 0.5,
-                px: 1.2,
-                py: 0.6,
+                px: 1,
+                py: 0.5,
                 borderRadius: 2,
-                bgcolor: isPositive ? alpha('#10b981', 0.1) : alpha('#f43f5e', 0.1),
+                bgcolor: isPositive ? alpha('#10b981', 0.08) : alpha('#f43f5e', 0.08),
                 color: isPositive ? '#059669' : '#e11d48',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                border: '1px solid',
-                borderColor: isPositive ? alpha('#10b981', 0.2) : alpha('#f43f5e', 0.2),
+                fontSize: '0.7rem',
+                fontWeight: 500,
               }}
             >
-              {isPositive ? <TrendingUp size={14} strokeWidth={3} /> : <TrendingDown size={14} strokeWidth={3} />}
+              {isPositive ? <TrendingUp size={12} strokeWidth={3} /> : <TrendingDown size={12} strokeWidth={3} />}
               {trendValue}
             </Box>
           )}
-        </Stack>
+        </Box>
 
         <Box sx={{ position: 'relative', zIndex: 1, mt: 'auto' }}>
           <Typography 
-            variant="h4" 
+            variant="h3" 
             sx={{ 
-              fontWeight: 700, 
-              letterSpacing: '-0.03em',
-              color: '#0f172a',
-              lineHeight: 1.1,
-              mb: 0.5,
-              fontSize: { xs: '1.25rem', sm: '2.125rem' }
+              fontWeight: 500, 
+              letterSpacing: '-0.04em',
+              color: '#1e293b',
+              lineHeight: 1,
+              mb: 1,
+              fontSize: { xs: '1.75rem', sm: '2.25rem' }
             }}
           >
             {value}
@@ -99,12 +97,12 @@ const StatCard = ({ icon: Icon, label, value, color, trend, trendValue }) => {
           <Typography 
             variant="subtitle2" 
             sx={{ 
-              fontWeight: 600, 
+              fontWeight: 500, 
               textTransform: 'uppercase', 
-              letterSpacing: '0.12em', 
+              letterSpacing: '0.1em', 
               color: 'text.secondary',
-              fontSize: { xs: '0.6rem', sm: '0.65rem' },
-              opacity: 0.8
+              fontSize: '0.65rem',
+              opacity: 0.7
             }}
           >
             {label}

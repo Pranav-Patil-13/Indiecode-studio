@@ -53,7 +53,7 @@ const ExpenseModal = ({ open, onClose, project: initialProject }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth sx={{ '& .MuiPaper-root': { borderRadius: 4 } }}>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 3 }}>
-        <Typography variant="h6" fontWeight={600}>Record Expense</Typography>
+        <Typography variant="h6" fontWeight={500}>Record Expense</Typography>
         <IconButton onClick={onClose} size="small"><X size={20} /></IconButton>
       </DialogTitle>
       <Divider />

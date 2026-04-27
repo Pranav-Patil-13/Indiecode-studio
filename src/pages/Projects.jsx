@@ -15,8 +15,10 @@ import { useApp } from '../context/AppContext';
 
 const Projects = () => {
   const [viewType, setViewType] = useState('grid');
-  const { projects, openAddProjectModal, clients, loading } = useApp();
+  const { projects, openAddProjectModal, clients, loading, user } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
+
+  const isClient = user?.user_metadata?.role === 'client';
 
   if (loading) return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -96,14 +98,16 @@ const Projects = () => {
               <ListIcon size={18} />
             </IconButton>
           </Box>
-          <Button 
-            variant="contained" 
-            startIcon={<Plus size={18} />}
-            sx={{ borderRadius: 2.5, px: 3 }}
-            onClick={openAddProjectModal}
-          >
-            New Project
-          </Button>
+          {!isClient && (
+            <Button 
+              variant="contained" 
+              startIcon={<Plus size={18} />}
+              sx={{ borderRadius: 2.5, px: 3 }}
+              onClick={openAddProjectModal}
+            >
+              New Project
+            </Button>
+          )}
         </Stack>
       </Box>
 

@@ -35,23 +35,21 @@ const Navbar = ({ title, onDrawerToggle }) => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-        {!isClient && (
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={onDrawerToggle}
-            sx={{ 
-              display: { lg: 'none' }, 
-              mr: 1,
-              bgcolor: 'action.hover',
-              p: 1.25,
-              borderRadius: 2.5
-            }}
-          >
-            <Menu size={26} />
-          </IconButton>
-        )}
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={onDrawerToggle}
+          sx={{ 
+            display: { lg: 'none' }, 
+            mr: 1,
+            bgcolor: 'action.hover',
+            p: 1.25,
+            borderRadius: 2.5
+          }}
+        >
+          <Menu size={26} />
+        </IconButton>
         <Typography variant="h6" sx={{ fontWeight: 500, display: { xs: 'none', sm: 'block' }, letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
           {title}
         </Typography>
@@ -117,16 +115,6 @@ const Navbar = ({ title, onDrawerToggle }) => {
           </Badge>
         </IconButton>
 
-        {isClient && (
-          <IconButton 
-            color="error" 
-            onClick={handleSignOut}
-            sx={{ bgcolor: 'error.main', color: 'white', borderRadius: 2.5, p: 1.25, '&:hover': { bgcolor: 'error.dark' } }}
-            title="Sign Out"
-          >
-            <LogOut size={20} />
-          </IconButton>
-        )}
       </Box>
     </Box>
   );

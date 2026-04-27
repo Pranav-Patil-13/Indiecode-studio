@@ -169,7 +169,7 @@ const InvoiceModal = ({ open, onClose, project, initialItems = [] }) => {
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <Receipt size={24} color={theme.palette.primary.main} />
-          <Typography variant="h6" fontWeight={650}>Generate Invoice</Typography>
+          <Typography variant="h6" fontWeight={500}>Generate Invoice</Typography>
         </Stack>
         <IconButton onClick={onClose} size="small"><X size={20} /></IconButton>
       </DialogTitle>
@@ -177,7 +177,7 @@ const InvoiceModal = ({ open, onClose, project, initialItems = [] }) => {
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={3}>
           <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase', mb: 1, display: 'block' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', mb: 1, display: 'block' }}>
               Invoice Details
             </Typography>
             <Stack direction="row" spacing={2}>
@@ -237,7 +237,7 @@ const InvoiceModal = ({ open, onClose, project, initialItems = [] }) => {
           </Box>
 
           <Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 650, mb: 1.5 }}>Line Items</Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1.5 }}>Line Items</Typography>
             <Stack spacing={2}>
               {items.map((item, index) => (
                 <Stack key={index} direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
@@ -279,8 +279,8 @@ const InvoiceModal = ({ open, onClose, project, initialItems = [] }) => {
           <Divider />
           
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 1 }}>
-            <Typography variant="h6" sx={{ fontWeight: 650 }}>Total</Typography>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: 'primary.main' }}>
+            <Typography variant="h6" sx={{ fontWeight: 500 }}>Total</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 500, color: 'primary.main' }}>
               ₹{calculateTotal().toLocaleString('en-IN')}
             </Typography>
           </Box>
