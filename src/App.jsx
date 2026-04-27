@@ -26,7 +26,7 @@ import NotificationDrawer from './components/Layout/NotificationDrawer';
 import Auth from './pages/Auth';
 import { initializePushNotifications } from './utils/pushNotifications';
 
-const APP_VERSION = '1.2.2'; // This should match the version in your native APK
+const APP_VERSION = '1.2.3';
 
 function AppContent() {
   const location = useLocation();
@@ -36,47 +36,35 @@ function AppContent() {
   
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  // OTA Update check — notifyAppReady() is called in main.jsx immediately on load
   React.useEffect(() => {
-    const setupUpdater = async () => {
-      if (Capacitor.isNativePlatform()) {
-        try {
-          console.log('OTA: Native platform detected, waiting for bridge...');
-          // Small delay to ensure bridge is ready
-          await new Promise(resolve => setTimeout(resolve, 2000));
+    const checkForUpdates = async () => {
+      if (!Capacitor.isNativePlatform()) return;
+
+      try {
+        const response = await fetch(`https://studio.indiecode.in/version.json?t=${Date.now()}`);
+        if (!response.ok) return;
+        
+        const data = await response.json();
+        console.log('OTA: Server version:', data.version, '| App version:', APP_VERSION);
+        
+        if (data.version !== APP_VERSION) {
+          showNotification(`Updating to v${data.version}...`, 'info');
           
-          console.log('OTA: Notifying app ready...');
-          await CapacitorUpdater.notifyAppReady();
+          const update = await CapacitorUpdater.download({
+            url: data.url,
+            version: data.version,
+          });
           
-          // Check for updates with cache busting
-          console.log('OTA: Fetching version.json...');
-          const response = await fetch(`https://studio.indiecode.in/version.json?t=${Date.now()}`);
-          if (!response.ok) throw new Error('Failed to fetch version.json');
-          
-          const data = await response.json();
-          console.log('OTA: Server version:', data.version);
-          console.log('OTA: Current hardcoded version:', APP_VERSION);
-          
-          if (data.version !== APP_VERSION) {
-            console.log('OTA: Update found!', data.version);
-            showNotification(`Updating to v${data.version}...`, 'info');
-            
-            const update = await CapacitorUpdater.download({
-              url: data.url,
-              version: data.version,
-            });
-            
-            console.log('OTA: Download complete, applying update...', update);
-            await CapacitorUpdater.set(update);
-          } else {
-            console.log('OTA: App is on latest version');
-          }
-        } catch (error) {
-          console.error('OTA: Error in update flow:', error);
+          console.log('OTA: Download complete, applying...');
+          await CapacitorUpdater.set(update);
         }
+      } catch (error) {
+        console.error('OTA update check failed:', error);
       }
     };
     
-    setupUpdater();
+    checkForUpdates();
   }, []);
 
   React.useEffect(() => {
@@ -106,7 +94,7 @@ function AppContent() {
       case '/portal': return 'Client Portal';
       default: 
         if (path.startsWith('/projects/')) return 'Project Command Center';
-        return 'IndieCode Studio v1.2.2';
+        return 'IndieCode Studio v1.2.3';
     }
   };
 
