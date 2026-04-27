@@ -114,16 +114,28 @@ const Clients = ({ isClient = false }) => {
   if (isClient) {
     return (
       <Container maxWidth="xl" sx={{ py: { xs: 3, md: 4 }, px: { xs: 2, sm: 3, md: 4 } }}>
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ 
+          mb: 4, 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'flex-start', md: 'center' },
+          gap: 2
+        }}>
           <Box>
-            <Typography variant="h4" fontWeight={500} gutterBottom>Your Studio Team</Typography>
-            <Typography variant="body1" color="text.secondary">The specialists dedicated to bringing your projects to life.</Typography>
+            <Typography variant="h4" fontWeight={500} gutterBottom sx={{ fontSize: { xs: '1.75rem', md: '2.125rem' } }}>
+              Your Studio Team
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              The specialists dedicated to bringing your projects to life.
+            </Typography>
           </Box>
           <TextField 
             placeholder="Search team members..."
             size="small"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ width: { xs: '100%', md: 'auto' } }}
             slotProps={{
               input: {
                 startAdornment: (
@@ -131,7 +143,11 @@ const Clients = ({ isClient = false }) => {
                     <Search size={18} color="#6C757D" />
                   </InputAdornment>
                 ),
-                sx: { bgcolor: 'background.paper', borderRadius: 2.5, minWidth: 250 }
+                sx: { 
+                  bgcolor: 'background.paper', 
+                  borderRadius: 2.5, 
+                  minWidth: { xs: '100%', md: 250 } 
+                }
               }
             }}
           />
