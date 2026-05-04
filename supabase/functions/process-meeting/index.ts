@@ -4,11 +4,13 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 serve(async (req: Request) => {
+  // 1. Handle CORS Preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders, status: 200 })
   }
 
   try {
@@ -22,7 +24,9 @@ serve(async (req: Request) => {
     const geminiKey = Deno.env.get("GEMINI_API_KEY");
     if (!geminiKey) throw new Error("Missing GEMINI_API_KEY in Supabase Secrets");
 
-    // 1. Call Gemini to analyze transcript
+    console.log(`Processing meeting for project: ${projectId || 'New Project'}`);
+
+    // Call Gemini
     const prompt = `
       You are an expert Project Manager. Analyze the following meeting transcript and extract project details.
       
@@ -51,11 +55,11 @@ serve(async (req: Request) => {
     });
 
     const geminiData = await geminiResponse.json();
-    if (geminiData.error) throw new Error(geminiData.error.message);
+    if (geminiData.error) throw new Error(`Gemini API Error: ${geminiData.error.message}`);
     
     const result = JSON.parse(geminiData.candidates[0].content.parts[0].text);
 
-    // 2. Upsert Project
+    // Upsert Project
     let projectData;
     if (projectId) {
       const { data, error } = await supabase
@@ -91,39 +95,41 @@ serve(async (req: Request) => {
       projectData = data;
     }
 
-    // 3. Create Requirements File
-    const folderName = projectData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const fileName = `requirements_${Date.now()}.md`;
-    const filePath = `${folderName}/${fileName}`;
+    // Requirements File
+    if (result.requirements) {
+      const folderName = projectData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const fileName = `requirements_${Date.now()}.md`;
+      const filePath = `${folderName}/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from('resources')
-      .upload(filePath, result.requirements, {
-        contentType: 'text/markdown',
-        upsert: true
-      });
-
-    if (!uploadError) {
-      const { data: { publicUrl } } = supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('resources')
-        .getPublicUrl(filePath);
+        .upload(filePath, result.requirements, {
+          contentType: 'text/markdown',
+          upsert: true
+        });
 
-      const newResource = {
-        id: crypto.randomUUID(),
-        name: "Project Requirements (AI Generated)",
-        type: "file",
-        url: publicUrl,
-        storagePath: filePath,
-        added_by: "AI Assistant",
-        created_at: new Date().toISOString(),
-        size: `${(result.requirements.length / 1024).toFixed(1)} KB`
-      };
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('resources')
+          .getPublicUrl(filePath);
 
-      const updatedResources = [...(projectData.resources || []), newResource];
-      await supabase
-        .from('projects')
-        .update({ resources: updatedResources })
-        .eq('id', projectData.id);
+        const newResource = {
+          id: crypto.randomUUID(),
+          name: "Project Requirements (AI Generated)",
+          type: "file",
+          url: publicUrl,
+          storagePath: filePath,
+          added_by: "AI Assistant",
+          created_at: new Date().toISOString(),
+          size: `${(result.requirements.length / 1024).toFixed(1)} KB`
+        };
+
+        const updatedResources = [...(projectData.resources || []), newResource];
+        await supabase
+          .from('projects')
+          .update({ resources: updatedResources })
+          .eq('id', projectData.id);
+      }
     }
 
     return new Response(JSON.stringify({ 
@@ -137,7 +143,7 @@ serve(async (req: Request) => {
   } catch (err) {
     console.error("Error in process-meeting:", err.message);
     return new Response(JSON.stringify({ success: false, error: err.message }), { 
-      status: 500, 
+      status: 200, // Return 200 but with success: false to avoid CORS issues on error
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
     });
   }
