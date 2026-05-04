@@ -35,8 +35,11 @@ import {
   ChevronRight,
   TrendingUp,
   Edit2,
-  Receipt
+  Receipt,
+  Sparkles
 } from 'lucide-react';
+import MagicImportModal from '../components/Modals/MagicImportModal';
+
 import { useApp } from '../context/AppContext';
 import KanbanBoard from '../components/Projects/ProjectDetails/KanbanBoard';
 import TeamSection from '../components/Projects/ProjectDetails/TeamSection';
@@ -53,6 +56,8 @@ const ProjectDetails = ({ isClient = false }) => {
   const navigate = useNavigate();
   const { projects, clients, loading, openEditProjectModal } = useApp();
   const [activeTab, setActiveTab] = useState(0);
+  const [magicModalOpen, setMagicModalOpen] = useState(false);
+
 
   const project = projects.find(p => p.id === id);
 
@@ -166,7 +171,30 @@ const ProjectDetails = ({ isClient = false }) => {
                   <Edit2 size={18} />
                 </IconButton>
               )}
+              {!isClient && (
+                <Button 
+                  variant="outlined" 
+                  size="small" 
+                  startIcon={<Sparkles size={16} />}
+                  onClick={() => setMagicModalOpen(true)}
+                  sx={{ 
+                    borderRadius: 2.5, 
+                    fontWeight: 600,
+                    borderColor: 'divider',
+                    color: 'text.primary',
+                    '&:hover': { bgcolor: 'action.hover', color: 'primary.main', borderColor: 'primary.main' }
+                  }}
+                >
+                  Sync Meeting
+                </Button>
+              )}
             </Stack>
+            
+            <MagicImportModal 
+              open={magicModalOpen} 
+              onClose={() => setMagicModalOpen(false)} 
+              projectId={project.id}
+            />
             
             <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '1rem', sm: '1.1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
               {project.description || 'No description provided.'}

@@ -19,9 +19,13 @@ import RevenueChart from '../components/Dashboard/RevenueChart';
 import { DashboardSkeleton } from '../components/Feedback/LoadingSkeleton';
 import { useApp } from '../context/AppContext';
 import { Capacitor } from '@capacitor/core';
+import MagicImportModal from '../components/Modals/MagicImportModal';
+
 
 const Dashboard = ({ isClient = false }) => {
   const { clients, projects, invoices, loading, user, notifications, messages } = useApp();
+  const [magicModalOpen, setMagicModalOpen] = useState(false);
+
 
   if (loading) return <DashboardSkeleton />;
 
@@ -142,14 +146,33 @@ const Dashboard = ({ isClient = false }) => {
                     {isClient ? 'My Active Projects' : 'Active Studio Projects'}
                   </Typography>
                 </Stack>
-                <Button 
-                  endIcon={<ArrowRight size={18} />} 
-                  sx={{ color: 'primary.main', fontWeight: 500, textTransform: 'none' }}
-                  onClick={() => window.location.href = '/projects'}
-                >
-                  View All
-                </Button>
+                <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                  <Button 
+                    variant="contained"
+                    size="small"
+                    startIcon={<Sparkles size={16} />}
+                    onClick={() => setMagicModalOpen(true)}
+                    sx={{ 
+                      borderRadius: 2.5, 
+                      background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+                      boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)',
+                      fontWeight: 600,
+                      display: isClient ? 'none' : 'flex'
+                    }}
+                  >
+                    Magic Import
+                  </Button>
+                  <Button 
+                    endIcon={<ArrowRight size={18} />} 
+                    sx={{ color: 'primary.main', fontWeight: 500, textTransform: 'none' }}
+                    onClick={() => window.location.href = '/projects'}
+                  >
+                    View All
+                  </Button>
+                </Stack>
               </Box>
+              
+              <MagicImportModal open={magicModalOpen} onClose={() => setMagicModalOpen(false)} />
               
               <Grid container spacing={3}>
                 {recentProjects.length > 0 ? (
