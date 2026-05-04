@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Container, Grid, Typography, Button, Box, Paper, Stack, Divider } from '@mui/material';
 import { 
   Users, 
@@ -9,7 +10,8 @@ import {
   Smartphone,
   CheckCircle2,
   Calendar,
-  Activity
+  Activity,
+  Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import StatCard from '../components/Dashboard/StatCard';
