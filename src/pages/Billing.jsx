@@ -318,7 +318,7 @@ const Billing = ({ isClient = false }) => {
       <Dialog 
         open={paymentDialogOpen} 
         onClose={() => setPaymentDialogOpen(false)}
-        PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+        slotProps={{ paper: { sx: { borderRadius: 3, p: 1 } } }}
       >
         <DialogTitle sx={{ fontWeight: 500 }}>Record Payment Date</DialogTitle>
         <DialogContent>

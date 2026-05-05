@@ -347,8 +347,8 @@ const Clients = ({ isClient = false }) => {
         onClose={handleMenuClose}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        PaperProps={{
-          sx: { borderRadius: 3, minWidth: 160, mt: 1, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }
+        slotProps={{
+          paper: { sx: { borderRadius: 3, minWidth: 160, mt: 1, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' } }
         }}
       >
         <MenuItem onClick={handleOpenInvoiceModal}>

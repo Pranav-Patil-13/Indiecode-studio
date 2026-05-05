@@ -35,8 +35,8 @@ const NotificationDrawer = () => {
       anchor="right"
       open={isNotificationDrawerOpen}
       onClose={closeNotificationDrawer}
-      PaperProps={{
-        sx: { width: { xs: '100%', sm: 400 }, border: 'none', boxShadow: '-10px 0 30px rgba(0,0,0,0.05)' }
+      slotProps={{
+        paper: { sx: { width: { xs: '100%', sm: 400 }, border: 'none', boxShadow: '-10px 0 30px rgba(0,0,0,0.05)' } }
       }}
     >
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

@@ -78,8 +78,8 @@ const MagicImportModal = ({ open, onClose, projectId = null }) => {
       onClose={loading ? undefined : onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{
-        sx: { borderRadius: 5, p: 1 }
+      slotProps={{
+        paper: { sx: { borderRadius: 5, p: 1 } }
       }}
     >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

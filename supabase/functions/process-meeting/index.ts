@@ -26,7 +26,7 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Processing meeting for project: ${projectId || 'New Project'}`);
 
-    // Call Gemini
+    // Call Gemini with Fallback Logic
     const prompt = `
       You are an expert Project Manager. Analyze the following meeting transcript and extract project details.
       
@@ -45,17 +45,40 @@ Deno.serve(async (req: Request) => {
       Response must be ONLY valid JSON.
     `;
 
-    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: "application/json" }
-      })
-    });
+    const models = ["gemini-3.1-flash", "gemini-3.1-flash-lite"];
+    let geminiData;
+    let lastError;
 
-    const geminiData = await geminiResponse.json();
-    if (geminiData.error) throw new Error(`Gemini API Error: ${geminiData.error.message}`);
+    for (const model of models) {
+      try {
+        console.log(`Attempting with model: ${model}`);
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+
+        const data = await response.json();
+        if (data.error) {
+          console.warn(`Model ${model} failed: ${data.error.message}`);
+          lastError = data.error.message;
+          continue; // Try next model
+        }
+
+        geminiData = data;
+        break; // Success!
+      } catch (err) {
+        console.error(`Fetch error with model ${model}:`, err.message);
+        lastError = err.message;
+      }
+    }
+
+    if (!geminiData) {
+      throw new Error(`Gemini API Error (All models failed): ${lastError}`);
+    }
     
     const result = JSON.parse(geminiData.candidates[0].content.parts[0].text);
 
