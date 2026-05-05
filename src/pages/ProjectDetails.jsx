@@ -119,9 +119,9 @@ const ProjectDetails = ({ isClient = false }) => {
         sx={{ 
           p: { xs: 4, md: 6 }, 
           borderRadius: 6, 
-          background: 'linear-gradient(to right, #000000 0%, #5d4a1f 60%, #D1B464 100%)',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
           border: '1px solid',
-          borderColor: 'rgba(209, 180, 100, 0.2)',
+          borderColor: 'rgba(255, 255, 255, 0.08)',
           mb: 6,
           position: 'relative',
           overflow: 'hidden',
@@ -165,7 +165,7 @@ const ProjectDetails = ({ isClient = false }) => {
                     border: '1px solid', 
                     borderColor: 'rgba(255,255,255,0.1)',
                     color: '#ffffff',
-                    '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', color: '#D1B464' }
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', color: '#6366f1' }
                   }}
                 >
                   <Edit2 size={18} />
@@ -294,12 +294,12 @@ const ProjectDetails = ({ isClient = false }) => {
                   borderRadius: 3, 
                   py: 1.5,
                   fontWeight: 600,
-                  background: 'linear-gradient(135deg, #D1B464 0%, #9c7c2d 100%)',
-                  color: '#000000',
-                  boxShadow: '0 8px 24px rgba(209, 180, 100, 0.25)',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                  color: '#ffffff',
+                  boxShadow: '0 8px 24px rgba(99, 102, 241, 0.25)',
                   '&:hover': { 
-                    background: 'linear-gradient(135deg, #e5c87a 0%, #b8943d 100%)',
-                    boxShadow: '0 12px 30px rgba(209, 180, 100, 0.35)',
+                    background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 100%)',
+                    boxShadow: '0 12px 30px rgba(99, 102, 241, 0.35)',
                     transform: 'translateY(-2px)'
                   },
                   transition: 'all 0.3s ease'
