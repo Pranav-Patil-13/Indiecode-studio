@@ -1,4 +1,4 @@
-import { Card, Box, Typography, LinearProgress, IconButton, Chip, CardActionArea, useTheme, Stack } from '@mui/material';
+import { Card, Box, Typography, LinearProgress, IconButton, Chip, CardActionArea, useTheme, Stack, alpha } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { MoreHorizontal, Clock, CheckCircle2, AlertCircle, ExternalLink, Edit2, Trash2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
