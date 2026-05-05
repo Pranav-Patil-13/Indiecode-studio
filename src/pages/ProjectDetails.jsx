@@ -153,7 +153,7 @@ const ProjectDetails = ({ isClient = false }) => {
             </Stack>
 
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2 }}>
-              <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: '#ffffff', fontSize: { xs: '2rem', sm: '3rem' } }}>
+              <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: '#ffffff', fontSize: '2rem' }}>
                 {project.name}
               </Typography>
               {!isClient && (
