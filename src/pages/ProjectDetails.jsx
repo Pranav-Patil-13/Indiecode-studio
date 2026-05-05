@@ -119,7 +119,7 @@ const ProjectDetails = ({ isClient = false }) => {
         sx={{ 
           p: { xs: 4, md: 6 }, 
           borderRadius: 6, 
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          background: 'linear-gradient(135deg, #000000 0%, #0f172a 100%)',
           border: '1px solid',
           borderColor: 'rgba(255, 255, 255, 0.08)',
           mb: 6,
