@@ -96,6 +96,49 @@ const ResourceCenter = ({ project, isClient = false }) => {
     }
   };
 
+  const handleDownload = async (resource) => {
+    if (resource.type === 'link') {
+      window.open(resource.url, '_blank');
+      return;
+    }
+
+    try {
+      showNotification('Downloading...', 'info');
+      
+      let filePath = resource.storagePath;
+      if (!filePath) {
+        const urlParts = resource.url.split('/resources/');
+        if (urlParts.length > 1) {
+          filePath = urlParts[1];
+        }
+      }
+
+      if (!filePath) throw new Error('Could not determine file path');
+
+      const { data, error } = await supabase.storage
+        .from('resources')
+        .download(filePath);
+
+      if (error) throw error;
+
+      // Create a download link
+      const blob = new Blob([data]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', resource.name);
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+      showNotification('Error downloading file: ' + error.message, 'error');
+    }
+  };
+
   const handleDeleteResource = async (resource) => {
     const role = user?.user_metadata?.role || 'admin';
     if (role !== 'admin') {
@@ -245,9 +288,7 @@ const ResourceCenter = ({ project, isClient = false }) => {
                   }}>
                     <IconButton 
                       size="small" 
-                      component="a"
-                      href={resource.url}
-                      target="_blank"
+                      onClick={() => handleDownload(resource)}
                       sx={{ 
                         bgcolor: 'action.hover', 
                         '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } 
