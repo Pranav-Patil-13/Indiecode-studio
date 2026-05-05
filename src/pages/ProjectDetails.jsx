@@ -113,144 +113,152 @@ const ProjectDetails = ({ isClient = false }) => {
         </Breadcrumbs>
       </Stack>
 
-      {/* Hero Header */}
-      <Paper 
-        elevation={0}
-        sx={{ 
-          p: { xs: 2.5, md: 4 }, 
-          borderRadius: 5, 
-          background: 'linear-gradient(135deg, #000000 0%, #0f172a 100%)',
-          border: '1px solid',
-          borderColor: 'rgba(255, 255, 255, 0.08)',
-          mb: 6,
-          position: 'relative',
-          overflow: 'hidden',
-          color: '#ffffff'
-        }}
-      >
-        {/* Decorative elements */}
-        <Box sx={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%)' }} />
-        
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 4, position: 'relative', zIndex: 1 }}>
-          <Box sx={{ flex: 1, minWidth: { xs: '100%', md: 400 } }}>
-            <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2 }}>
-              <Chip 
-                icon={<TrendingUp size={14} />}
-                label={project.status} 
-                size="small" 
-                sx={{ 
-                  fontWeight: 500, 
-                  borderRadius: 2,
-                  bgcolor: project.status === 'On Track' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-                  color: project.status === 'On Track' ? '#10b981' : '#3b82f6',
-                  pl: 0.5
-                }}
-              />
-              <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.5 }} />
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
-                Created on {new Date(project.created_at).toLocaleDateString()}
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2 }}>
-              <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: '#ffffff', fontSize: '2rem' }}>
-                {project.name}
-              </Typography>
-              {!isClient && (
-                <IconButton 
-                  size="small" 
-                  onClick={() => openEditProjectModal(project)}
-                  sx={{ 
-                    bgcolor: 'rgba(255,255,255,0.05)', 
-                    border: '1px solid', 
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    color: '#ffffff',
-                    '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', color: '#6366f1' }
-                  }}
-                >
-                  <Edit2 size={18} />
-                </IconButton>
-              )}
-            </Stack>
-            
-            <MagicImportModal 
-              open={magicModalOpen} 
-              onClose={() => setMagicModalOpen(false)} 
-              projectId={project.id}
-            />
-            
-            <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: { xs: '0.875rem', sm: '1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 2 }}>
-              {project.description || 'No description provided.'}
-            </Typography>
-            
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, sm: 'auto' }}>
-                <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
-                  Client Partner
-                </Typography>
-                <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                  {clients.find(c => c.id === project.client_id)?.name || 'Unknown Client'}
-                </Typography>
-              </Grid>
-              <Grid size={{ xs: 6, sm: 'auto' }}>
-                <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
-                  Target Delivery
-                </Typography>
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                  <Calendar size={18} color="#64748b" />
-                  <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                    {project.due_date}
-                  </Typography>
-                </Stack>
-              </Grid>
-              <Grid size={{ xs: 6, sm: 'auto' }}>
-                <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
-                  Priority Level
-                </Typography>
-                <Chip 
-                  label={project.priority} 
-                  sx={{ 
-                    height: 28, 
-                    fontWeight: 500, 
-                    borderRadius: 1.5,
-                    bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.08)',
-                    color: project.priority === 'High' ? '#ef4444' : '#ffffff',
-                    border: '1px solid',
-                    borderColor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)'
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-
+      {/* Hero Section & Summary Card */}
+      <Grid container spacing={3} sx={{ mb: 6 }}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Paper 
+            elevation={0}
             sx={{ 
-              p: 2.5, 
-              width: { xs: '100%', md: 280 },
-              minWidth: { xs: '100%', md: 280 }, 
+              p: { xs: 3, md: 4 }, 
+              height: '100%',
               borderRadius: 5, 
-              bgcolor: 'background.paper',
-              boxShadow: theme.palette.mode === 'light' ? '0 20px 50px rgba(0,0,0,0.04)' : '0 20px 50px rgba(0,0,0,0.4)',
+              background: 'linear-gradient(135deg, #000000 0%, #0f172a 100%)',
+              border: '1px solid',
+              borderColor: 'rgba(255, 255, 255, 0.08)',
+              position: 'relative',
+              overflow: 'hidden',
+              color: '#ffffff',
               display: 'flex',
               flexDirection: 'column',
+              justifyContent: 'center'
+            }}
+          >
+            {/* Decorative elements */}
+            <Box sx={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%)' }} />
+            
+            <Box sx={{ position: 'relative', zIndex: 1 }}>
+              <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2 }}>
+                <Chip 
+                  icon={<TrendingUp size={14} />}
+                  label={project.status} 
+                  size="small" 
+                  sx={{ 
+                    fontWeight: 500, 
+                    borderRadius: 2,
+                    bgcolor: project.status === 'On Track' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                    color: project.status === 'On Track' ? '#10b981' : '#3b82f6',
+                    pl: 0.5
+                  }}
+                />
+                <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.3, bgcolor: 'rgba(255,255,255,0.2)' }} />
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+                  Created {new Date(project.created_at).toLocaleDateString()}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 1.5 }}>
+                <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: '#ffffff', fontSize: '2rem' }}>
+                  {project.name}
+                </Typography>
+                {!isClient && (
+                  <IconButton 
+                    size="small" 
+                    onClick={() => openEditProjectModal(project)}
+                    sx={{ 
+                      bgcolor: 'rgba(255,255,255,0.05)', 
+                      border: '1px solid', 
+                      borderColor: 'rgba(255,255,255,0.1)',
+                      color: '#ffffff',
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', color: '#6366f1' }
+                    }}
+                  >
+                    <Edit2 size={18} />
+                  </IconButton>
+                )}
+              </Stack>
+              
+              <MagicImportModal 
+                open={magicModalOpen} 
+                onClose={() => setMagicModalOpen(false)} 
+                projectId={project.id}
+              />
+              
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: { xs: '0.875rem', sm: '1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 3 }}>
+                {project.description || 'No description provided.'}
+              </Typography>
+              
+              <Stack direction="row" spacing={4} sx={{ flexWrap: 'wrap', gap: 2 }}>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
+                    Client Partner
+                  </Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                    {clients.find(c => c.id === project.client_id)?.name || 'Unknown Client'}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
+                    Delivery
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                    <Calendar size={14} color="rgba(255,255,255,0.5)" />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                      {project.due_date}
+                    </Typography>
+                  </Stack>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
+                    Priority
+                  </Typography>
+                  <Chip 
+                    label={project.priority} 
+                    sx={{ 
+                      height: 24, 
+                      fontWeight: 500, 
+                      borderRadius: 1.5,
+                      fontSize: '0.75rem',
+                      bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.08)',
+                      color: project.priority === 'High' ? '#ef4444' : '#ffffff',
+                      border: '1px solid',
+                      borderColor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)'
+                    }}
+                  />
+                </Box>
+              </Stack>
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              height: '100%',
+              borderRadius: 5, 
+              bgcolor: 'background.paper',
+              boxShadow: theme.palette.mode === 'light' ? '0 10px 40px rgba(0,0,0,0.04)' : '0 10px 40px rgba(0,0,0,0.4)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
               alignItems: 'center',
               textAlign: 'center',
               border: '1px solid',
               borderColor: 'divider'
             }}
           >
-            <Box sx={{ position: 'relative', display: 'inline-flex', mb: 3 }}>
+            <Box sx={{ position: 'relative', display: 'inline-flex', mb: 2.5 }}>
               <CircularProgress 
                 variant="determinate" 
                 value={100} 
-                size={120} 
+                size={100} 
                 thickness={4} 
-                sx={{ color: 'rgba(0,0,0,0.03)' }} 
+                sx={{ color: 'action.hover' }} 
               />
               <CircularProgress 
                 variant="determinate" 
                 value={project.progress} 
-                size={120} 
+                size={100} 
                 thickness={4} 
                 sx={{ 
                   color: project.progress > 80 ? '#10b981' : 'primary.main',
@@ -260,25 +268,25 @@ const ProjectDetails = ({ isClient = false }) => {
                 }} 
               />
               <Box sx={{ top: 0, left: 0, bottom: 0, right: 0, position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h4" component="div" sx={{ fontWeight: 500, letterSpacing: '-1px' }}>
+                <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
                   {project.progress}%
                 </Typography>
               </Box>
             </Box>
             
-            <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1 }}>Overall Completion</Typography>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>Project Completion</Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, mb: 3 }}>
-              {project.phases?.filter(p => p.status === 'completed' || p.status === 'Done').length || 0} of {project.phases?.length || 4} phases completed
+              {project.phases?.filter(p => p.status === 'completed' || p.status === 'Done').length || 0} of {project.phases?.length || 4} phases done
             </Typography>
 
-            <Divider sx={{ width: '100%', mb: 3, opacity: 0.5 }} />
+            <Divider sx={{ width: '100%', mb: 2.5, opacity: 0.5 }} />
 
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%', mb: 3 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>Team Collaboration</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>Team</Typography>
                 <Typography variant="caption" sx={{ fontWeight: 500 }}>{project.team?.length || 0} active</Typography>
               </Box>
-              <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 32, height: 32, fontSize: '0.75rem', border: '2px solid', borderColor: 'background.paper' } }}>
+              <AvatarGroup max={4} sx={{ justifyContent: 'center', '& .MuiAvatar-root': { width: 30, height: 30, fontSize: '0.7rem', border: '2px solid', borderColor: 'background.paper' } }}>
                 {project.team?.map((member) => (
                   <Avatar key={member.id}>{member.avatar}</Avatar>
                 ))}
@@ -292,16 +300,14 @@ const ProjectDetails = ({ isClient = false }) => {
                 startIcon={<Sparkles size={18} />}
                 onClick={() => setMagicModalOpen(true)}
                 sx={{ 
-                  mt: 4,
-                  borderRadius: 3, 
-                  py: 1.5,
+                  borderRadius: 2.5, 
+                  py: 1.25,
                   fontWeight: 600,
                   background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
                   color: '#ffffff',
-                  boxShadow: '0 8px 24px rgba(99, 102, 241, 0.25)',
+                  boxShadow: '0 8px 24px rgba(99, 102, 241, 0.2)',
                   '&:hover': { 
                     background: 'linear-gradient(135deg, #818cf8 0%, #6366f1 100%)',
-                    boxShadow: '0 12px 30px rgba(99, 102, 241, 0.35)',
                     transform: 'translateY(-2px)'
                   },
                   transition: 'all 0.3s ease'
@@ -311,8 +317,8 @@ const ProjectDetails = ({ isClient = false }) => {
               </Button>
             )}
           </Paper>
-        </Box>
-      </Paper>
+        </Grid>
+      </Grid>
 
       {/* Tab Navigation: Select for Mobile, Tabs for Desktop */}
       <Box sx={{ mb: 5 }}>
