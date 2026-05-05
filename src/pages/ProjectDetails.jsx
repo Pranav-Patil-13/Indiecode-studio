@@ -20,8 +20,7 @@ import {
   Link,
   Grid,
   useTheme,
-  TextField,
-  alpha
+  TextField
 } from '@mui/material';
 import { 
   ArrowLeft, 
@@ -120,13 +119,13 @@ const ProjectDetails = ({ isClient = false }) => {
         sx={{ 
           p: { xs: 4, md: 6 }, 
           borderRadius: 6, 
-          background: 'linear-gradient(135deg, #FDB931 0%, #D4AF37 50%, #AF9134 100%)',
+          background: 'radial-gradient(circle, #D1B464 0%, #5d4a1f 30%, #000000 80%, #000000 100%)',
           border: '1px solid',
-          borderColor: 'rgba(184, 134, 11, 0.3)',
+          borderColor: 'rgba(209, 180, 100, 0.2)',
           mb: 6,
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: `0 30px 60px -12px ${alpha('#B8860B', 0.15)}`
+          color: '#ffffff'
         }}
       >
         {/* Decorative elements */}
@@ -148,13 +147,13 @@ const ProjectDetails = ({ isClient = false }) => {
                 }}
               />
               <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.5 }} />
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>
                 Created on {new Date(project.created_at).toLocaleDateString()}
               </Typography>
             </Stack>
 
             <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 2 }}>
-              <Typography variant="h3" sx={{ fontWeight: 600, letterSpacing: '-0.03em', color: '#000000', fontSize: { xs: '2rem', sm: '3rem' } }}>
+              <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: '#ffffff', fontSize: { xs: '2rem', sm: '3rem' } }}>
                 {project.name}
               </Typography>
               {!isClient && (
@@ -162,31 +161,15 @@ const ProjectDetails = ({ isClient = false }) => {
                   size="small" 
                   onClick={() => openEditProjectModal(project)}
                   sx={{ 
-                    bgcolor: 'background.paper', 
+                    bgcolor: 'rgba(255,255,255,0.05)', 
                     border: '1px solid', 
-                    borderColor: 'divider',
-                    '&:hover': { bgcolor: 'action.hover', color: 'primary.main' }
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    color: '#ffffff',
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', color: '#D1B464' }
                   }}
                 >
                   <Edit2 size={18} />
                 </IconButton>
-              )}
-              {!isClient && (
-                <Button 
-                  variant="outlined" 
-                  size="small" 
-                  startIcon={<Sparkles size={16} />}
-                  onClick={() => setMagicModalOpen(true)}
-                  sx={{ 
-                    borderRadius: 2.5, 
-                    fontWeight: 600,
-                    borderColor: 'divider',
-                    color: 'text.primary',
-                    '&:hover': { bgcolor: 'action.hover', color: 'primary.main', borderColor: 'primary.main' }
-                  }}
-                >
-                  Sync Meeting
-                </Button>
               )}
             </Stack>
             
@@ -196,21 +179,21 @@ const ProjectDetails = ({ isClient = false }) => {
               projectId={project.id}
             />
             
-            <Typography variant="body1" sx={{ color: 'rgba(0,0,0,0.7)', fontWeight: 500, fontSize: { xs: '1rem', sm: '1.1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
+            <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: { xs: '1rem', sm: '1.1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
               {project.description || 'No description provided.'}
             </Typography>
             
             <Grid container spacing={3}>
               <Grid size={{ xs: 12, sm: 'auto' }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Client Partner
                 </Typography>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#000000' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                   {clients.find(c => c.id === project.client_id)?.name || 'Unknown Client'}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 6, sm: 'auto' }}>
-                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Target Delivery
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
@@ -221,7 +204,7 @@ const ProjectDetails = ({ isClient = false }) => {
                 </Stack>
               </Grid>
               <Grid size={{ xs: 6, sm: 'auto' }}>
-                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 1 }}>
                   Priority Level
                 </Typography>
                 <Chip 
@@ -244,14 +227,14 @@ const ProjectDetails = ({ isClient = false }) => {
               width: { xs: '100%', md: 320 },
               minWidth: { xs: '100%', md: 320 }, 
               borderRadius: 6, 
-              bgcolor: 'rgba(0,0,0,0.03)',
-              backdropFilter: 'blur(10px)',
+              bgcolor: 'background.paper',
+              boxShadow: theme.palette.mode === 'light' ? '0 20px 50px rgba(0,0,0,0.04)' : '0 20px 50px rgba(0,0,0,0.4)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               textAlign: 'center',
               border: '1px solid',
-              borderColor: 'rgba(0,0,0,0.08)'
+              borderColor: 'divider'
             }}
           >
             <Box sx={{ position: 'relative', display: 'inline-flex', mb: 3 }}>
@@ -260,7 +243,7 @@ const ProjectDetails = ({ isClient = false }) => {
                 value={100} 
                 size={120} 
                 thickness={4} 
-                sx={{ color: 'rgba(0,0,0,0.1)' }} 
+                sx={{ color: 'rgba(0,0,0,0.03)' }} 
               />
               <CircularProgress 
                 variant="determinate" 
@@ -268,30 +251,30 @@ const ProjectDetails = ({ isClient = false }) => {
                 size={120} 
                 thickness={4} 
                 sx={{ 
-                  color: '#000000',
+                  color: project.progress > 80 ? '#10b981' : 'primary.main',
                   position: 'absolute',
                   left: 0,
                   strokeLinecap: 'round'
                 }} 
               />
               <Box sx={{ top: 0, left: 0, bottom: 0, right: 0, position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h4" component="div" sx={{ fontWeight: 600, letterSpacing: '-1px', color: '#000000' }}>
+                <Typography variant="h4" component="div" sx={{ fontWeight: 500, letterSpacing: '-1px' }}>
                   {project.progress}%
                 </Typography>
               </Box>
             </Box>
             
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1, color: '#000000' }}>Overall Completion</Typography>
-            <Typography variant="caption" sx={{ color: 'rgba(0,0,0,0.6)', fontWeight: 600, mb: 3 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1 }}>Overall Completion</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, mb: 3 }}>
               {project.phases?.filter(p => p.status === 'completed' || p.status === 'Done').length || 0} of {project.phases?.length || 4} phases completed
             </Typography>
 
-            <Divider sx={{ width: '100%', mb: 3, opacity: 0.2, borderColor: '#000000' }} />
+            <Divider sx={{ width: '100%', mb: 3, opacity: 0.5 }} />
 
             <Box sx={{ width: '100%' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="caption" sx={{ fontWeight: 600, color: 'rgba(0,0,0,0.6)' }}>Team Collaboration</Typography>
-                <Typography variant="caption" sx={{ fontWeight: 600, color: '#000000' }}>{project.team?.length || 0} active</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>Team Collaboration</Typography>
+                <Typography variant="caption" sx={{ fontWeight: 500 }}>{project.team?.length || 0} active</Typography>
               </Box>
               <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 32, height: 32, fontSize: '0.75rem', border: '2px solid', borderColor: 'background.paper' } }}>
                 {project.team?.map((member) => (
@@ -299,6 +282,32 @@ const ProjectDetails = ({ isClient = false }) => {
                 ))}
               </AvatarGroup>
             </Box>
+
+            {!isClient && (
+              <Button 
+                fullWidth
+                variant="contained" 
+                startIcon={<Sparkles size={18} />}
+                onClick={() => setMagicModalOpen(true)}
+                sx={{ 
+                  mt: 4,
+                  borderRadius: 3, 
+                  py: 1.5,
+                  fontWeight: 600,
+                  background: 'linear-gradient(135deg, #D1B464 0%, #9c7c2d 100%)',
+                  color: '#000000',
+                  boxShadow: '0 8px 24px rgba(209, 180, 100, 0.25)',
+                  '&:hover': { 
+                    background: 'linear-gradient(135deg, #e5c87a 0%, #b8943d 100%)',
+                    boxShadow: '0 12px 30px rgba(209, 180, 100, 0.35)',
+                    transform: 'translateY(-2px)'
+                  },
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                Sync Meeting
+              </Button>
+            )}
           </Paper>
         </Box>
       </Paper>
