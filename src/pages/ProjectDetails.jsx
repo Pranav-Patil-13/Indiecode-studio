@@ -213,8 +213,10 @@ const ProjectDetails = ({ isClient = false }) => {
                     height: 28, 
                     fontWeight: 500, 
                     borderRadius: 1.5,
-                    bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(0,0,0,0.05)',
-                    color: project.priority === 'High' ? '#ef4444' : 'text.primary'
+                    bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.08)',
+                    color: project.priority === 'High' ? '#ef4444' : '#ffffff',
+                    border: '1px solid',
+                    borderColor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)'
                   }}
                 />
               </Grid>
