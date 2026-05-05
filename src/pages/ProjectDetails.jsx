@@ -122,19 +122,18 @@ const ProjectDetails = ({ isClient = false }) => {
               p: { xs: 3, md: 4 }, 
               height: '100%',
               borderRadius: 5, 
-              background: 'linear-gradient(135deg, #000000 0%, #0f172a 100%)',
+              bgcolor: 'background.paper',
               border: '1px solid',
-              borderColor: 'rgba(255, 255, 255, 0.08)',
+              borderColor: 'divider',
               position: 'relative',
               overflow: 'hidden',
-              color: '#ffffff',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center'
             }}
           >
             {/* Decorative elements */}
-            <Box sx={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%)' }} />
+            <Box sx={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0, 0, 0, 0.02) 0%, transparent 70%)' }} />
             
             <Box sx={{ position: 'relative', zIndex: 1 }}>
               <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2 }}>
@@ -150,14 +149,14 @@ const ProjectDetails = ({ isClient = false }) => {
                     pl: 0.5
                   }}
                 />
-                <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.3, bgcolor: 'rgba(255,255,255,0.2)' }} />
-                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+                <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.5 }} />
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                   Created {new Date(project.created_at).toLocaleDateString()}
                 </Typography>
               </Stack>
 
               <Stack direction="row" spacing={2} sx={{ alignItems: 'center', mb: 1.5 }}>
-                <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: '#ffffff', fontSize: '2rem' }}>
+                <Typography variant="h3" sx={{ fontWeight: 500, letterSpacing: '-0.03em', color: 'text.primary', fontSize: '2rem' }}>
                   {project.name}
                 </Typography>
                 {!isClient && (
@@ -165,11 +164,10 @@ const ProjectDetails = ({ isClient = false }) => {
                     size="small" 
                     onClick={() => openEditProjectModal(project)}
                     sx={{ 
-                      bgcolor: 'rgba(255,255,255,0.05)', 
+                      bgcolor: 'background.paper', 
                       border: '1px solid', 
-                      borderColor: 'rgba(255,255,255,0.1)',
-                      color: '#ffffff',
-                      '&:hover': { bgcolor: 'rgba(255,255,255,0.1)', color: '#6366f1' }
+                      borderColor: 'divider',
+                      '&:hover': { bgcolor: 'action.hover', color: 'primary.main' }
                     }}
                   >
                     <Edit2 size={18} />
@@ -183,13 +181,13 @@ const ProjectDetails = ({ isClient = false }) => {
                 projectId={project.id}
               />
               
-              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: { xs: '0.875rem', sm: '1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 3 }}>
+              <Typography variant="body1" sx={{ color: 'text.secondary', fontSize: { xs: '0.875rem', sm: '1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 3 }}>
                 {project.description || 'No description provided.'}
               </Typography>
               
               <Stack direction="row" spacing={4} sx={{ flexWrap: 'wrap', gap: 2 }}>
                 <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
                     Client Partner
                   </Typography>
                   <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
@@ -197,18 +195,18 @@ const ProjectDetails = ({ isClient = false }) => {
                   </Typography>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
                     Delivery
                   </Typography>
                   <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                    <Calendar size={14} color="rgba(255,255,255,0.5)" />
+                    <Calendar size={14} color="text.disabled" />
                     <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                       {project.due_date}
                     </Typography>
                   </Stack>
                 </Box>
                 <Box>
-                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: 1, display: 'block', mb: 0.5 }}>
                     Priority
                   </Typography>
                   <Chip 
@@ -218,10 +216,10 @@ const ProjectDetails = ({ isClient = false }) => {
                       fontWeight: 500, 
                       borderRadius: 1.5,
                       fontSize: '0.75rem',
-                      bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.08)',
-                      color: project.priority === 'High' ? '#ef4444' : '#ffffff',
+                      bgcolor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(0,0,0,0.05)',
+                      color: project.priority === 'High' ? '#ef4444' : 'text.primary',
                       border: '1px solid',
-                      borderColor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255,255,255,0.1)'
+                      borderColor: project.priority === 'High' ? 'rgba(239, 68, 68, 0.2)' : 'divider'
                     }}
                   />
                 </Box>
