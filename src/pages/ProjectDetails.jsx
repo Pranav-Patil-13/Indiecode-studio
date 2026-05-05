@@ -117,8 +117,8 @@ const ProjectDetails = ({ isClient = false }) => {
       <Paper 
         elevation={0}
         sx={{ 
-          p: { xs: 4, md: 6 }, 
-          borderRadius: 6, 
+          p: { xs: 2.5, md: 4 }, 
+          borderRadius: 5, 
           background: 'linear-gradient(135deg, #000000 0%, #0f172a 100%)',
           border: '1px solid',
           borderColor: 'rgba(255, 255, 255, 0.08)',
@@ -179,7 +179,7 @@ const ProjectDetails = ({ isClient = false }) => {
               projectId={project.id}
             />
             
-            <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: { xs: '1rem', sm: '1.1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 4 }}>
+            <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.7)', fontSize: { xs: '0.875rem', sm: '1rem' }, lineHeight: 1.6, maxWidth: 700, mb: 2 }}>
               {project.description || 'No description provided.'}
             </Typography>
             
@@ -225,10 +225,10 @@ const ProjectDetails = ({ isClient = false }) => {
 
           <Paper 
             sx={{ 
-              p: 4, 
-              width: { xs: '100%', md: 320 },
-              minWidth: { xs: '100%', md: 320 }, 
-              borderRadius: 6, 
+              p: 2.5, 
+              width: { xs: '100%', md: 280 },
+              minWidth: { xs: '100%', md: 280 }, 
+              borderRadius: 5, 
               bgcolor: 'background.paper',
               boxShadow: theme.palette.mode === 'light' ? '0 20px 50px rgba(0,0,0,0.04)' : '0 20px 50px rgba(0,0,0,0.4)',
               display: 'flex',
