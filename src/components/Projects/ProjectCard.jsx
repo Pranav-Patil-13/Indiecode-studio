@@ -1,4 +1,4 @@
-import { Card, Box, Typography, LinearProgress, IconButton, Chip, CardActionArea, useTheme, Stack, alpha } from '@mui/material';
+import { Card, Box, Typography, LinearProgress, IconButton, Chip, CardActionArea, useTheme, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { MoreHorizontal, Clock, CheckCircle2, AlertCircle, ExternalLink, Edit2, Trash2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -159,24 +159,23 @@ const ProjectCard = ({ project, variant = 'grid' }) => {
             cursor: 'pointer',
             borderRadius: 6,
             border: '1px solid',
-            borderColor: 'rgba(184, 134, 11, 0.2)',
+            borderColor: 'divider',
             boxShadow: 'none',
-            background: 'linear-gradient(135deg, #FDB931 0%, #D4AF37 100%)',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
               transform: 'translateY(-10px)',
-              borderColor: 'rgba(184, 134, 11, 0.5)',
-              boxShadow: `0 30px 60px -12px ${alpha('#B8860B', 0.25)}`
+              borderColor: 'primary.main',
+              boxShadow: '0 30px 60px -12px rgba(0,0,0,0.08)'
             }
           }}
           onClick={() => navigate(`/projects/${id}`)}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 600, color: '#000000', mb: 0.5, letterSpacing: '-0.01em' }}>
+              <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.5, letterSpacing: '-0.01em' }}>
                 {name}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600, color: 'rgba(0,0,0,0.6)' }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
                 {clientName}
               </Typography>
             </Box>
@@ -214,10 +213,10 @@ const ProjectCard = ({ project, variant = 'grid' }) => {
 
           <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5 }}>
-              <Typography variant="caption" sx={{ fontWeight: 600, color: 'rgba(0,0,0,0.6)', textTransform: 'uppercase', letterSpacing: 1 }}>
+              <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
                 Live Progress
               </Typography>
-              <Typography variant="caption" sx={{ fontWeight: 600, color: '#000000', fontSize: '0.875rem' }}>
+              <Typography variant="caption" sx={{ fontWeight: 500, color: 'primary.main', fontSize: '0.875rem' }}>
                 {progress}%
               </Typography>
             </Box>
@@ -240,15 +239,15 @@ const ProjectCard = ({ project, variant = 'grid' }) => {
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               {getStatusIcon(status)}
-              <Typography variant="caption" sx={{ fontWeight: 600, color: '#000000' }}>
+              <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.primary' }}>
                 {status}
               </Typography>
             </Box>
             
             <Stack direction="row" spacing={3} sx={{ alignItems: 'center' }}>
                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Clock size={14} color="rgba(0,0,0,0.6)" />
-                <Typography variant="caption" sx={{ fontWeight: 600, color: 'rgba(0,0,0,0.6)' }}>
+                <Clock size={14} color="#64748b" />
+                <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>
                   {due_date}
                 </Typography>
               </Box>

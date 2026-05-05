@@ -45,7 +45,13 @@ Deno.serve(async (req: Request) => {
       Response must be ONLY valid JSON.
     `;
 
-    const models = ["gemini-3.1-flash", "gemini-3.1-flash-lite"];
+    // Modern 2026 Model IDs (Preview)
+    const models = [
+      "gemini-3-flash-preview", 
+      "gemini-3.1-flash-lite-preview",
+      "gemini-2.5-flash" // Last resort fallback
+    ];
+    
     let geminiData;
     let lastError;
 
@@ -62,17 +68,25 @@ Deno.serve(async (req: Request) => {
         });
 
         const data = await response.json();
+        
         if (data.error) {
           console.warn(`Model ${model} failed: ${data.error.message}`);
-          lastError = data.error.message;
+          lastError = `${model}: ${data.error.message}`;
           continue; // Try next model
         }
 
+        if (!data.candidates || data.candidates.length === 0) {
+          console.warn(`Model ${model} returned no candidates`);
+          lastError = `${model}: No candidates returned`;
+          continue;
+        }
+
         geminiData = data;
+        console.log(`Success with model: ${model}`);
         break; // Success!
       } catch (err) {
         console.error(`Fetch error with model ${model}:`, err.message);
-        lastError = err.message;
+        lastError = `${model}: ${err.message}`;
       }
     }
 
@@ -80,7 +94,10 @@ Deno.serve(async (req: Request) => {
       throw new Error(`Gemini API Error (All models failed): ${lastError}`);
     }
     
-    const result = JSON.parse(geminiData.candidates[0].content.parts[0].text);
+    const resultText = geminiData.candidates[0].content.parts[0].text;
+    // Clean up markdown code blocks if the model includes them
+    const cleanJson = resultText.replace(/```json\n?|```/g, '').trim();
+    const result = JSON.parse(cleanJson);
 
     // Upsert Project
     let projectData;

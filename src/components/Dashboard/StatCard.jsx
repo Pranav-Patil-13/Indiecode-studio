@@ -16,20 +16,15 @@ const StatCard = ({ icon: Icon, label, value, color, trend, trendValue }) => {
           p: { xs: 2.5, sm: 3.5 }, 
           borderRadius: 6, 
           border: '1px solid', 
-          borderColor: 'rgba(184, 134, 11, 0.3)', 
-          boxShadow: `0 20px 40px -12px ${alpha('#B8860B', 0.2)}`,
+          borderColor: alpha(color, 0.1), 
+          boxShadow: `0 25px 50px -12px ${alpha(color, 0.12)}`,
           position: 'relative',
           overflow: 'hidden',
-          background: 'linear-gradient(135deg, #FDB931 0%, #D4AF37 50%, #AF9134 100%)',
+          background: `linear-gradient(145deg, #ffffff 0%, ${alpha(color, 0.02)} 100%)`,
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
           minHeight: { xs: 140, sm: 180 },
-          transition: 'all 0.3s ease',
-          '&:hover': {
-            boxShadow: `0 30px 60px -12px ${alpha('#B8860B', 0.3)}`,
-            transform: 'translateY(-4px)'
-          }
         }}
       >
         {/* Decorative Background Shapes */}
@@ -56,12 +51,12 @@ const StatCard = ({ icon: Icon, label, value, color, trend, trendValue }) => {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              background: 'rgba(0, 0, 0, 0.05)',
-              color: '#000000',
-              boxShadow: '0 8px 16px -8px rgba(0,0,0,0.1)',
+              background: `linear-gradient(135deg, ${color} 0%, ${alpha(color, 0.8)} 100%)`,
+              color: '#fff',
+              boxShadow: `0 12px 24px -10px ${color}`,
             }}
           >
-            <Icon size={22} strokeWidth={2.5} />
+            <Icon size={22} strokeWidth={2.2} />
           </Box>
 
           {trendValue && (
@@ -89,9 +84,9 @@ const StatCard = ({ icon: Icon, label, value, color, trend, trendValue }) => {
           <Typography 
             variant="h3" 
             sx={{ 
-              fontWeight: 600, 
+              fontWeight: 500, 
               letterSpacing: '-0.04em',
-              color: '#000000',
+              color: '#1e293b',
               lineHeight: 1,
               mb: 1,
               fontSize: { xs: '1.75rem', sm: '2.25rem' }
@@ -102,11 +97,12 @@ const StatCard = ({ icon: Icon, label, value, color, trend, trendValue }) => {
           <Typography 
             variant="subtitle2" 
             sx={{ 
-              fontWeight: 600, 
+              fontWeight: 500, 
               textTransform: 'uppercase', 
               letterSpacing: '0.1em', 
-              color: 'rgba(0,0,0,0.6)',
+              color: 'text.secondary',
               fontSize: '0.65rem',
+              opacity: 0.7
             }}
           >
             {label}
