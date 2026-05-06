@@ -1,6 +1,6 @@
-import { Card, Box, Typography, LinearProgress, IconButton, Chip, CardActionArea, useTheme, Stack } from '@mui/material';
+import { Card, Box, Typography, LinearProgress, IconButton, Chip, CardActionArea, useTheme, Stack, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { MoreHorizontal, Clock, CheckCircle2, AlertCircle, ExternalLink, Edit2, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Clock, CheckCircle2, AlertCircle, ExternalLink, Edit2, Trash2, Mic, Video } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useState } from 'react';
 import ConfirmDialog from '../Modals/ConfirmDialog';
@@ -9,8 +9,9 @@ const ProjectCard = ({ project, variant = 'grid' }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { clients, deleteProject, showNotification, openEditProjectModal, user } = useApp();
-  const { id, name, client_id, progress, status, due_date, priority } = project;
+  const { id, name, client_id, progress, status, due_date, priority, source, fathom_url } = project;
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const isFromMeeting = source === 'fathom_webhook';
 
   const role = user?.user_metadata?.role || 'admin';
   const isClient = role === 'client';
@@ -69,9 +70,24 @@ const ProjectCard = ({ project, variant = 'grid' }) => {
           onClick={() => navigate(`/projects/${id}`)}
         >
           <Box sx={{ width: 300, flexShrink: 0 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.5 }}>
-              {name}
-            </Typography>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.5 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                {name}
+              </Typography>
+              {isFromMeeting && (
+                <Chip 
+                  icon={<Mic size={12} />}
+                  label="From Meeting"
+                  size="small"
+                  sx={{ 
+                    height: 22, fontSize: '0.65rem', fontWeight: 600,
+                    bgcolor: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6',
+                    '& .MuiChip-icon': { color: '#8b5cf6', ml: 0.5 },
+                    borderRadius: 1.5, letterSpacing: 0.3
+                  }}
+                />
+              )}
+            </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
               {clientName}
             </Typography>
@@ -134,6 +150,13 @@ const ProjectCard = ({ project, variant = 'grid' }) => {
           </Box>
 
           <Stack direction="row" spacing={1} sx={{ ml: 2 }} onClick={(e) => e.stopPropagation()}>
+            {isFromMeeting && fathom_url && (
+              <Tooltip title="View Fathom Recording">
+                <IconButton size="small" onClick={(e) => { e.stopPropagation(); window.open(fathom_url, '_blank'); }} sx={{ color: '#8b5cf6' }}>
+                  <Video size={18} />
+                </IconButton>
+              </Tooltip>
+            )}
             <IconButton size="small" onClick={handleView} title="View Details">
               <ExternalLink size={18} />
             </IconButton>
@@ -172,14 +195,45 @@ const ProjectCard = ({ project, variant = 'grid' }) => {
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <Box>
-              <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.5, letterSpacing: '-0.01em' }}>
-                {name}
-              </Typography>
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.5 }}>
+                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.01em' }}>
+                  {name}
+                </Typography>
+                {isFromMeeting && (
+                  <Chip 
+                    icon={<Mic size={12} />}
+                    label="From Meeting"
+                    size="small"
+                    sx={{ 
+                      height: 22, fontSize: '0.65rem', fontWeight: 600,
+                      bgcolor: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6',
+                      '& .MuiChip-icon': { color: '#8b5cf6', ml: 0.5 },
+                      borderRadius: 1.5, letterSpacing: 0.3,
+                      animation: 'pulse 2s ease-in-out 3',
+                      '@keyframes pulse': {
+                        '0%, 100%': { opacity: 1 },
+                        '50%': { opacity: 0.6 }
+                      }
+                    }}
+                  />
+                )}
+              </Stack>
               <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
                 {clientName}
               </Typography>
             </Box>
             <Stack direction="row" spacing={1} onClick={(e) => e.stopPropagation()}>
+              {isFromMeeting && fathom_url && (
+                <Tooltip title="View Fathom Recording">
+                  <IconButton 
+                    size="small" 
+                    onClick={(e) => { e.stopPropagation(); window.open(fathom_url, '_blank'); }}
+                    sx={{ bgcolor: 'rgba(139, 92, 246, 0.08)', borderRadius: 2, color: '#8b5cf6' }}
+                  >
+                    <Video size={18} />
+                  </IconButton>
+                </Tooltip>
+              )}
               <IconButton 
                 size="small" 
                 onClick={handleView} 

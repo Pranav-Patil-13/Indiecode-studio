@@ -230,6 +230,25 @@ export const AppProvider = ({ children }) => {
           createLocalNotification('New Message', `${newMessage.sender_name || 'Someone'} sent you a message.`, 'message');
         }
       })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'projects' }, payload => {
+        const newProject = payload.new;
+        setProjects(prev => {
+          if (prev.find(p => p.id === newProject.id)) return prev;
+          return [newProject, ...prev];
+        });
+        
+        // Special notification for Fathom auto-created projects
+        if (newProject.source === 'fathom_webhook') {
+          showNotification(`🎯 New project auto-created from meeting: "${newProject.name}"`, 'success');
+          createLocalNotification(
+            '🎙️ Project Auto-Created from Meeting',
+            `"${newProject.name}" was automatically created from your strategy call${newProject.fathom_meeting_title ? `: "${newProject.fathom_meeting_title}"` : ''}.`,
+            'meeting'
+          );
+        } else {
+          showNotification(`New project created: "${newProject.name}"`, 'info');
+        }
+      })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'projects' }, payload => {
         const oldProject = projects.find(p => p.id === payload.new.id);
         setProjects(prev => prev.map(p => p.id === payload.new.id ? payload.new : p));

@@ -36,7 +36,9 @@ import {
   TrendingUp,
   Edit2,
   Receipt,
-  Sparkles
+  Sparkles,
+  Video,
+  Mic
 } from 'lucide-react';
 import MagicImportModal from '../components/Modals/MagicImportModal';
 
@@ -136,7 +138,7 @@ const ProjectDetails = ({ isClient = false }) => {
             <Box sx={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0, 0, 0, 0.02) 0%, transparent 70%)' }} />
             
             <Box sx={{ position: 'relative', zIndex: 1 }}>
-              <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2 }}>
+              <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2, flexWrap: 'wrap', gap: 1 }}>
                 <Chip 
                   icon={<TrendingUp size={14} />}
                   label={project.status} 
@@ -149,6 +151,34 @@ const ProjectDetails = ({ isClient = false }) => {
                     pl: 0.5
                   }}
                 />
+                {project.source === 'fathom_webhook' && (
+                  <Chip 
+                    icon={<Mic size={14} />}
+                    label="Auto-imported from Meeting"
+                    size="small" 
+                    sx={{ 
+                      fontWeight: 600, borderRadius: 2, pl: 0.5,
+                      bgcolor: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6',
+                      '& .MuiChip-icon': { color: '#8b5cf6' }
+                    }}
+                  />
+                )}
+                {project.source === 'fathom_webhook' && project.fathom_url && (
+                  <Chip 
+                    icon={<Video size={14} />}
+                    label={project.fathom_meeting_title || 'View Recording'}
+                    size="small" 
+                    clickable
+                    onClick={() => window.open(project.fathom_url, '_blank')}
+                    sx={{ 
+                      fontWeight: 500, borderRadius: 2, pl: 0.5,
+                      bgcolor: 'rgba(139, 92, 246, 0.06)', color: '#7c3aed',
+                      '& .MuiChip-icon': { color: '#7c3aed' },
+                      '&:hover': { bgcolor: 'rgba(139, 92, 246, 0.15)' },
+                      cursor: 'pointer'
+                    }}
+                  />
+                )}
                 <Divider orientation="vertical" flexItem sx={{ height: 16, my: 'auto', opacity: 0.5 }} />
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
                   Created {new Date(project.created_at).toLocaleDateString()}
